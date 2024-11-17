@@ -6,12 +6,12 @@
 //
 
 import UIKit
+import SnapKit
 
 final class OnboardingViewController: UIViewController {
 	
 	override func viewDidLoad() {
 		
-	
 	}
 	
 }
