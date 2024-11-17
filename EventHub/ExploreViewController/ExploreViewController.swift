@@ -7,11 +7,17 @@
 
 import UIKit
 
+
 final class ExploreViewController: UIViewController {
 	
 	override func viewDidLoad() {
-		
+        view.backgroundColor = .blue
 	
 	}
 	
+    
+}
+
+@available(iOS 17.0, *)
+#Preview {ExploreViewController()
 }
