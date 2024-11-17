@@ -7,11 +7,13 @@
 
 import UIKit
 
-final class LoginViewController: UIViewController {
+final class EventsViewController: UIViewController {
+	
+	
 	
 	override func viewDidLoad() {
 		
-	
+		
 	}
 	
 }
