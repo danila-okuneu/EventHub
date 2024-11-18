@@ -7,14 +7,19 @@
 
 import UIKit
 
-final class PhoneCollectionView: UIView {
+final class PhoneCollectionView: UICollectionView {
 	
 	// MARK: - UI Components
 	
 	
 	// MARK: - Initializers
-	init(width: CGFloat, height: CGPoint) {
-		super.init(frame: .zero)
+	override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+		super.init(frame: frame, collectionViewLayout: layout)
+		allowsSelection = false
+		isPagingEnabled = true
+		showsHorizontalScrollIndicator = false
+		layer.cornerRadius = 15
+		layer.masksToBounds = true
 	}
 	
 	required init?(coder: NSCoder) {

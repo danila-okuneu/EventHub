@@ -12,27 +12,23 @@ final class OnboardingViewController: UIViewController {
 	
 	private var currentPage = 0
 	
-	private let screensCollectionView: UICollectionView = {
+	private let phoneCollectionView: PhoneCollectionView = {
 		let layout = UICollectionViewFlowLayout()
 		layout.scrollDirection = .horizontal
 		layout.minimumInteritemSpacing = 0
 		layout.minimumLineSpacing = 0
-		layout.itemSize = CGSize(width: Constants.phoneWidth - 30, height: Constants.phoneHeight - 30)
-		let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
-		collection.allowsSelection = false
-		collection.isPagingEnabled = true
-		collection.showsHorizontalScrollIndicator = false
-		return collection
+		layout.itemSize = CGSize(width: Constants.phoneWidth, height: Constants.phoneHeight)
+		let collectionView = PhoneCollectionView(frame: .zero, collectionViewLayout: layout)
+		return collectionView
 	}()
 	
-	
-	private let phoneImageView: GradientImageView = {
-		let imageView = GradientImageView()
+	private let phoneImageView: UIImageView = {
+		let imageView = UIImageView()
 		imageView.image = .phoneShape
 		imageView.contentMode = .scaleAspectFit
-		
 		return imageView
 	}()
+
 	
 	private let baseView: UIView = {
 		let view = UIView()
@@ -100,9 +96,9 @@ final class OnboardingViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		screensCollectionView.register(CustomCollectionCell.self, forCellWithReuseIdentifier: CustomCollectionCell.identifier)
-		screensCollectionView.delegate = self
-		screensCollectionView.dataSource = self
+		phoneCollectionView.register(CustomCollectionCell.self, forCellWithReuseIdentifier: CustomCollectionCell.identifier)
+		phoneCollectionView.delegate = self
+		phoneCollectionView.dataSource = self
 		setupViews()
 		setupTargets()
 	}
@@ -112,7 +108,7 @@ final class OnboardingViewController: UIViewController {
 		view.backgroundColor = .white
 		
 		
-		view.addSubview(screensCollectionView)
+		view.addSubview(phoneCollectionView)
 		view.addSubview(phoneImageView)
 		
 		view.addSubview(baseView)
@@ -133,20 +129,21 @@ final class OnboardingViewController: UIViewController {
 	private func makeConstraints() {
 		
 		
-		phoneImageView.snp.makeConstraints { make in
+		phoneCollectionView.snp.makeConstraints { make in
 			make.top.equalToSuperview().offset(Constants.phoneTopOffset)
 			make.height.equalTo(Constants.phoneHeight)
 			make.width.equalTo(Constants.phoneWidth)
 			make.centerX.equalToSuperview()
 		}
 		
-		
-		screensCollectionView.snp.makeConstraints { make in
-			make.edges.equalTo(phoneImageView).inset(15)
+		phoneImageView.snp.makeConstraints { make in
+			
+			make.left.right.equalTo(phoneCollectionView).inset(-Constants.phoneWidthInset)
+			make.top.bottom.equalTo(phoneCollectionView).inset(-Constants.phoneHeightInset)
+			
 		}
 		
-		screensCollectionView.layer.masksToBounds = true
-		screensCollectionView.layer.cornerRadius = 20
+
 		
 		
 		baseView.snp.makeConstraints { make in
@@ -187,15 +184,16 @@ final class OnboardingViewController: UIViewController {
 	}
 	
 	@objc private func skipTapped() {
+		self.dismiss(animated: true)
 		
 	}
 	
 	@objc private func nextTapped() {
 		
-		guard currentPage + 1 < screensCollectionView.numberOfItems(inSection: 0) else { return }
+		guard currentPage + 1 < phoneCollectionView.numberOfItems(inSection: 0) else { return }
 		currentPage += 1
 		pageControl.currentPage = currentPage
-		screensCollectionView.scrollToItem(at: IndexPath(row: currentPage, section: 0), at: .centeredHorizontally, animated: true)
+		phoneCollectionView.scrollToItem(at: IndexPath(row: currentPage, section: 0), at: .centeredHorizontally, animated: true)
 		
 		
 	}
@@ -233,6 +231,8 @@ extension OnboardingViewController {
 		static let phoneWidth = screenWidth * 270 / 375
 		static let phoneTopOffset = screenHeight * 78.5 / 812
 		static let phoneBottomOffset = screenHeight * 195.42 / 812
+		static let phoneHeightInset = screenHeight * 17 / 812
+		static let phoneWidthInset = screenWidth * 17 / 375
 		
 		static let titleTopOffset = screenHeight * 36 / 812
 		static let titleFontSize = screenHeight * 22 / 812
