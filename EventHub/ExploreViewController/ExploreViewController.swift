@@ -10,7 +10,7 @@ import UIKit
 final class ExploreViewController: UIViewController {
 	
 	override func viewDidLoad() {
-		
+        view.backgroundColor = .white
 	
 	}
 	
