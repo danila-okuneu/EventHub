@@ -10,7 +10,7 @@ import UIKit
 final class FavouritesViewController: UIViewController {
 	
 	override func viewDidLoad() {
-		
+        view.backgroundColor = .appGreen
 	
 	}
 	
