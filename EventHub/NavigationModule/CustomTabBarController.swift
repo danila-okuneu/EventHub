@@ -15,14 +15,15 @@ class CustomTabBarController: UITabBarController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
-
+        
         setValue(customTabBar, forKey: "tabBar")
         setupTabItems()
     }
-
-// MARK: - Настройка вкладок
+    
+    // MARK: - Настройка вкладок
     
     private func setupTabItems() {
+
         let exploreVC = ExploreViewController()
         exploreVC.tabBarItem.title = "Explore"
         exploreVC.tabBarItem.image = UIImage(named: "explore")
@@ -30,6 +31,10 @@ class CustomTabBarController: UITabBarController {
         let eventsVC = EventsViewController()
         eventsVC.tabBarItem.title = "Events"
         eventsVC.tabBarItem.image = UIImage(named: "calendar")
+        
+        let emptyVC = UIViewController()
+        emptyVC.tabBarItem.title = " "
+        emptyVC.tabBarItem.image = nil
         
         let mapVC = MapViewController()
         mapVC.tabBarItem.title = "Map"
@@ -39,7 +44,6 @@ class CustomTabBarController: UITabBarController {
         profileVC.tabBarItem.title = "Profile"
         profileVC.tabBarItem.image = UIImage(named: "profile")
         
-        setViewControllers([exploreVC, eventsVC, mapVC, profileVC], animated: false)
-        
+        setViewControllers([exploreVC, eventsVC, emptyVC, mapVC, profileVC], animated: false)
     }
 }
