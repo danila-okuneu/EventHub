@@ -33,12 +33,15 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileView.delegate = self
         setupActions()
         updateUI()
+		profileView.nameTextField.delegate = self
     }
     
     private func setupActions() {
         profileView.editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         profileView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         profileView.signOutButton.addTarget(self, action: #selector(signOutButtonTapped), for: .touchUpInside)
+		profileView.editIcon2.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(editBioTapped)))
+		profileView.editIcon2.isUserInteractionEnabled = true
     }
     
     private func updateUI() {
@@ -49,10 +52,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
             
             profileView.profileImageView.image = user.profileImage
             profileView.profileImageView.isHidden = false
-            
-            profileView.nameLabel.text = user.name.isEmpty ? "No Name" : user.name
-            profileView.nameLabel.isHidden = false
-            
+		
             profileView.header2.isHidden = false
             
             let truncatedText = (user.about as NSString).substring(to: 150) + "..."
@@ -64,8 +64,10 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
             profileView.signOutButton.isHidden = false
             
             profileView.editIcon.isHidden = true
+			profileView.editIcon2.isHidden = true
             profileView.aboutTextView.isHidden = true
-            profileView.nameTextField.isHidden = true
+			profileView.nameTextField.text = user.name
+			profileView.nameTextField.isEnabled = false
             profileView.saveButton.isHidden = true
             
         case .edit:
@@ -73,17 +75,17 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
             profileView.header1.isHidden = false
             profileView.profileImageView.image = user.profileImage
             profileView.profileImageView.isHidden = false
+		
             
-            profileView.nameTextField.text = user.name
-            profileView.nameTextField.isHidden = false
+			profileView.nameTextField.isEnabled = true
             profileView.saveButton.isHidden = false
             
             profileView.header2.isHidden = false
             profileView.editIcon.isHidden = false
+			profileView.editIcon2.isHidden = false
             profileView.aboutTextView.text = user.about
             profileView.aboutTextView.isHidden = false
             
-            profileView.nameLabel.isHidden = true
             profileView.aboutLabel.isHidden = true
             profileView.readMoreButton.isHidden = true
             profileView.editButton.isHidden = true
@@ -111,6 +113,11 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileMode = .view
         updateUI()
     }
+	
+	@objc private func editBioTapped() {
+		
+		profileView.aboutTextView.becomeFirstResponder()
+	}
     
     func didTapReadMore() {
         profileView.aboutLabel.text = user.about
@@ -119,4 +126,18 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     
     @objc private func signOutButtonTapped() {
     }
+}
+
+
+// MARK: - TextField Delegate
+extension ProfileViewController: UITextFieldDelegate {
+	
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		true
+	}
+
+	func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+		true
+	}
+	
 }

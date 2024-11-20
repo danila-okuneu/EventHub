@@ -22,7 +22,6 @@ class ProfileView: UIView {
     
     let header1 = UILabel()
     let profileImageView = UIImageView()
-    let nameLabel = UILabel()
     let nameTextField = UITextField()
     let header2 = UILabel()
     let aboutLabel = UILabel()
@@ -30,10 +29,13 @@ class ProfileView: UIView {
     let aboutTextView = UITextView()
     
     let editButton = CustomButton(title: "Edit Profile", icon: .editIcon, hasBorder: true, borderColor: .accent, textColor: .accent, iconTintColor: .accent)
+	
     let saveButton = CustomButton(title: "Save", icon: nil)
     let signOutButton = CustomButton(title: "Sign Out", icon: .signOutIcon, hasBorder: false, textColor: .black, iconTintColor: .gray)
     
     let editIcon = UIImageView(image: .editIcon)
+	let editIcon2 = UIImageView(image: .editIcon)
+	
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,17 +52,19 @@ class ProfileView: UIView {
         
         addSubview(scrollView)
         scrollView.addSubview(contentView)
+		scrollView.isScrollEnabled = true
+		scrollView.alwaysBounceVertical = true
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: topAnchor),
+			scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            contentView.topAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.topAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
@@ -81,11 +85,7 @@ class ProfileView: UIView {
         profileImageView.clipsToBounds = true
         profileImageView.contentMode = .scaleAspectFill
         
-        // name
-        nameLabel.textAlignment = .center
-        nameLabel.font = UIFont.systemFont(ofSize: 24, weight: .regular)
-        nameLabel.textColor = .black
-        
+		// name
         nameTextField.textAlignment = .center
         nameTextField.font = UIFont.systemFont(ofSize: 24, weight: .regular)
         nameTextField.backgroundColor = .white
@@ -99,6 +99,7 @@ class ProfileView: UIView {
         header2.textColor = .black
         
         editIcon.tintColor = .accent
+		editIcon2.tintColor = .accent
         
         // user info "about"
         aboutLabel.layer.borderColor = UIColor.lightGray.cgColor
@@ -125,7 +126,7 @@ class ProfileView: UIView {
         
     //MARK: - constraint settings
         
-        let views: [UIView] = [header1, profileImageView, nameLabel, nameTextField, header2, editIcon, aboutLabel, readMoreButton, aboutTextView, saveButton, editButton, signOutButton]
+		let views: [UIView] = [header1, profileImageView, nameTextField, header2, editIcon2, editIcon, aboutLabel, readMoreButton, aboutTextView, saveButton, editButton, signOutButton]
         
         views.forEach { view in
             contentView.addSubview(view)
@@ -141,15 +142,15 @@ class ProfileView: UIView {
             profileImageView.widthAnchor.constraint(equalToConstant: 96),
             profileImageView.heightAnchor.constraint(equalToConstant: 96),
             
-            nameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 21),
+//            nameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+//            nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 21),
             
             nameTextField.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             nameTextField.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 21),
             nameTextField.widthAnchor.constraint(equalToConstant: 200),
             
             editButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            editButton.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 15),
+			editButton.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 15),
             editButton.widthAnchor.constraint(equalToConstant: 200),
             
             saveButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -159,8 +160,10 @@ class ProfileView: UIView {
             header2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             header2.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 154),
             
-            editIcon.leadingAnchor.constraint(equalTo: header2.trailingAnchor, constant: 8),
-            editIcon.centerYAnchor.constraint(equalTo: header2.centerYAnchor),
+            editIcon2.leadingAnchor.constraint(equalTo: header2.trailingAnchor, constant: 8),
+            editIcon2.centerYAnchor.constraint(equalTo: header2.centerYAnchor),
+			editIcon2.heightAnchor.constraint(equalTo: header2.heightAnchor),
+			editIcon2.widthAnchor.constraint(equalTo: header2.heightAnchor),
             
             aboutLabel.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 35),
             aboutLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
