@@ -19,6 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window?.backgroundColor = .appPurpleDark
 		window?.windowScene = windowScene
         window?.rootViewController = CustomTabBarController()
+        
 		window?.makeKeyAndVisible()
 	}
 

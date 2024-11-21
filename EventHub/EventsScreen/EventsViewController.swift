@@ -86,8 +86,12 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
             exploreButtons.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
             exploreButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
 ])
+        exploreButtons.addTarget(self, action: #selector(exploreButtonTapped), for: .touchUpInside)
             }
 
+    @objc private func exploreButtonTapped() {
+
+            }
     
     private func updateEmptyViewVisibility() {
            let hasData = isShowingUpcomingEvents ? !upcomingEvents.isEmpty : !pastEvents.isEmpty
