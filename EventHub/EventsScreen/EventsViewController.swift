@@ -24,9 +24,15 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
        let segmentedControl: UISegmentedControl = {
            let sc = UISegmentedControl(items: ["UPCOMING", "PAST EVENTS"])
            sc.selectedSegmentIndex = 0
+           sc.selectedSegmentTintColor = .white
+
            sc.translatesAutoresizingMaskIntoConstraints = false
-           return sc
-       }()
+           sc.setTitleTextAttributes([.foregroundColor: UIColor.accent], for: .selected)
+           sc.setTitleTextAttributes([.foregroundColor: UIColor.appGrayTabbar], for: .normal)
+           sc.backgroundColor = .gray
+                   return sc
+               }()
+
        
     var collectionView: UICollectionView = {
            let layout = UICollectionViewFlowLayout()
@@ -43,25 +49,34 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     // MARK: - Life Cicle
     override func viewDidLoad() {
         
+        
         if upcomingEvents.isEmpty {
             setupEmptyView()
         }
         else {
             setupCollectionView()
         }
-        
+        setupView()
+
+    }
+    private func setupView() {
+       
         view.addSubview(exploreButtons)
-        
+        view.addSubview(segmentedControl)
         exploreButtons.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             exploreButtons.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 60),
             exploreButtons.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
-            exploreButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
+            exploreButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            
+            segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
+            segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            segmentedControl.heightAnchor.constraint(equalToConstant: 45)
 
         ])
-    }
-        
 
+    }
 private func setupCollectionView() {
     let layout = UICollectionViewFlowLayout()
     layout.scrollDirection = .vertical
