@@ -9,6 +9,13 @@ import UIKit
 
 final class SignupViewController: UIViewController {
 
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "background")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "arrow-left")?.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -88,8 +95,14 @@ final class SignupViewController: UIViewController {
         config.title = "Login with Google"
 
         button.configuration = config
-        button.layer.cornerRadius = 12
         button.clipsToBounds = true
+        button.layer.cornerRadius = 12
+        
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 5)
+        button.layer.shadowRadius = 4
+        button.layer.shadowOpacity = 0.2
+        button.layer.masksToBounds = false
         return button
     }()
 
@@ -111,7 +124,6 @@ final class SignupViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .appGray
         setupUI()
         
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
@@ -119,12 +131,17 @@ final class SignupViewController: UIViewController {
     }
 
     private func setupUI() {
-        [backButton, titleLabel, fullNameTextField, emailTextField, passwordTextField, confirmPasswordTextField, signUpButton, signUpButtonImageView, orLabel, loginWithGoogleButton, alreadyHaveAccountLabel, signInButton].forEach {
+        [backgroundImageView, backButton, titleLabel, fullNameTextField, emailTextField, passwordTextField, confirmPasswordTextField, signUpButton, signUpButtonImageView, orLabel, loginWithGoogleButton, alreadyHaveAccountLabel, signInButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([
+            backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 9),
             backButton.widthAnchor.constraint(equalToConstant: 22),

@@ -9,6 +9,13 @@ import UIKit
 
 final class LoginViewController: UIViewController {
 
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "background")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "group")
@@ -104,8 +111,15 @@ final class LoginViewController: UIViewController {
         config.title = "Login with Google"
         
         button.configuration = config
-        button.layer.cornerRadius = 12
         button.clipsToBounds = true
+        button.layer.cornerRadius = 12
+        
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 5)
+        button.layer.shadowRadius = 4
+        button.layer.shadowOpacity = 0.2
+        button.layer.masksToBounds = false
+        
         return button
     }()
     
@@ -126,19 +140,23 @@ final class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .appGray
         setupUI()
         
         signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
     }
     
     private func setupUI() {
-        [logoImageView, titleLabel, signInLabel, emailTextField, passwordTextField, rememberMeSwitch, rememberMeLabel, forgotPasswordButton, signInButton, signInButtonImageView, orLabel, loginWithGoogleButton, signUpLabel, signUpButton].forEach {
+        [backgroundImageView, logoImageView, titleLabel, signInLabel, emailTextField, passwordTextField, rememberMeSwitch, rememberMeLabel, forgotPasswordButton, signInButton, signInButtonImageView, orLabel, loginWithGoogleButton, signUpLabel, signUpButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
+            backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 31),
             logoImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 85),
             logoImageView.widthAnchor.constraint(equalToConstant: 55),
