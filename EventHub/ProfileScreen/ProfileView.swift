@@ -26,14 +26,14 @@ class ProfileView: UIView {
     let nameTextField = UITextField()
     let header2 = UILabel()
     let aboutLabel = UILabel()
-    let readMoreButton = UIButton()
     let aboutTextView = UITextView()
     
     let editButton = CustomButton(title: "Edit Profile", icon: .editIcon, hasBorder: true, borderColor: .accent, textColor: .accent, iconTintColor: .accent)
     let saveButton = CustomButton(title: "Save", icon: nil)
     let signOutButton = CustomButton(title: "Sign Out", icon: .signOutIcon, hasBorder: false, textColor: .black, iconTintColor: .gray)
     
-    let editIcon = UIImageView(image: .editIcon)
+    let editNameIcon = UIImageView(image: .editIcon)
+    let editAboutIcon = UIImageView(image: .editIcon)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -55,12 +55,12 @@ class ProfileView: UIView {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            contentView.topAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.topAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
@@ -76,7 +76,7 @@ class ProfileView: UIView {
         header1.textColor = .black
         
         // photo
-        profileImageView.image = UIImage(named: "person.circle")
+        profileImageView.image = UIImage(systemName: "person.fill")
         profileImageView.layer.cornerRadius = 50
         profileImageView.clipsToBounds = true
         profileImageView.contentMode = .scaleAspectFill
@@ -90,7 +90,7 @@ class ProfileView: UIView {
         nameTextField.font = UIFont.systemFont(ofSize: 24, weight: .regular)
         nameTextField.backgroundColor = .white
         nameTextField.textColor = .black
-        nameTextField.rightView = editIcon
+        nameTextField.rightView = editNameIcon
         nameTextField.rightViewMode = .always
         
         // About me header
@@ -98,22 +98,15 @@ class ProfileView: UIView {
         header2.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         header2.textColor = .black
         
-        editIcon.tintColor = .accent
-        
         // user info "about"
-        aboutLabel.layer.borderColor = UIColor.lightGray.cgColor
         aboutLabel.font = UIFont.systemFont(ofSize: 16, weight: .light)
         aboutLabel.textColor = .black
-        aboutLabel.backgroundColor = .white
         aboutLabel.numberOfLines = 0
-        aboutLabel.lineBreakMode = .byTruncatingTail
+        aboutLabel.lineBreakMode = .byWordWrapping
+        aboutLabel.isUserInteractionEnabled = true
         
-        // Настройка кнопки READ MORE
-        readMoreButton.setTitle("Read more", for: .normal)
-        readMoreButton.setTitleColor(.accent, for: .normal)
-        readMoreButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .light)
-        readMoreButton.isHidden = false
-        readMoreButton.addTarget(self, action: #selector(readMoreTapped), for: .touchUpInside)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapReadMore))
+        aboutLabel.addGestureRecognizer(tapGesture)
         
         aboutTextView.layer.borderColor = UIColor.systemGray5.cgColor
         aboutTextView.layer.borderWidth = 0.5
@@ -125,7 +118,7 @@ class ProfileView: UIView {
         
     //MARK: - constraint settings
         
-        let views: [UIView] = [header1, profileImageView, nameLabel, nameTextField, header2, editIcon, aboutLabel, readMoreButton, aboutTextView, saveButton, editButton, signOutButton]
+        let views: [UIView] = [header1, profileImageView, nameLabel, nameTextField, header2, editAboutIcon, aboutLabel, aboutTextView, saveButton, editButton, signOutButton]
         
         views.forEach { view in
             contentView.addSubview(view)
@@ -159,15 +152,14 @@ class ProfileView: UIView {
             header2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             header2.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 154),
             
-            editIcon.leadingAnchor.constraint(equalTo: header2.trailingAnchor, constant: 8),
-            editIcon.centerYAnchor.constraint(equalTo: header2.centerYAnchor),
+            editAboutIcon.leadingAnchor.constraint(equalTo: header2.trailingAnchor, constant: 8),
+            editAboutIcon.centerYAnchor.constraint(equalTo: header2.centerYAnchor),
+            editAboutIcon.heightAnchor.constraint(equalTo: header2.heightAnchor),
+            editAboutIcon.widthAnchor.constraint(equalTo: header2.heightAnchor),
             
             aboutLabel.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 35),
             aboutLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             aboutLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -35),
-            
-            readMoreButton.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 8),
-            readMoreButton.leadingAnchor.constraint(equalTo: aboutLabel.leadingAnchor),
             
             aboutTextView.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 35),
             aboutTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
@@ -175,13 +167,14 @@ class ProfileView: UIView {
             aboutTextView.heightAnchor.constraint(equalToConstant: 300),
             
             signOutButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            signOutButton.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 150),
+            signOutButton.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 100),
             signOutButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
 
+            contentView.bottomAnchor.constraint(equalTo: signOutButton.bottomAnchor, constant: 20)
         ])
     }
     
-    @objc private func readMoreTapped() {
+    @objc private func didTapReadMore() {
         delegate?.didTapReadMore()
     }
 }

@@ -39,62 +39,38 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileView.editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         profileView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         profileView.signOutButton.addTarget(self, action: #selector(signOutButtonTapped), for: .touchUpInside)
+        let readMoreGesture = UITapGestureRecognizer(target: self, action: #selector(didTapReadMore))
+        profileView.aboutLabel.addGestureRecognizer(readMoreGesture)
+        
     }
     
     private func updateUI() {
-        switch profileMode {
-        case .view:
-            // Показать текстовые метки / скрыть текстовые поля
-            profileView.header1.isHidden = false
-            
+        
+        let commonElements: [UIView] = [profileView.header1, profileView.profileImageView, profileView.header2]
+        let viewModeElements: [UIView] = [profileView.nameLabel, profileView.aboutLabel, profileView.editButton, profileView.signOutButton]
+        let editModeElements: [UIView] = [profileView.nameTextField, profileView.aboutTextView, profileView.saveButton, profileView.editAboutIcon]
+        
+        // Set visibility based on mode
+        commonElements.forEach { $0.isHidden = false }
+        
+        if profileMode == .view {
+            // using mock data
             profileView.profileImageView.image = user.profileImage
-            profileView.profileImageView.isHidden = false
+            profileView.nameLabel.text = user.name
+            setupAboutLabel(with: user.about)
             
-            profileView.nameLabel.text = user.name.isEmpty ? "No Name" : user.name
-            profileView.nameLabel.isHidden = false
-            
-            profileView.header2.isHidden = false
-            
-            let truncatedText = (user.about as NSString).substring(to: 150) + "..."
-            profileView.aboutLabel.text = truncatedText
-            profileView.aboutLabel.isHidden = false
-            profileView.readMoreButton.isHidden = false
-            
-            profileView.editButton.isHidden = false
-            profileView.signOutButton.isHidden = false
-            
-            profileView.editIcon.isHidden = true
-            profileView.aboutTextView.isHidden = true
-            profileView.nameTextField.isHidden = true
-            profileView.saveButton.isHidden = true
-            
-        case .edit:
-            // Показать текстовые поля / скрыть метки
-            profileView.header1.isHidden = false
-            profileView.profileImageView.image = user.profileImage
-            profileView.profileImageView.isHidden = false
-            
+            viewModeElements.forEach { $0.isHidden = false }
+            editModeElements.forEach { $0.isHidden = true }
+        } else {
+            // using mock data
             profileView.nameTextField.text = user.name
-            profileView.nameTextField.isHidden = false
-            profileView.saveButton.isHidden = false
-            
-            profileView.header2.isHidden = false
-            profileView.editIcon.isHidden = false
             profileView.aboutTextView.text = user.about
-            profileView.aboutTextView.isHidden = false
             
-            profileView.nameLabel.isHidden = true
-            profileView.aboutLabel.isHidden = true
-            profileView.readMoreButton.isHidden = true
-            profileView.editButton.isHidden = true
-            profileView.signOutButton.isHidden = true
+            editModeElements.forEach { $0.isHidden = false }
+            viewModeElements.forEach { $0.isHidden = true }
         }
     }
     
-    @objc private func showFullText() {
-        profileView.aboutLabel.text = user.about
-        profileView.readMoreButton.isHidden = true
-    }
     
     // change mode -> edit
     @objc private func editButtonTapped() {
@@ -112,11 +88,38 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         updateUI()
     }
     
-    func didTapReadMore() {
-        profileView.aboutLabel.text = user.about
-        profileView.readMoreButton.isHidden = true
+    //setup "read more" button
+    func setupAboutLabel(with text: String) {
+        let maxLength = 150
+        var truncatedText = String(text.prefix(maxLength))
+        
+        if let lastSpaceIndex = truncatedText.range(of: " ", options: .backwards)?.lowerBound {
+            truncatedText = String(truncatedText[..<lastSpaceIndex])
+        }
+        
+        truncatedText += "..."
+        
+        let fullText = truncatedText + " Read more"
+        
+        let attributedString = NSMutableAttributedString(string: fullText)
+        let readMoreRange = (fullText as NSString).range(of: "Read more")
+        attributedString.addAttribute(.foregroundColor, value: UIColor.accent, range: readMoreRange)
+        
+        profileView.aboutLabel.attributedText = attributedString
+        profileView.aboutLabel.isUserInteractionEnabled = true
     }
     
-    @objc private func signOutButtonTapped() {
+    @objc func didTapReadMore() {
+        profileMode = .view
+        profileView.aboutLabel.text = user.about
     }
+
+    @objc private func signOutButtonTapped() {
+        // Sign out logic
+    }
+}
+
+@available(iOS 17.0, *)
+#Preview {
+    ProfileViewController()
 }
