@@ -36,7 +36,7 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
            return cv
        }()
        
-
+    var exploreButtons = UIButton.createButton(icon: "right", title: "EXPLORE EVENTS")
     
     
     
@@ -49,6 +49,16 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
         else {
             setupCollectionView()
         }
+        
+        view.addSubview(exploreButtons)
+        
+        exploreButtons.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            exploreButtons.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 60),
+            exploreButtons.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
+            exploreButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
+
+        ])
     }
         
 
