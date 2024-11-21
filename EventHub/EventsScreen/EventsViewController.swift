@@ -47,38 +47,69 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     // MARK: - Life Cicle
     override func viewDidLoad() {
         
-        
-        if upcomingEvents.isEmpty {
-            setupEmptyView()
-        }
-        else {
-            setupCollectionView()
-        }
-        setupView()
+        super.viewDidLoad()
+        view.backgroundColor = .appGray
+                setupCollectionView()
+                setupEmptyView()
+                setupSegmentedControl()
+                setupExploreButton()
+                loadMockData() // Загрузка моковых данных
+            }
 
-    }
-    private func setupView() {
-       
-        view.addSubview(exploreButtons)
+    
+    func setupSegmentedControl() {
         view.addSubview(segmentedControl)
-        exploreButtons.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            exploreButtons.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 60),
-            exploreButtons.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
-            exploreButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            
             segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
             segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             segmentedControl.heightAnchor.constraint(equalToConstant: 45)
 ])
         segmentedControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
+    }
+    
+    @objc private func segmentChanged() {
+            if segmentedControl.selectedSegmentIndex == 0 {
+                print("Selected Upcoming Events")
+                loadMockData()
+            } else {
+                print("Selected Past Events")
+                loadMockData()
             }
+        }
+    private func setupExploreButton() {
+        view.addSubview(exploreButtons)
+        
+        exploreButtons.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            exploreButtons.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 60),
+            exploreButtons.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
+            exploreButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
+])
+            }
+
+    
+    private func updateEmptyViewVisibility() {
+           let hasData = isShowingUpcomingEvents ? !upcomingEvents.isEmpty : !pastEvents.isEmpty
+           emptyView.isHidden = hasData
+       }
+    private func loadMockData() {
+//           upcomingEvents = [
+//            Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
+//            Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
+//        ]
+        upcomingEvents = []
+           pastEvents = [Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
+               Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA")]
+           
+           collectionView.reloadData()
+           updateEmptyViewVisibility()
+       }
+
 
 private func setupCollectionView() {
     let layout = UICollectionViewFlowLayout()
     layout.scrollDirection = .vertical
-    
     collectionView.backgroundColor = .clear
     collectionView.dataSource = self
     collectionView.delegate = self
@@ -86,28 +117,18 @@ private func setupCollectionView() {
     
     
     collectionView.register(EventCollectionViewCell.self, forCellWithReuseIdentifier: EventCollectionViewCell.identifier)
-    
     view.addSubview(collectionView)
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     
     NSLayoutConstraint.activate([
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-        collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 104),
+        collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 170),
         collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
     ])
-    
+    emptyView.isHidden = true
 }
     
-    @objc private func segmentChanged() {
-            if segmentedControl.selectedSegmentIndex == 0 {
-                print("Selected Upcoming Events")
-                // Обновите ваш интерфейс для предстоящих событий
-            } else {
-                print("Selected Past Events")
-                // Обновите ваш интерфейс для прошедших событий
-            }
-        }
 
     private func setupEmptyView() {
         view.addSubview(emptyView)
@@ -119,18 +140,27 @@ private func setupCollectionView() {
             emptyView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+
+
     // MARK: - UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return upcomingEvents.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        isShowingUpcomingEvents ? upcomingEvents.count : pastEvents.count
+            }
+
+
+func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
-        let event = upcomingEvents[indexPath.item]
-        cell.configure(with: event)
-        
+        let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
+         cell.configure(with: event, isbookmarkHidden: true)
         return cell
     }
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    return CGSize(width: collectionView.bounds.width, height: 140)
+}
+
 }
