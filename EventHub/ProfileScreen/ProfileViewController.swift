@@ -42,7 +42,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     
     private func setupActions() {
         profileView.editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
-        profileView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        profileView.backSaveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         profileView.signOutButton.addTarget(self, action: #selector(signOutButtonTapped), for: .touchUpInside)
         
         let readMoreGesture = UITapGestureRecognizer(target: self, action: #selector(didTapReadMore))
@@ -61,7 +61,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         
         let commonElements: [UIView] = [profileView.header1, profileView.profileImageView, profileView.header2]
         let viewModeElements: [UIView] = [profileView.nameLabel, profileView.aboutLabel, profileView.editButton, profileView.signOutButton]
-        let editModeElements: [UIView] = [profileView.nameTextField, profileView.aboutTextView, profileView.saveButton, profileView.editAboutIcon]
+        let editModeElements: [UIView] = [profileView.nameTextField, profileView.aboutTextView, profileView.backSaveButton, profileView.editAboutIcon]
         
         // Set visibility based on mode
         commonElements.forEach { $0.isHidden = false }

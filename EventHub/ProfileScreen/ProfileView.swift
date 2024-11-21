@@ -30,7 +30,7 @@ class ProfileView: UIView {
     
     let editButton = CustomButton(title: "Edit Profile", icon: .editIcon, hasBorder: true, borderColor: .accent, textColor: .accent, iconTintColor: .accent)
 	
-    let saveButton = CustomButton(title: "Save", icon: nil)
+    let backSaveButton = UIButton(type: .system)
     let signOutButton = CustomButton(title: "Sign Out", icon: .signOutIcon, hasBorder: false, textColor: .black, iconTintColor: .gray)
     
     let editNameIcon = UIImageView(image: .editIcon)
@@ -78,6 +78,13 @@ class ProfileView: UIView {
         header1.textAlignment = .center
         header1.textColor = .black
         
+        // back arrow
+        backSaveButton.setImage(UIImage(systemName: "arrow.left"), for: .normal)
+        backSaveButton.tintColor = .black
+        var config = UIButton.Configuration.plain()
+        backSaveButton.configuration = config
+        config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+
         // photo
         profileImageView.image = UIImage(systemName: "person.fill")
         profileImageView.layer.cornerRadius = 50
@@ -85,6 +92,10 @@ class ProfileView: UIView {
         profileImageView.contentMode = .scaleAspectFill
         
 		// name
+        nameLabel.textAlignment = .center
+        nameLabel.textColor = .black
+        nameLabel.font = UIFont.systemFont(ofSize: 24, weight: .regular)
+        
         nameTextField.textAlignment = .center
         nameTextField.font = UIFont.systemFont(ofSize: 24, weight: .regular)
         nameTextField.backgroundColor = .white
@@ -117,7 +128,7 @@ class ProfileView: UIView {
         
     //MARK: - constraint settings
         
-        let views: [UIView] = [header1, profileImageView, nameLabel, nameTextField, header2, editAboutIcon, aboutLabel, aboutTextView, saveButton, editButton, signOutButton]
+        let views: [UIView] = [header1, profileImageView, nameLabel, nameTextField, header2, editAboutIcon, aboutLabel, aboutTextView, backSaveButton, editButton, signOutButton]
         
         views.forEach { view in
             contentView.addSubview(view)
@@ -144,9 +155,10 @@ class ProfileView: UIView {
 			editButton.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 15),
             editButton.widthAnchor.constraint(equalToConstant: 200),
             
-            saveButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            saveButton.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 15),
-            saveButton.widthAnchor.constraint(equalToConstant: 200),
+            backSaveButton.centerYAnchor.constraint(equalTo: header1.centerYAnchor),
+            backSaveButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 25),
+            backSaveButton.widthAnchor.constraint(equalToConstant: 22),
+            backSaveButton.heightAnchor.constraint(equalToConstant: 22),
             
             header2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             header2.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 154),
@@ -156,11 +168,11 @@ class ProfileView: UIView {
             editAboutIcon.heightAnchor.constraint(equalTo: header2.heightAnchor),
             editAboutIcon.widthAnchor.constraint(equalTo: header2.heightAnchor),
             
-            aboutLabel.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 35),
+            aboutLabel.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 19),
             aboutLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             aboutLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -35),
             
-            aboutTextView.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 35),
+            aboutTextView.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 19),
             aboutTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             aboutTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -35),
             aboutTextView.heightAnchor.constraint(equalToConstant: 300),
