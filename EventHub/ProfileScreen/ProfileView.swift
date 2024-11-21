@@ -29,6 +29,7 @@ class ProfileView: UIView {
     let aboutTextView = UITextView()
     
     let editButton = CustomButton(title: "Edit Profile", icon: .editIcon, hasBorder: true, borderColor: .accent, textColor: .accent, iconTintColor: .accent)
+	
     let saveButton = CustomButton(title: "Save", icon: nil)
     let signOutButton = CustomButton(title: "Sign Out", icon: .signOutIcon, hasBorder: false, textColor: .black, iconTintColor: .gray)
     
@@ -50,6 +51,8 @@ class ProfileView: UIView {
         
         addSubview(scrollView)
         scrollView.addSubview(contentView)
+		scrollView.isScrollEnabled = true
+		scrollView.alwaysBounceVertical = true
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -81,11 +84,7 @@ class ProfileView: UIView {
         profileImageView.clipsToBounds = true
         profileImageView.contentMode = .scaleAspectFill
         
-        // name
-        nameLabel.textAlignment = .center
-        nameLabel.font = UIFont.systemFont(ofSize: 24, weight: .regular)
-        nameLabel.textColor = .black
-        
+		// name
         nameTextField.textAlignment = .center
         nameTextField.font = UIFont.systemFont(ofSize: 24, weight: .regular)
         nameTextField.backgroundColor = .white
@@ -142,7 +141,7 @@ class ProfileView: UIView {
             nameTextField.widthAnchor.constraint(equalToConstant: 200),
             
             editButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            editButton.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 15),
+			editButton.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 15),
             editButton.widthAnchor.constraint(equalToConstant: 200),
             
             saveButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),

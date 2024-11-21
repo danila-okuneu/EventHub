@@ -39,9 +39,9 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileView.editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         profileView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         profileView.signOutButton.addTarget(self, action: #selector(signOutButtonTapped), for: .touchUpInside)
+
         let readMoreGesture = UITapGestureRecognizer(target: self, action: #selector(didTapReadMore))
         profileView.aboutLabel.addGestureRecognizer(readMoreGesture)
-        
     }
     
     private func updateUI() {
@@ -87,6 +87,11 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileMode = .view
         updateUI()
     }
+	
+	@objc private func editBioTapped() {
+		
+		profileView.aboutTextView.becomeFirstResponder()
+	}
     
     //setup "read more" button
     func setupAboutLabel(with text: String) {
@@ -122,4 +127,16 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 @available(iOS 17.0, *)
 #Preview {
     ProfileViewController()
+}
+
+// MARK: - TextField Delegate
+extension ProfileViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        true
+    }
 }
