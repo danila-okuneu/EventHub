@@ -9,6 +9,9 @@ import UIKit
 
 class ProfileViewController: UIViewController, ProfileViewDelegate {
     
+    var nameTextField: UITextField!
+    var aboutTextView: UITextView!
+    
     // mock user
     var user: User = User(
         name: "Ashfak Sayem",
@@ -24,6 +27,8 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     
     override func loadView() {
         view = ProfileView()
+        nameTextField = profileView.nameTextField
+        aboutTextView = profileView.aboutTextView
     }
     
     override func viewDidLoad() {
@@ -39,12 +44,20 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileView.editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         profileView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         profileView.signOutButton.addTarget(self, action: #selector(signOutButtonTapped), for: .touchUpInside)
-
+        
         let readMoreGesture = UITapGestureRecognizer(target: self, action: #selector(didTapReadMore))
         profileView.aboutLabel.addGestureRecognizer(readMoreGesture)
     }
     
     private func updateUI() {
+        
+        // Назначаем делегаты для текстовых полей
+        nameTextField.delegate = self
+        aboutTextView.delegate = self
+        
+        // Добавляем жест для скрытия клавиатуры
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
         
         let commonElements: [UIView] = [profileView.header1, profileView.profileImageView, profileView.header2]
         let viewModeElements: [UIView] = [profileView.nameLabel, profileView.aboutLabel, profileView.editButton, profileView.signOutButton]
@@ -87,11 +100,11 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileMode = .view
         updateUI()
     }
-	
-	@objc private func editBioTapped() {
-		
-		profileView.aboutTextView.becomeFirstResponder()
-	}
+    
+    @objc private func editBioTapped() {
+        
+        profileView.aboutTextView.becomeFirstResponder()
+    }
     
     //setup "read more" button
     func setupAboutLabel(with text: String) {
@@ -118,7 +131,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileMode = .view
         profileView.aboutLabel.text = user.about
     }
-
+    
     @objc private func signOutButtonTapped() {
         // Sign out logic
     }
@@ -130,13 +143,25 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 }
 
 // MARK: - TextField Delegate
-extension ProfileViewController: UITextFieldDelegate {
+extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {
     
+    // Обработка событий для nameTextField
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        true
+        textField.resignFirstResponder()
+        return true
     }
     
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        true
+        return true
+    }
+    
+    // Обработка событий для aboutTextView
+    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+        return true
+    }
+    
+    // Закрытие клавиатуры при нажатии на экран
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
