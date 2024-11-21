@@ -15,12 +15,10 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     
     var upcomingEvents: [Event] = []
     var pastEvents: [Event] = []
-    var displayedEvents: [Event] {
-           return isShowingUpcoming ? upcomingEvents : pastEvents
-       }
-       
-    var isShowingUpcoming = true
-       
+
+    private var isShowingUpcomingEvents: Bool {
+        return segmentedControl.selectedSegmentIndex == 0
+    }
        let segmentedControl: UISegmentedControl = {
            let sc = UISegmentedControl(items: ["UPCOMING", "PAST EVENTS"])
            sc.selectedSegmentIndex = 0
@@ -73,10 +71,10 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
             segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
             segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             segmentedControl.heightAnchor.constraint(equalToConstant: 45)
+])
+        segmentedControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
+            }
 
-        ])
-
-    }
 private func setupCollectionView() {
     let layout = UICollectionViewFlowLayout()
     layout.scrollDirection = .vertical
@@ -101,6 +99,16 @@ private func setupCollectionView() {
     
 }
     
+    @objc private func segmentChanged() {
+            if segmentedControl.selectedSegmentIndex == 0 {
+                print("Selected Upcoming Events")
+                // Обновите ваш интерфейс для предстоящих событий
+            } else {
+                print("Selected Past Events")
+                // Обновите ваш интерфейс для прошедших событий
+            }
+        }
+
     private func setupEmptyView() {
         view.addSubview(emptyView)
         emptyView.translatesAutoresizingMaskIntoConstraints = false
@@ -114,7 +122,7 @@ private func setupCollectionView() {
     // MARK: - UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return upcomingEvents.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

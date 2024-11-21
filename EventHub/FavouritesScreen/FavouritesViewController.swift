@@ -12,15 +12,15 @@ import UIKit
 
 struct Event {
     let image: UIImage
-    let date: String
+    let dateString: String
     let title: String
     let location: String
-    
+   
 }
 
 let mockEvent: [Event] = [
-    Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
-    Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
+    Event(image: UIImage(named: "2")!, dateString: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA", date: 28-04),
+    Event(image: UIImage(named: "1")!, dateString: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
     
     
 ]
