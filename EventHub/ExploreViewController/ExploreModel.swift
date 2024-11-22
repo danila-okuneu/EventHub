@@ -9,6 +9,7 @@
 import Foundation
 
 enum ExploreSection: Int, Hashable, CaseIterable {
+    case search
     case categories
     case upcoming
     case nearby
