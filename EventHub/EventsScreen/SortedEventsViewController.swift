@@ -85,3 +85,14 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
 
 }
 
+class SegmentedControl: UISegmentedControl {
+    override func layoutSubviews() {
+      super.layoutSubviews()
+      layer.cornerRadius = self.bounds.size.height / 2.0
+      layer.borderColor = UIColor(red: 170.0/255.0, green: 170.0/255.0, blue: 170.0/255.0, alpha: 1.0).cgColor
+      layer.borderWidth = 1.0
+      layer.masksToBounds = true
+      clipsToBounds = true
+
+   }
+}

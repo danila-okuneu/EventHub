@@ -19,15 +19,10 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     private var isShowingUpcomingEvents: Bool {
         return segmentedControl.selectedSegmentIndex == 0
     }
-       let segmentedControl: UISegmentedControl = {
-           let sc = UISegmentedControl(items: ["UPCOMING", "PAST EVENTS"])
+    let segmentedControl: CustomSegmentedControl = {
+           let sc = CustomSegmentedControl(items: ["UPCOMING", "PAST EVENTS"])
            sc.selectedSegmentIndex = 0
-           sc.selectedSegmentTintColor = .white
-
            sc.translatesAutoresizingMaskIntoConstraints = false
-           sc.setTitleTextAttributes([.foregroundColor: UIColor.accent], for: .selected)
-           sc.setTitleTextAttributes([.foregroundColor: UIColor.appGrayTabbar], for: .normal)
-           sc.backgroundColor = .gray
                    return sc
                }()
 
@@ -37,6 +32,7 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
            let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
            cv.translatesAutoresizingMaskIntoConstraints = false
            cv.backgroundColor = .white
+          cv.clipsToBounds = true
            return cv
        }()
        
@@ -168,3 +164,5 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
 }
 
 }
+
+
