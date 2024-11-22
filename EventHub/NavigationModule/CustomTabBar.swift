@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol CustomTabBarDelegate: AnyObject {
+    func didTapFavoriteButton()
+}
+
 final class CustomTabBar: UITabBar {
     
+    weak var customDelegate: CustomTabBarDelegate?
+
     private let favoriteButton = FavoriteButton(type: .system)
     private let shadowLayer = CALayer()
     
@@ -53,6 +59,8 @@ final class CustomTabBar: UITabBar {
 
     private func setupFavoriteButton() {
         
+        favoriteButton.isUserInteractionEnabled = true
+
         addSubview(favoriteButton)
         NSLayoutConstraint.activate([
             favoriteButton.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -60,13 +68,13 @@ final class CustomTabBar: UITabBar {
             favoriteButton.heightAnchor.constraint(equalToConstant: 46),
             favoriteButton.widthAnchor.constraint(equalToConstant: 46)
         ])
-        
-        favoriteButton.addTarget(self, action: #selector(didTapFavoriteButton), for: .touchUpInside)
+        favoriteButton.addTarget(self, action: #selector(didTapFavoriteButton), for: .touchDown)
     }
     
     @objc private func didTapFavoriteButton() {
+        customDelegate?.didTapFavoriteButton()
     }
-    
+
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         favoriteButton.frame.contains(point) ? favoriteButton : super.hitTest(point, with: event)
     }
