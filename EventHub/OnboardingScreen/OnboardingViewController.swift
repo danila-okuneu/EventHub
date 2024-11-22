@@ -19,8 +19,11 @@ final class OnboardingViewController: UIViewController {
 		layout.minimumLineSpacing = 0
 		layout.itemSize = CGSize(width: Constants.phoneWidth, height: Constants.phoneHeight)
 		let collectionView = PhoneCollectionView(frame: .zero, collectionViewLayout: layout)
+		collectionView.isScrollEnabled = false
+		
 		return collectionView
 	}()
+	
 	
 	private let phoneImageView: UIImageView = {
 		let imageView = UIImageView()
@@ -28,7 +31,7 @@ final class OnboardingViewController: UIViewController {
 		imageView.contentMode = .scaleAspectFit
 		return imageView
 	}()
-
+	
 	
 	private let baseView: UIView = {
 		let view = UIView()
@@ -82,7 +85,7 @@ final class OnboardingViewController: UIViewController {
 		button.titleLabel?.textAlignment = .right
 		return button
 	}()
-
+	
 	
 	private let pageControl: UIPageControl = {
 		let pager = UIPageControl()
@@ -143,7 +146,7 @@ final class OnboardingViewController: UIViewController {
 			
 		}
 		
-
+		
 		
 		
 		baseView.snp.makeConstraints { make in
@@ -176,11 +179,12 @@ final class OnboardingViewController: UIViewController {
 		nextButton.snp.makeConstraints { make in
 			make.width.equalTo(view).multipliedBy(0.3)
 		}
-
+		
 	}
 	
 	private func setupTargets() {
 		nextButton.addTarget(self, action: #selector(nextTapped), for: .touchUpInside)
+		
 	}
 	
 	@objc private func skipTapped() {
@@ -190,14 +194,52 @@ final class OnboardingViewController: UIViewController {
 	
 	@objc private func nextTapped() {
 		
-		guard currentPage + 1 < phoneCollectionView.numberOfItems(inSection: 0) else { return }
 		currentPage += 1
+	
+		switch currentPage {
+		case 1:
+			update(
+				label: titleLabel,
+				text: "Web Have Modern Events Calendar Feature"
+			)
+			update(
+				label: subtitleLabel,
+				text: "Subtitle1"
+			)
+		case 2:
+			update(
+				label: titleLabel,
+				text: "To Look Up More Events or Activities Nearby By Map"
+			)
+			update(
+				label: subtitleLabel,
+				text: "Subtitle2"
+			)
+			update(button: nextButton, title: "Start")
+			update(button: skipButton, title: "")
+		default:
+			dismiss(animated: true)
+		}
+		
 		pageControl.currentPage = currentPage
 		phoneCollectionView.scrollToItem(at: IndexPath(row: currentPage, section: 0), at: .centeredHorizontally, animated: true)
 		
 		
 	}
 	
+	
+	
+	private func update(label: UILabel, text: String) {
+		UIView.transition(with: label, duration: 0.2, options: .transitionCrossDissolve) {
+			label.text = text
+		}
+	}
+	
+	private func update(button: UIButton, title: String) {
+		UIView.transition(with: button, duration: 0.2, options: .transitionCrossDissolve) {
+			button.setTitle(title, for: .normal)
+		}
+	}
 }
 
 // MARK: - Delegate & Datasource
@@ -206,9 +248,10 @@ extension OnboardingViewController: UICollectionViewDelegate, UICollectionViewDa
 		OnboardingScreen.list.count
 	}
 	
+	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionCell.identifier, for: indexPath) as! CustomCollectionCell
-
+		
 		cell.imageView.image = OnboardingScreen.list[indexPath.row].image
 		return cell
 	}
@@ -242,8 +285,11 @@ extension OnboardingViewController {
 		
 		static let buttonFontSize = screenHeight * 18 / 812
 	}
-	
 }
 
 
 
+@available(iOS 17.0, *)
+#Preview {
+	return OnboardingViewController()
+}

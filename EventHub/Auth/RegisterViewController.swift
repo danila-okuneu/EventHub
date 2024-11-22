@@ -44,7 +44,7 @@ final class RegisterViewController: UIViewController {
 		view.addSubview(fieldVStack)
 		
 		makeConstraints()
-		set
+		setupStack()
 	}
 	
 	private func makeConstraints() {
