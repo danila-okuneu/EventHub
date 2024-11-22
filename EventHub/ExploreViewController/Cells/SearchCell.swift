@@ -13,7 +13,7 @@ class SearchCell: UICollectionViewCell, UITextFieldDelegate {
     private var notificationButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "bell"), for: .normal)
-        button.addTarget(SearchCell.self, action: #selector (notificationButtonTapped), for: .touchUpInside)
+//        button.addTarget(SearchCell.self, action: #selector (notificationButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -50,8 +50,8 @@ class SearchCell: UICollectionViewCell, UITextFieldDelegate {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupSearchView()
         setupCell()
+        setupSearchView()
     }
     
     required init?(coder: NSCoder) {
@@ -62,13 +62,15 @@ class SearchCell: UICollectionViewCell, UITextFieldDelegate {
         let glassButton = UIButton()
         glassButton.setImage(UIImage(named: "search"), for: .normal)
         let stroke = UIImageView(image: UIImage(named: "stroke"))
-        textField.text = "Search"
-//        textField.placeholder = "Search..."
-//        textField.attributedPlaceholder = NSAttributedString(string: "Search...", attributes: [.foregroundColor: UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)])
+//        textField.text = "Search"
+        textField.placeholder = "Search..."
+        textField.attributedPlaceholder = NSAttributedString(string: "Search...", attributes: [.foregroundColor: UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)])
         textField.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         textField.font = .cerealFont(ofSize: 20.3)
         
         searchView.addSomeSubviews(glassButton, stroke, textField, filterButton)
+        
+        searchView.disableChildrenTAMIC()
         
         glassButton.snp.makeConstraints { make in
             make.leading.equalToSuperview()
@@ -90,9 +92,9 @@ class SearchCell: UICollectionViewCell, UITextFieldDelegate {
         
     }
     
-    @objc func notificationButtonTapped() {
-        print("Notification Button Tapped")
-    }
+//    @objc func notificationButtonTapped() {
+//        print("Notification Button Tapped")
+//    }
     
     private func setupCell() {
         contentView.addSomeSubviews(selectLocationButton,selectedLoacationLabel, notificationButton, searchView)
@@ -112,8 +114,10 @@ class SearchCell: UICollectionViewCell, UITextFieldDelegate {
         }
         searchView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(28)
+            make.trailing.equalToSuperview().offset(-22)
             make.top.equalTo(selectedLoacationLabel.snp.bottom).offset(30)
             make.width.equalToSuperview()
+            make.height.equalTo(40)
         }
     }
 }

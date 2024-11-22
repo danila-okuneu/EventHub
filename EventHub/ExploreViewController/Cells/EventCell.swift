@@ -37,7 +37,14 @@ class EventCell: UICollectionViewCell {
         return view
     }()
     
-    
+    let bookmarkButton: UIButton = {
+        let button = UIButton()
+        button.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
+        button.setImage(.bookmarkFill, for: .normal)
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(didTap), for: .touchUpInside)
+        return button
+    }()
     
     
     override init(frame: CGRect) {
@@ -56,7 +63,7 @@ class EventCell: UICollectionViewCell {
         contentView.backgroundColor = .white
         
     
-        contentView.addSomeSubviews(imageView, eventName,eventLocation)
+        contentView.addSomeSubviews(imageView,bookmarkButton, eventName,eventLocation)
         setupImageView()
         setupFriendsStack()
         
@@ -85,7 +92,7 @@ class EventCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 15
-        
+        imageView.disableChildrenTAMIC()
         
         let bluredViewForDate = UIView()
         bluredViewForDate.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
@@ -104,12 +111,9 @@ class EventCell: UICollectionViewCell {
         eventDate.textAlignment = .center
         eventDate.text = "10\nJune"
         
-        let bluredViewForBookmark = UIButton()
-        bluredViewForBookmark.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
-        bluredViewForBookmark.setImage(.bookmarkFill, for: .normal)
-        bluredViewForBookmark.layer.cornerRadius = 10
         
-        imageView.addSubview(bluredViewForBookmark)
+
+//        imageView.addSubview(bluredViewForBookmark)
         
         bluredViewForDate.snp.makeConstraints { make in
             make.width.height.equalTo(45)
@@ -117,10 +121,6 @@ class EventCell: UICollectionViewCell {
         }
         eventDate.snp.makeConstraints { make in
             make.center.equalToSuperview()
-        }
-        bluredViewForBookmark.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-            make.trailing.top.equalToSuperview().inset(8)
         }
     }
     
@@ -137,6 +137,7 @@ class EventCell: UICollectionViewCell {
         friendsView.addSomeSubviews(friendOneImageView,friendTwoImageView,friendThreeImageView, aboutGoingLabel)
         
         contentView.addSubview(friendsView)
+//        contentView.disableChildrenTAMIC()
         friendsView.snp.makeConstraints { make in
             make.top.equalTo(eventName.snp.bottom).offset(10)
             make.leading.equalToSuperview().inset(16)
@@ -154,11 +155,21 @@ class EventCell: UICollectionViewCell {
         
     }
     
+    @objc func didTap() {
+        print("bookmark tapped")
+    }
+    
     private func setupLayout() {
         
         imageView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(9)
             make.height.equalTo(contentView.snp.height).dividedBy(2)
+//            make.width.equalTo(contentView.snp.width).inset(9)
+        }
+        
+        bookmarkButton.snp.makeConstraints { make in
+            make.width.height.equalTo(30)
+            make.trailing.top.equalToSuperview().inset(16)
         }
     }
     
