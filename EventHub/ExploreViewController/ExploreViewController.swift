@@ -14,6 +14,24 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     private let collectionView: UICollectionView = .createCollectionView(with: .eventsLayout())
     private var sections: [ExploreSection] = ExploreSection.allCases
     private let categories: [String] = ["Sports", "Music", "Food", "Art"]
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.backgroundColor = .white
+        scrollView.frame = view.bounds
+        scrollView.contentSize = contentSize
+        return scrollView
+    }()
+    
+    private var contentSize: CGSize {
+        CGSize(width: view.frame.width, height: view.frame.height + 10)
+    }
+    
+    private lazy var contentView: UIView = {
+        let contentView = UIView()
+        contentView.backgroundColor = .white
+        contentView.frame.size = contentSize
+        return contentView
+    }()
     
     lazy var blueView: UIView = {
         let view = UIView()
@@ -30,14 +48,16 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        collectionView.frame = view.bounds
+//        scrollView.frame = view.bounds
     }
 	
     
     private func configureCollectionView() {
         
-        view.addSubview(blueView)
-        view.addSubview(collectionView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(blueView)
+        contentView.addSubview(collectionView)
         collectionView.backgroundColor = UIColor(red: 0.312, green: 0.334, blue: 0.534, alpha: 0.06)
         collectionView.register(CategorieCell.self, forCellWithReuseIdentifier: CategorieCell.identifier)
         collectionView.register(EventCell.self , forCellWithReuseIdentifier: EventCell.identifier)
@@ -46,11 +66,26 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         collectionView.dataSource = self
         collectionView.delegate = self
         
+//        scrollView.snp.makeConstraints{ make in
+//            make.edges.equalTo(view)
+//        }
+//        contentView.snp.makeConstraints{ make in
+//            make.top.leading.trailing.equalTo(scrollView)
+//            make.width.equalTo(scrollView)
+//            make.height.equalTo(1500)
+//        }
+        
         blueView.snp.makeConstraints{ make in
-            make.top.equalTo(view.snp.top).offset(-100)
-            make.width.equalTo(view)
-            make.height.equalTo(330)
+            make.top.equalTo(contentView.snp.top).offset(-300)
+            make.width.equalToSuperview()
+            make.height.equalTo(470)
         }
+        collectionView.snp.makeConstraints{ make in
+            make.top.equalTo(contentView.snp.top)
+            make.leading.trailing.equalTo(contentView)
+            make.bottom.equalTo(contentView.snp.bottom)
+        }
+        
     }
     
 }
