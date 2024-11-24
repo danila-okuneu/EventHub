@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -13,13 +14,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-	
+		
+		
 		guard let windowScene = (scene as? UIWindowScene) else { return }
 		window = UIWindow(frame: windowScene.coordinateSpace.bounds)
 		window?.backgroundColor = .appPurpleDark
 		window?.windowScene = windowScene
-        //window?.rootViewController = LoginViewController()
-        window?.rootViewController = CustomTabBarController()
+		
+		
+		if let user = Auth.auth().currentUser {
+			print(user.uid)
+			window?.rootViewController = CustomTabBarController()
+		} else {
+			if DefaultsManager.isRegistered {
+				window?.rootViewController = LoginViewController()
+			} else {
+				window?.rootViewController = SignupViewController()
+			}
+		}
+		
 		window?.makeKeyAndVisible()
 	}
 
@@ -50,6 +63,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		// Use this method to save data, release shared resources, and store enough scene-specific state information
 		// to restore the scene back to its current state.
 	}
+	
 
 
 }

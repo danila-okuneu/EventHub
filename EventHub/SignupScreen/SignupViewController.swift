@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 final class SignupViewController: UIViewController {
 
@@ -125,8 +126,10 @@ final class SignupViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        
+		
+		setupTextFields()
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+		signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
         signInButton.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
     }
 
@@ -199,10 +202,94 @@ final class SignupViewController: UIViewController {
     @objc private func backButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
+	
+	@objc private func signUpButtonTapped() {
+		
+		print("sign UP tapper")
+		guard let name = fullNameTextField.textField.text, name != "" else { return }
+		guard let email = emailTextField.textField.text, email != "" else { return }
+		guard let password = passwordTextField.textField.text, password != "" else { return }
+		
+		Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+			guard error == nil else { return }
+			
+			let user = User(name: name, about: "")
+//			authResult?.user.uid
+		}
+	
+		DefaultsManager.isRegistered = true
+		
+		let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+		guard let window = windowScene?.keyWindow else { return }
+		
+		UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
+			window.rootViewController = CustomTabBarController()
+		}
+		
+		
+		
+	}
     
     @objc private func signInButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
+}
+
+// MARK: - TextField Delegate
+extension SignupViewController: UITextFieldDelegate {
+	
+	private func setupTextFields() {
+		fullNameTextField.textField.delegate = self
+		emailTextField.textField.delegate = self
+		passwordTextField.textField.delegate = self
+		confirmPasswordTextField.textField.delegate = self
+		
+		fullNameTextField.textField.tag = 1
+		emailTextField.textField.tag = 2
+		passwordTextField.textField.tag = 3
+		confirmPasswordTextField.textField.tag = 4
+	}
+	
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		
+		
+		
+		print("TFDelegate")
+		if textField.tag == 1, textField.text == "" {
+			print("false")
+			return false
+		}
+		
+		if textField.tag == 1, textField.text == "" {
+			print("false")
+			return false
+		}
+
+		if textField.tag == 2, textField.text?.count(where:  {$0 == "@" }) != 1 {
+			return false
+		}
+		
+		if (textField.tag == 3 || textField.tag == 4), (textField.text!.contains(" ") || textField.text!.count < 8) {
+			return false
+		}
+		
+		
+		textField.endEditing(true)
+		return true
+	}
+	
+	
+}
+
+extension SignupViewController {
+	
+	private func register() {
+		
+		
+		
+		
+	}
+	
 }
 
 @available(iOS 17.0, *)
