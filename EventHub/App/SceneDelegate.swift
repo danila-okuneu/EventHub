@@ -22,33 +22,38 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window?.windowScene = windowScene
 		
 		
-		
-		if let user = Auth.auth().currentUser {
-			
-			print(user.uid)
-			Task {
-				do {
-					try await FirestoreManager.fetchUserData(uid: user.uid)
-					window?.rootViewController = CustomTabBarController()
-				} catch { }
-				
-			}
-			
-			
-		} else {
-			print("Unknown user")
-			
-			if DefaultsManager.isRegistered {
-				window?.rootViewController = LoginViewController()
-			} else {
-				window?.rootViewController = SignupViewController()
-			}
-		}
+		window?.rootViewController = SplashViewController()
+//
+//		if let user = Auth.auth().currentUser {
+//			
+//			print(user.uid)
+//			Task {
+//				do {
+//					try await FirestoreManager.fetchUserData(uid: user.uid)
+//					window?.rootViewController = CustomTabBarController()
+//				} catch { }
+//				
+//			}
+//			
+//			
+//		} else {
+//			print("Unknown user")
+//			
+//			if DefaultsManager.isRegistered {
+//				window?.rootViewController = LoginViewController()
+//			} else {
+//				window?.rootViewController = SignupViewController()
+//			}
+//		}
 		
 		window?.makeKeyAndVisible()
 	}
 
 	func sceneDidDisconnect(_ scene: UIScene) {
+		
+		if !DefaultsManager.isRemembered {
+			try? Auth.auth().signOut()
+		}
 		// Called as the scene is being released by the system.
 		// This occurs shortly after the scene enters the background, or when its session is discarded.
 		// Release any resources associated with this scene that can be re-created the next time the scene connects.
