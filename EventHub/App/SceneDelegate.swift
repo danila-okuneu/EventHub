@@ -18,8 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window = UIWindow(frame: windowScene.coordinateSpace.bounds)
 		window?.backgroundColor = .appPurpleDark
 		window?.windowScene = windowScene
+        //window?.rootViewController = LoginViewController()
         window?.rootViewController = CustomTabBarController()
-        
 		window?.makeKeyAndVisible()
 	}
 
