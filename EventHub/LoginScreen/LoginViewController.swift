@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 
 final class LoginViewController: UIViewController {
 
@@ -224,21 +225,24 @@ final class LoginViewController: UIViewController {
 		
 		
 		DefaultsManager.isRemembered = rememberMeSwitch.isOn
-		Auth.auth().signIn(withEmail: email, password: password) { authDataResult, error in
-			guard error == nil else { print(error?.localizedDescription); return }
-		
-			let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-			if let window = windowScene?.keyWindow {
+		Task {
+			do {
+				let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
+				try await FirestoreManager.fetchUserData(uid: authResult.user.uid)
 				
-				UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
-					window.rootViewController = CustomTabBarController()
+	
+				
+				let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+				if let window = windowScene?.keyWindow {
+					
+					UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
+						window.rootViewController = CustomTabBarController()
+					}
 				}
-				
+			} catch {
+				print("Login error: \(error.localizedDescription)")
 			}
 		}
-			
-		
-		
 	}
 	
     @objc private func signUpButtonTapped() {

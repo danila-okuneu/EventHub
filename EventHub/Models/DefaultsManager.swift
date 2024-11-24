@@ -9,6 +9,8 @@ import Foundation
 
 struct DefaultsManager {
 	
+	static var currentUser: User?
+	
 	static var isOnboarded: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: "isOnboarded")
