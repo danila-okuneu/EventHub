@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DEE50AFC2CF33E6A004E53C2 /* WWRoundedSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = DEE50AFB2CF33E6A004E53C2 /* WWRoundedSegmentedControl */; };
 		F1912BE82CE7A33C00F90E9C /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F1912BE72CE7A33C00F90E9C /* SnapKit */; };
 		F1E4F47B2CEA750C00A237AD /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F1E4F47A2CEA750C00A237AD /* Kingfisher */; };
 /* End PBXBuildFile section */
@@ -34,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DEE50AFC2CF33E6A004E53C2 /* WWRoundedSegmentedControl in Frameworks */,
 				F1E4F47B2CEA750C00A237AD /* Kingfisher in Frameworks */,
 				F1912BE82CE7A33C00F90E9C /* SnapKit in Frameworks */,
 			);
@@ -80,6 +82,7 @@
 			packageProductDependencies = (
 				F1912BE72CE7A33C00F90E9C /* SnapKit */,
 				F1E4F47A2CEA750C00A237AD /* Kingfisher */,
+				DEE50AFB2CF33E6A004E53C2 /* WWRoundedSegmentedControl */,
 			);
 			productName = EventHub;
 			productReference = F1912BC92CE7784500F90E9C /* EventHub.app */;
@@ -113,6 +116,7 @@
 			packageReferences = (
 				F1912BE62CE7A33C00F90E9C /* XCRemoteSwiftPackageReference "SnapKit" */,
 				F1E4F4792CEA750C00A237AD /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				DEE50AFA2CF33E6A004E53C2 /* XCRemoteSwiftPackageReference "WWRoundedSegmentedControl" */,
 			);
 			productRefGroup = F1912BCA2CE7784500F90E9C /* Products */;
 			projectDirPath = "";
@@ -351,6 +355,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		DEE50AFA2CF33E6A004E53C2 /* XCRemoteSwiftPackageReference "WWRoundedSegmentedControl" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/William-Weng/WWRoundedSegmentedControl.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 		F1912BE62CE7A33C00F90E9C /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -370,6 +382,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DEE50AFB2CF33E6A004E53C2 /* WWRoundedSegmentedControl */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DEE50AFA2CF33E6A004E53C2 /* XCRemoteSwiftPackageReference "WWRoundedSegmentedControl" */;
+			productName = WWRoundedSegmentedControl;
+		};
 		F1912BE72CE7A33C00F90E9C /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F1912BE62CE7A33C00F90E9C /* XCRemoteSwiftPackageReference "SnapKit" */;

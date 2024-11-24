@@ -15,14 +15,13 @@ struct Event {
     let date: String
     let title: String
     let location: String
-    
+   
 }
 
 let mockEvent: [Event] = [
     Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
     Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
-    
-    
+ 
 ]
 
 
@@ -96,8 +95,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
         let event = events[indexPath.item]
-        cell.configure(with: event)
-        
+        cell.configure(with: event, isbookmarkHidden: false)
         return cell
     }
     
