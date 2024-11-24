@@ -210,24 +210,27 @@ final class SignupViewController: UIViewController {
 		guard let email = emailTextField.textField.text, email != "" else { return }
 		guard let password = passwordTextField.textField.text, password != "" else { return }
 		
-		Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-			guard error == nil else { return }
-			
-			let user = User(name: name, about: "")
-//			authResult?.user.uid
+		Task {
+			do {
+				let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+				let user = User(name: name)
+				DefaultsManager.currentUser = user
+				FirestoreManager.saveUserData(user: user, uid: authResult.user.uid)
+				
+				
+				DefaultsManager.isRegistered = true
+				
+				let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+				guard let window = windowScene?.keyWindow else { return }
+				
+				UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
+					window.rootViewController = CustomTabBarController()
+				}
+				
+			} catch {
+				print("error")
+			}
 		}
-	
-		DefaultsManager.isRegistered = true
-		
-		let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-		guard let window = windowScene?.keyWindow else { return }
-		
-		UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
-			window.rootViewController = CustomTabBarController()
-		}
-		
-		
-		
 	}
     
     @objc private func signInButtonTapped() {

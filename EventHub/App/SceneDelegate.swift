@@ -22,10 +22,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window?.windowScene = windowScene
 		
 		
+		
 		if let user = Auth.auth().currentUser {
+			
 			print(user.uid)
-			window?.rootViewController = CustomTabBarController()
+			Task {
+				do {
+					try await FirestoreManager.fetchUserData(uid: user.uid)
+					window?.rootViewController = CustomTabBarController()
+				} catch { }
+				
+			}
+			
+			
 		} else {
+			print("Unknown user")
+			
 			if DefaultsManager.isRegistered {
 				window?.rootViewController = LoginViewController()
 			} else {
