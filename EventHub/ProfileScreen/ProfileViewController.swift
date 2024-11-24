@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ProfileViewController: UIViewController, ProfileViewDelegate {
     
@@ -13,12 +14,9 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     var aboutTextView: UITextView!
     
     // mock user
-    var user: User = User(
-        name: "Ashfak Sayem",
-        profileImage: UIImage(named: "photoProfile"),
-        about: "I am passionate about exploring the world through art, music, and storytelling, always seeking new experiences that inspire creativity and personal growth. I am passionate about exploring the world through art, music, and storytelling, always seeking new experiences that inspire creativity and personal growth. I am passionate about exploring the world through art, music, and storytelling, always seeking new experiences that inspire creativity and personal growth. I am passionate about exploring the world through art, music, and storytelling, always seeking new experiences that inspire creativity and personal growth."
-    )
-    
+	
+	var user: User! = DefaultsManager.currentUser
+	
     private var profileView: ProfileView {
         return view as! ProfileView
     }
@@ -65,12 +63,12 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         
         // Set visibility based on mode
         commonElements.forEach { $0.isHidden = false }
-        
+		
         if profileMode == .view {
             // using mock data
             profileView.profileImageView.image = user.profileImage
             profileView.nameLabel.text = user.name
-            setupAboutLabel(with: user.about)
+            setupAboutLabel(with: user.about ?? "")
             
             viewModeElements.forEach { $0.isHidden = false }
             editModeElements.forEach { $0.isHidden = true }
@@ -94,6 +92,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     // change mode -> view
     @objc private func saveButtonTapped() {
         // save changes to the model
+		
         user.name = profileView.nameTextField.text ?? user.name
         user.about = profileView.aboutTextView.text ?? user.about
         
@@ -129,11 +128,29 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     
     @objc func didTapReadMore() {
         profileMode = .view
+		
+
         profileView.aboutLabel.text = user.about
     }
     
     @objc private func signOutButtonTapped() {
-        // Sign out logic
+        
+		
+		do {
+			try Auth.auth().signOut()
+			DefaultsManager.currentUser = nil
+		} catch {
+			print(error.localizedDescription)
+			return
+		}
+		
+		let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+		guard let window = windowScene?.keyWindow else { return }
+		
+		UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
+			window.rootViewController = LoginViewController()
+		}
+
     }
 }
 
@@ -144,13 +161,28 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 
 // MARK: - TextField Delegate
 extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {
-    
-    // Обработка событий для nameTextField
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
+
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+
+		if let text = textField.text, let uid = Auth.auth().currentUser?.uid {
+			Task {
+				await handleNameChange(text: text, uid: uid)
+			}
+		}
+
+		return true
+	}
+
+	private func handleNameChange(text: String, uid: String) async {
+		do {
+			try await FirestoreManager.changeName(for: text, uid: uid)
+			print("Name changed")
+		} catch {
+			print("Failed to change name: \(error.localizedDescription)")
+		}
+	}
+	
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         return true
     }

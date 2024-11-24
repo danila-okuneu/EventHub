@@ -10,7 +10,7 @@ import UIKit
 struct User {
     var name: String
     var profileImage: UIImage?
-    var about: String
+    var about: String?
 }
 
 enum ProfileMode {

@@ -27,7 +27,7 @@ class ProfileView: UIView {
     let header2 = UILabel()
     let aboutLabel = UILabel()
     let aboutTextView = UITextView()
-    
+	
     let editButton = CustomButton(title: "Edit Profile", icon: .editIcon, hasBorder: true, borderColor: .accent, textColor: .accent, iconTintColor: .accent)
 	
     let backSaveButton = UIButton(type: .system)

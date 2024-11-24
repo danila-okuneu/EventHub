@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 final class LoginViewController: UIViewController {
 
@@ -54,6 +56,7 @@ final class LoginViewController: UIViewController {
     private let rememberMeSwitch: UISwitch = {
         let switchControl = UISwitch()
         switchControl.onTintColor = UIColor.appPurpleDark
+		switchControl.isOn = true
         switchControl.thumbTintColor = .white
         switchControl.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
         return switchControl
@@ -142,6 +145,7 @@ final class LoginViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         
+		signInButton.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
     }
     
@@ -214,6 +218,33 @@ final class LoginViewController: UIViewController {
         ])
     }
     
+	@objc private func signInButtonTapped() {
+		
+		guard let email = emailTextField.textField.text, email != "" else { return }
+		guard let password = passwordTextField.textField.text, password != "" else { return }
+		
+		
+		DefaultsManager.isRemembered = rememberMeSwitch.isOn
+		Task {
+			do {
+				let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
+				try await FirestoreManager.fetchUserData(uid: authResult.user.uid)
+				
+	
+				
+				let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+				if let window = windowScene?.keyWindow {
+					
+					UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
+						window.rootViewController = CustomTabBarController()
+					}
+				}
+			} catch {
+				print("Login error: \(error.localizedDescription)")
+			}
+		}
+	}
+	
     @objc private func signUpButtonTapped() {
         let signupVC = SignupViewController()
         signupVC.modalPresentationStyle = .fullScreen
