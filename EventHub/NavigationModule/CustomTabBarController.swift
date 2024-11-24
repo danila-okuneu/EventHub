@@ -38,11 +38,11 @@ class CustomTabBarController: UITabBarController {
         
         let mapVC = MapViewController()
         mapVC.tabBarItem.title = "Map"
-        mapVC.tabBarItem.image = UIImage(named: "location")
+        mapVC.tabBarItem.image = UIImage(named: "Location")
         
         let profileVC = ProfileViewController()
         profileVC.tabBarItem.title = "Profile"
-        profileVC.tabBarItem.image = UIImage(named: "profile")
+        profileVC.tabBarItem.image = UIImage(named: "Profile")
         
         
         setViewControllers([exploreVC, eventsVC, emptyVC, mapVC, profileVC], animated: false)

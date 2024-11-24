@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import WWRoundedSegmentedControl
 
 final class EventsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
@@ -50,6 +51,9 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
                 setupSegmentedControl()
                 setupExploreButton()
                 loadMockData() // Загрузка моковых данных
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [unowned self] in
+            segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
+        }
             }
 
     
