@@ -20,32 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window = UIWindow(frame: windowScene.coordinateSpace.bounds)
 		window?.backgroundColor = .appPurpleDark
 		window?.windowScene = windowScene
-		
-		
 		window?.rootViewController = SplashViewController()
-//
-//		if let user = Auth.auth().currentUser {
-//			
-//			print(user.uid)
-//			Task {
-//				do {
-//					try await FirestoreManager.fetchUserData(uid: user.uid)
-//					window?.rootViewController = CustomTabBarController()
-//				} catch { }
-//				
-//			}
-//			
-//			
-//		} else {
-//			print("Unknown user")
-//			
-//			if DefaultsManager.isRegistered {
-//				window?.rootViewController = LoginViewController()
-//			} else {
-//				window?.rootViewController = SignupViewController()
-//			}
-//		}
-		
 		window?.makeKeyAndVisible()
 	}
 
