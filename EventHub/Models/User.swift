@@ -8,9 +8,12 @@
 import UIKit
 
 struct User {
+	
+	static var current: User?
+	
     var name: String
     var profileImage: UIImage?
-    var about: String
+    var about: String?
 }
 
 enum ProfileMode {

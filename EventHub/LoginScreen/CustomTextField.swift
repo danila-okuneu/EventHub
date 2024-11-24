@@ -15,7 +15,7 @@ class CustomTextField: UIView {
         case `default`
     }
     
-    private let textField = UITextField()
+	let textField = UITextField()
     private let leftImageView = UIImageView()
     private var toggleButton: UIButton?
     

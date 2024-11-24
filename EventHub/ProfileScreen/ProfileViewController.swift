@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ProfileViewController: UIViewController, ProfileViewDelegate {
     
@@ -133,7 +134,22 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     }
     
     @objc private func signOutButtonTapped() {
-        // Sign out logic
+        
+		
+		do {
+			try Auth.auth().signOut()
+		} catch {
+			print(error.localizedDescription)
+			return
+		}
+		
+		let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+		guard let window = windowScene?.keyWindow else { return }
+		
+		UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
+			window.rootViewController = LoginViewController()
+		}
+
     }
 }
 
