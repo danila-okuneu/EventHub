@@ -54,13 +54,26 @@ final class NetworkService {
     
     
     
+	func getEventsList(type: RequestType) async throws -> [EventType] {
+		
+		guard let url = URL(string: baseURLString + type.rawValue) else { throw NetworkError.invalidURL }
+		let (data, _) = try await session.data(from: url)
+		
+		let decoder = JSONDecoder()
+		decoder.keyDecodingStrategy = .convertFromSnakeCase
+		guard let dataResponse = try? decoder.decode(DataResponse.self, from: data) else { throw NetworkError.decodingError }
+		
+		return dataResponse.results
+	}
     
     
     func getEventsList(completion: @escaping (Result<[EventType], NetworkError>) -> Void) {
         let getUrlResult = getURL(forRequestType: .eventsList)
         switch getUrlResult {
         case .success(let url):
+			print(url)
             let request = URLRequest(url: url)
+			
             let dataTask = session.dataTask(with: request) { [weak self] data, response, error in
                 print(response ?? "No response")
                 guard let self, let response else {
@@ -74,10 +87,11 @@ final class NetworkService {
                         completion(.failure(.networkError))
                         return
                     }
-                    if let data{
-                        print(data)
+                    if let data {
+						print(String(data: data, encoding: .utf8))
                         let decoder = JSONDecoder()
                         decoder.keyDecodingStrategy = .convertFromSnakeCase
+						
                         if let events = try? decoder.decode(DataResponse.self, from: data) {
                             completion(.success(events.results))
                             
@@ -99,7 +113,8 @@ final class NetworkService {
         }
         
     }
-    
+	
+	    
     private func getURL(forRequestType type: RequestType) -> Result<URL, NetworkError> {
         guard let url = URL(string: baseURLString + type.rawValue) else {
             return .failure(.invalidURL)

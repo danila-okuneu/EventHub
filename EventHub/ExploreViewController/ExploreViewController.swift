@@ -47,7 +47,14 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	override func viewDidLoad() {
         view.backgroundColor = .white
         configureCollectionView()
-        getUpcommingEvents()
+		Task {
+			do {
+				try await networkService.getEventsList(type: .eventsList)
+			} catch {
+				self.shwoErrorAllertWith(error: error as! NetworkError)
+			}
+		}
+//        getUpcommingEvents()
 	}
     
     override func viewDidLayoutSubviews() {
@@ -63,7 +70,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
                     self?.upcommingEvents = events
                     self?.collectionView.reloadData()
                 case.failure(let error):
-                    self?.shwoErrorAllertWith(error: error)
+					self?.shwoErrorAllertWith(error: error)
                     
                 }
             }

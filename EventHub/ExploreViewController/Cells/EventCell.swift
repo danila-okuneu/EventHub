@@ -174,7 +174,7 @@ class EventCell: UICollectionViewCell {
     }
     
     func configureCell(with data: EventType) {
-        eventName.text = data.shortTitle
+		eventName.text = data.shortTitle
 //            newNameLabel.text = news
 //            
 //            if let image = image {
