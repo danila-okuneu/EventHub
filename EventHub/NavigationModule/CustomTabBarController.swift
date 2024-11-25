@@ -44,6 +44,7 @@ class CustomTabBarController: UITabBarController {
         profileVC.tabBarItem.title = "Profile"
         profileVC.tabBarItem.image = UIImage(named: "Profile")
         
+        
         setViewControllers([exploreVC, eventsVC, emptyVC, mapVC, profileVC], animated: false)
     }
 }

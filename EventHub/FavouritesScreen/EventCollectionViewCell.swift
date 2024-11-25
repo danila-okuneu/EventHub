@@ -25,6 +25,7 @@ class EventCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
+
     }
     
     required init?(coder: NSCoder) {
@@ -110,11 +111,12 @@ class EventCollectionViewCell: UICollectionViewCell {
         bookmarkButton.tintColor = isBookmarked ? .red : .blue
     }
     
-    func configure(with event: Event) {
+    func configure(with event: Event, isbookmarkHidden: Bool) {
         dateLabel.text = event.date
         titleLabel.text = event.title
         locationLabel.text = event.location
         eventImageView.image = event.image
+        bookmarkButton.isHidden = isbookmarkHidden
 
     }
 }
