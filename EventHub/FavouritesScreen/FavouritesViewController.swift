@@ -18,11 +18,15 @@ struct Event {
    
 }
 
-let mockEvent: [Event] = [
-    Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
-    Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
- 
-]
+struct FavouriteEvent {
+    let id: String
+    let title: String
+    let imageURL: String
+    let place: String
+    let date: String
+}
+
+let event = FavouriteEvent(id: "100", title: "Jazz music", imageURL: "1", place: "Concert Hall", date: "Fri, Apr 26 • 6:00 PM")
 
 
 class FavouritesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -30,17 +34,20 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
     
     private let emptyView = EmptyView()
     
-    private var events = mockEvent
-    //private var events: [Event] = []
+    private var events: [FavouriteEvent] = []
     private var collectionView: UICollectionView!
     private let headerHeightWithNoData: CGFloat = 350
     private let headerHeightWithData: CGFloat = 0
     
-    // MARK: - Life Cicle
+    private let favouriteEventStore = FavouriteEventStore()
+    
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .appGray
-
+        
+        //saveEvent(event)
+        fetchEvents()
         
         if events.isEmpty {
             setupEmptyView()
@@ -49,6 +56,25 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
             setupCollectionView()
         }
     }
+    
+    // MARK: - Core Data Operations
+    
+    private func fetchEvents() {
+        events = favouriteEventStore.fetchAllEvents()
+    }
+    
+    private func saveEvent(_ event: FavouriteEvent) {
+        favouriteEventStore.saveEvent(event)
+        fetchEvents()
+    }
+    
+    private func deleteEvent(withId id: String) {
+        favouriteEventStore.deleteEvent(withId: id)
+        fetchEvents()
+        collectionView.reloadData()
+    }
+    
+    // MARK: - Setup Views
     
     private func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
@@ -62,6 +88,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         
         
         collectionView.register(EventCollectionViewCell.self, forCellWithReuseIdentifier: EventCollectionViewCell.identifier)
+        collectionView.register(FavouriteEventCollectionViewCell.self, forCellWithReuseIdentifier: FavouriteEventCollectionViewCell.identifier)
         
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -92,10 +119,16 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavouriteEventCollectionViewCell.identifier, for: indexPath) as! FavouriteEventCollectionViewCell
         
         let event = events[indexPath.item]
         cell.configure(with: event, isbookmarkHidden: false)
+        
+        cell.onDelete = { [weak self] in
+            guard let self = self else { return }
+            self.deleteEvent(withId: event.id)
+        }
+        
         return cell
     }
     
