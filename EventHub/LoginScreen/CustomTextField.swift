@@ -26,8 +26,8 @@ class CustomTextField: UIView {
         super.init(frame: .zero)
         setupView()
         
-        leftImageView.image = icon
-        leftImageView.tintColor = .gray
+		leftImageView.image = icon?.withRenderingMode(.alwaysTemplate)
+		leftImageView.tintColor = .authGrayTint
         leftImageView.contentMode = .scaleAspectFit
         leftImageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -57,7 +57,7 @@ class CustomTextField: UIView {
     private func setupView() {
         self.layer.cornerRadius = cornerRadius
         self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.lightGray.cgColor
+		self.layer.borderColor = UIColor.authBorderGray.cgColor
         self.backgroundColor = .white
         self.translatesAutoresizingMaskIntoConstraints = false
         self.heightAnchor.constraint(equalToConstant: textFieldHeight).isActive = true
@@ -66,7 +66,7 @@ class CustomTextField: UIView {
     private func setupPasswordToggle() {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
-        button.tintColor = .gray
+		button.tintColor = .authGrayTint
         button.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         addSubview(button)
@@ -101,11 +101,31 @@ class CustomTextField: UIView {
             ])
         }
     }
+	
+	func showErrorAnimation() {
+		
+		self.layer.borderColor = UIColor.appRed.cgColor
+		let shakeAnimation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+		shakeAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
+		shakeAnimation.duration = 0.6
+		shakeAnimation.values = [-10, 10, -8, 8, -5, 5, 0]
+		
+		self.leftImageView.tintColor = .appRed
+		self.layer.add(shakeAnimation, forKey: "shake")
+	}
+	
+	func resetFieldColor() {
+		
+		UIView.animate(withDuration: 0.3) {
+			self.layer.borderColor = UIColor.authBorderGray.cgColor
+			self.leftImageView.tintColor = .authGrayTint
+		}
+		
+	}
     
     @objc private func togglePasswordVisibility() {
         textField.isSecureTextEntry.toggle()
-        let imageName = textField.isSecureTextEntry ? "eye.slash" : "eye"
+        let imageName = textField.isSecureTextEntry ? "eye.slash.fill" : "eye.fill"
         toggleButton?.setImage(UIImage(systemName: imageName), for: .normal)
     }
 }
-
