@@ -51,10 +51,13 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
                 setupSegmentedControl()
                 setupExploreButton()
                 loadMockData() // Загрузка моковых данных
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [unowned self] in
-            segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
-        }
-            }
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(true)
+		
+		segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
+	}
 
     
     func setupSegmentedControl() {

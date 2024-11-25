@@ -108,8 +108,8 @@ final class SplashViewController: UIViewController {
 			if let uid = Auth.auth().currentUser?.uid {
 				
 				do {
-					// MARK: -  Для защиты вкл.
-//					try? await Task.sleep(nanoseconds: 4 * 1_000_000_000)
+//					 MARK: -  Для защиты вкл.
+					try? await Task.sleep(nanoseconds: 4 * 1_000_000_000)
 					try await FirestoreManager.fetchUserData(uid: uid)
 				} catch {
 					print("Downloading user data error")

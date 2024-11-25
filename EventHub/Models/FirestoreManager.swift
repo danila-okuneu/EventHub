@@ -34,34 +34,31 @@ struct FirestoreManager {
 		]
 		
 		db.collection("users").document(uid).setData(userData) { error in
-			print(error?.localizedDescription)
 		}
 	}
 	
-	static func fetchUserData(uid: String) async throws -> User? {
-		do {
-			let snapshot = try await db.collection("users").document(uid).getDocument()
-			guard let data = snapshot.data() else { throw NSError(domain: "FirestoreManager", code: 404, userInfo: [NSLocalizedDescriptionKey: "Пользователь не найден."]) }
-
-			let name = data["name"] as? String ?? "Unknown"
-			
-			let about = data["about"] as? String ?? ""
-			let image: UIImage? = UIImage(named: "photoProfile")
-
-			let user = User(name: name, profileImage: image, about: about)
-			print(user)
-			
-			DefaultsManager.currentUser = user
-			return user
-		} catch {
-			print("Ошибка получения данных пользователя: \(error.localizedDescription)")
-			throw error
-		}
+	static func fetchUserData(uid: String) async throws {
+		let snapshot = try await db.collection("users").document(uid).getDocument()
+		guard let data = snapshot.data() else { throw NSError(domain: "FirestoreManager", code: 404, userInfo: [NSLocalizedDescriptionKey: "Пользователь не найден."]) }
+		
+		let name = data["name"] as? String ?? "Unknown"
+		
+		let about = data["about"] as? String ?? ""
+		let image: UIImage? = UIImage(named: "photoProfile")
+		
+		let user = User(name: name, profileImage: image, about: about)
+		print(user)
+		
+		DefaultsManager.currentUser = user
 	}
 	
 	
 	
 	static func uploadUser(photo: UIImage?, uid: String) -> String? {
+		
+		let loginVC = LoginViewController()
+		loginVC.modalPresentationStyle = .pageSheet
+		
 		
 		
 		return "url"
