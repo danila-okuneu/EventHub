@@ -50,19 +50,17 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     
     
     // MARK: - Life Cicle
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        view.backgroundColor = .appGray
-                setupCollectionView()
-                setupEmptyView()
-                setupSegmentedControl()
-                setupExploreButton()
-                loadMockData() // Загрузка моковых данных
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [unowned self] in
-            segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
-        }
-            }
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .appGray
+		setupCollectionView()
+		setupEmptyView()
+		setupSegmentedControl()
+		setupExploreButton()
+		loadMockData() // Загрузка моковых данных
+		segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
+	}
 
     
     func setupSegmentedControl() {

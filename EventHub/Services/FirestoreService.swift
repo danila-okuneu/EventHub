@@ -10,11 +10,9 @@ import FirebaseStorage
 import FirebaseAuth
 import UIKit
 
-struct FirestoreManager {
+struct FirestoreService {
 	
 	static private let db = Firestore.firestore()
-	static private let storage = Storage.storage()
-	
 	
 	static func userExists(uid: String) async throws {
 		
@@ -25,7 +23,7 @@ struct FirestoreManager {
 		}
 	}
 	
-	static func data(ofUserWith uid: String) async throws -> [String: Any]? {
+	static func getUserData(with uid: String) async throws -> [String: Any]? {
 		
 		let document = try await db.collection("users").document(uid).getDocument()
 		
@@ -76,13 +74,12 @@ struct FirestoreManager {
 		]
 		
 		db.collection("users").document(uid).setData(userData) { error in
-			print(error?.localizedDescription)
 		}
 	}
 	
 	static func fetchUserData(uid: String) async throws {
 		
-		guard let data = try await data(ofUserWith: uid) else { return }
+		guard let data = try await getUserData(with: uid) else { return }
 		
 		let name = data["name"] as? String ?? "Unknown"
 		let about = data["about"] as? String ?? ""
@@ -95,6 +92,10 @@ struct FirestoreManager {
 	
 	
 	static func uploadUser(photo: UIImage?, uid: String) -> String? {
+		
+		let loginVC = LoginViewController()
+		loginVC.modalPresentationStyle = .pageSheet
+		
 		
 		
 		return "url"

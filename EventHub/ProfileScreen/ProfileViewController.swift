@@ -61,7 +61,6 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         if profileMode == .view {
             // using mock data
 			self.profileView.nameTextField.isEnabled = false
-			self.profileView.aboutTextView.isEditable = false
 			
 			UIView.animate(withDuration: 0.3) {
 				self.profileView.editButton.layer.opacity = 1.0
@@ -77,7 +76,6 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         } else {
 			
 			self.profileView.nameTextField.isEnabled = true
-			self.profileView.aboutTextView.isEditable = true
 			
 			UIView.animate(withDuration: 0.3) {
 				self.profileView.editButton.layer.opacity = 0.0
@@ -86,7 +84,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 				self.profileView.editAboutButton.layer.opacity = 1.0
 			}
 
-			aboutTextView.attributedText = NSAttributedString(string: user.about ?? "", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .light)])
+			aboutTextView.attributedText = NSMutableAttributedString(string: user.about ?? "", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .light)])
         }
     }
     
@@ -186,7 +184,7 @@ extension ProfileViewController: UITextFieldDelegate {
 	func textFieldDidEndEditing(_ textField: UITextField) {
 		guard let uid = Auth.auth().currentUser?.uid else { return }
 		Task {
-			try? await FirestoreManager.changeName(forUserWith: uid, to: textField.text ?? "Unknown")
+			try? await FirestoreService.changeName(forUserWith: uid, to: textField.text ?? "Unknown")
 			textField.text = user.name
 		}
 	}
@@ -213,7 +211,7 @@ extension ProfileViewController: UITextViewDelegate {
 		guard let uid = Auth.auth().currentUser?.uid else { return }
 		
 		Task {
-			try? await FirestoreManager.changeAbout(forUserWith: uid, to: textView.text)
+			try? await FirestoreService.changeAbout(forUserWith: uid, to: textView.text)
 			UIView.transition(with: textView, duration: 0.3, options: [.transitionCrossDissolve]) {
 				textView.text = self.user.about
 			}

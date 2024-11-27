@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window = UIWindow(frame: windowScene.coordinateSpace.bounds)
 		window?.backgroundColor = .appPurpleDark
 		window?.windowScene = windowScene
-        window?.rootViewController = SearchBarVC()
+		window?.rootViewController = SplashViewController()
 		window?.makeKeyAndVisible()
 	}
 
@@ -28,6 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		if !DefaultsManager.isRemembered {
 			try? Auth.auth().signOut()
+			DefaultsManager.currentUser = nil
 		}
 		// Called as the scene is being released by the system.
 		// This occurs shortly after the scene enters the background, or when its session is discarded.
