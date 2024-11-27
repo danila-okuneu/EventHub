@@ -11,6 +11,9 @@ import SnapKit
 
 final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	
+    private let networkService = NetworkService()
+    private var upcommingEvents: [EventType] = []
+    
     private let collectionView: UICollectionView = .createCollectionView(with: .eventsLayout())
     private var sections: [ExploreSection] = ExploreSection.allCases
     private let categories: [String] = ["Sports", "Music", "Food", "Art"]
@@ -44,11 +47,40 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	override func viewDidLoad() {
         view.backgroundColor = .white
         configureCollectionView()
+		Task {
+			do {
+				try await networkService.getEventsList(type: .eventsList)
+			} catch {
+				self.shwoErrorAllertWith(error: error as! NetworkError)
+			}
+		}
+//        getUpcommingEvents()
 	}
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 //        scrollView.frame = view.bounds
+    }
+    
+    private func getUpcommingEvents() {
+        networkService.getEventsList {[weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let events):
+                    self?.upcommingEvents = events
+                    self?.collectionView.reloadData()
+                case.failure(let error):
+					self?.shwoErrorAllertWith(error: error)
+                    
+                }
+            }
+        }
+    }
+    
+    private func shwoErrorAllertWith(error: NetworkError) {
+        let allert = UIAlertController(title: "Ошибка", message: error.errorText, preferredStyle: .alert)
+        allert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(allert, animated: true)
     }
 	
     
@@ -119,6 +151,9 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return cell
         case .upcoming, .nearby:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell
+            if upcommingEvents.count > 0 {
+                cell.configureCell(with: upcommingEvents[indexPath.row])
+            }
             return cell
         }
     }
