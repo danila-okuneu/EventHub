@@ -14,7 +14,7 @@ final class LoginViewController: UIViewController {
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "background")
-        imageView.contentMode = .scaleAspectFit
+		imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
@@ -228,7 +228,7 @@ final class LoginViewController: UIViewController {
 		Task {
 			do {
 				let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
-				try await FirestoreManager.fetchUserData(uid: authResult.user.uid)
+				try await FirestoreService.fetchUserData(uid: authResult.user.uid)
 				
 	
 				

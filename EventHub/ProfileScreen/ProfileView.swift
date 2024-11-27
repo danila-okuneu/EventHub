@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ProfileViewDelegate: AnyObject {
-    func didTapReadMore()
+    func didTapReadMore()	
 }
 
 class ProfileView: UIView {
@@ -106,7 +106,7 @@ class ProfileView: UIView {
 		editNameButton.addTarget(self, action: #selector(editNameButtonTapped), for: .touchUpInside)
 		
         
-        // About m
+        // About me
         aboutTitleLabel.text = "About me"
         aboutTitleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         aboutTitleLabel.textColor = .black
@@ -117,7 +117,8 @@ class ProfileView: UIView {
         aboutTextView.font = UIFont.systemFont(ofSize: 16, weight: .light)
         aboutTextView.textColor = .black
         aboutTextView.backgroundColor = .white
-        aboutTextView.isEditable = false
+		aboutTextView.typingAttributes = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .light)]
+		aboutTextView.allowsEditingTextAttributes = false
 		
 		editNameButton.layer.opacity = 0.0
 		editAboutButton.setBackgroundImage(.editIcon, for: .normal)

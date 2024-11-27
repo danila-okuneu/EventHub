@@ -7,13 +7,14 @@
 
 import UIKit
 import FirebaseAuth
+import GoogleSignIn
 
 final class SignupViewController: UIViewController {
 
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "background")
-        imageView.contentMode = .scaleAspectFit
+		imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
@@ -215,7 +216,7 @@ final class SignupViewController: UIViewController {
 				let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
 				let user = User(uid: authResult.user.uid, name: name)
 				DefaultsManager.currentUser = user
-				FirestoreManager.saveUserData(user: user, uid: authResult.user.uid)
+				FirestoreService.saveUserData(user: user, uid: authResult.user.uid)
 				
 				
 				DefaultsManager.isRegistered = true
