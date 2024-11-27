@@ -74,7 +74,6 @@ struct FirestoreService {
 		]
 		
 		db.collection("users").document(uid).setData(userData) { error in
-			print(error?.localizedDescription)
 		}
 	}
 	
@@ -93,6 +92,10 @@ struct FirestoreService {
 	
 	
 	static func uploadUser(photo: UIImage?, uid: String) -> String? {
+		
+		let loginVC = LoginViewController()
+		loginVC.modalPresentationStyle = .pageSheet
+		
 		
 		
 		return "url"
