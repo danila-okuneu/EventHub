@@ -24,9 +24,14 @@ let mockEvent: [Event] = [
  
 ]
 
+protocol FavouritesViewControllerDelegate: AnyObject {
+    func didCloseFavouritesScreen()
+}
 
 class FavouritesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     // MARK: - Property
+    
+    weak var delegate: FavouritesViewControllerDelegate?
     
     private let emptyView = EmptyView()
     
@@ -48,6 +53,11 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         else {
             setupCollectionView()
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        delegate?.didCloseFavouritesScreen()
     }
     
     private func setupCollectionView() {

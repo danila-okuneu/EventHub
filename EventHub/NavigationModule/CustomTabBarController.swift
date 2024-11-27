@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CustomTabBarController: UITabBarController {
+class CustomTabBarController: UITabBarController, CustomTabBarDelegate {
     
     private let customTabBar = CustomTabBar()
     
@@ -17,13 +17,12 @@ class CustomTabBarController: UITabBarController {
         view.backgroundColor = .white
         
         setValue(customTabBar, forKey: "tabBar")
+        customTabBar.customDelegate = self
+        
         setupTabItems()
     }
     
-    // MARK: - Настройка вкладок
-    
     private func setupTabItems() {
-
         let exploreVC = ExploreViewController()
         exploreVC.tabBarItem.title = "Explore"
         exploreVC.tabBarItem.image = UIImage(named: "explore")
@@ -44,7 +43,26 @@ class CustomTabBarController: UITabBarController {
         profileVC.tabBarItem.title = "Profile"
         profileVC.tabBarItem.image = UIImage(named: "Profile")
         
-        
         setViewControllers([exploreVC, eventsVC, emptyVC, mapVC, profileVC], animated: false)
+    }
+    
+    func didTapFavoriteButton() {
+        let favouritesVC = FavouritesViewController()
+        favouritesVC.tabBarItem.title = ""
+        favouritesVC.tabBarItem.image = UIImage(named: "favorites")
+        favouritesVC.delegate = self
+        
+        var controllers = viewControllers ?? []
+        controllers[2] = favouritesVC
+        setViewControllers(controllers, animated: true)
+        selectedIndex = 2
+        
+        customTabBar.updateFavoriteButtonColor(to: .appRed)
+    }
+}
+
+extension CustomTabBarController: FavouritesViewControllerDelegate {
+    func didCloseFavouritesScreen() {
+        customTabBar.updateFavoriteButtonColor(to: .accent)
     }
 }
