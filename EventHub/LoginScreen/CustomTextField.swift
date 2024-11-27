@@ -22,11 +22,11 @@ class CustomTextField: UIView {
     private let textFieldHeight: CGFloat = 56
     private let cornerRadius: CGFloat = 12
     
-    init(type: FieldType, placeholderText: String, icon: UIImage?) {
+	init(ofType type: FieldType, with placeholderText: String) {
         super.init(frame: .zero)
+		
         setupView()
-        
-		leftImageView.image = icon?.withRenderingMode(.alwaysTemplate)
+		configureTextField(with: type)
 		leftImageView.tintColor = .authGrayTint
         leftImageView.contentMode = .scaleAspectFit
         leftImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -37,13 +37,6 @@ class CustomTextField: UIView {
         textField.autocapitalizationType = .none
         textField.translatesAutoresizingMaskIntoConstraints = false
         
-        if type == .password {
-            textField.isSecureTextEntry = true
-            setupPasswordToggle()
-        } else if type == .default {
-            textField.keyboardType = .default
-        }
-        
         addSubview(leftImageView)
         addSubview(textField)
         
@@ -53,6 +46,31 @@ class CustomTextField: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+	
+	private func configureTextField(with type: FieldType) {
+		switch type {
+		case .email:
+			textField.keyboardType = .emailAddress
+			textField.autocapitalizationType = .none
+			textField.spellCheckingType = .no
+			textField.autocorrectionType = .no
+			textField.textContentType = .emailAddress
+			leftImageView.image = .authEnvelope.withRenderingMode(.alwaysTemplate)
+			
+		case .password:
+			textField.keyboardType = .asciiCapable
+			textField.isSecureTextEntry = true
+			textField.textContentType = .password
+			leftImageView.image = .authPassword.withRenderingMode(.alwaysTemplate)
+			setupPasswordToggle()
+			
+		case .default:
+			textField.autocapitalizationType = .words
+			textField.textContentType = .name
+			leftImageView.image = .authProfile.withRenderingMode(.alwaysTemplate)
+		}
+		
+	}
     
     private func setupView() {
         self.layer.cornerRadius = cornerRadius
@@ -65,7 +83,7 @@ class CustomTextField: UIView {
     
     private func setupPasswordToggle() {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.setImage(UIImage(systemName: "eye.slash.fill"), for: .normal)
 		button.tintColor = .authGrayTint
         button.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -114,13 +132,17 @@ class CustomTextField: UIView {
 		self.layer.add(shakeAnimation, forKey: "shake")
 	}
 	
+	func showError() {
+		UIView.animate(withDuration: 0.15) {
+			self.layer.borderColor = UIColor.appRed.cgColor
+		}
+	}
+	
 	func resetFieldColor() {
-		
 		UIView.animate(withDuration: 0.3) {
 			self.layer.borderColor = UIColor.authBorderGray.cgColor
 			self.leftImageView.tintColor = .authGrayTint
 		}
-		
 	}
     
     @objc private func togglePasswordVisibility() {
