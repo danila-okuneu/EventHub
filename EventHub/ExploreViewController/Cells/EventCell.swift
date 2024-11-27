@@ -173,16 +173,16 @@ class EventCell: UICollectionViewCell {
         }
     }
     
-    //    func configureCell(image: URL?, topic: String, news: String/*, newsData: News*/) {
-    //        categoryNameLabel.text = topic
-    //        newNameLabel.text = news
-    //        
-    //        if let image = image {
-    //            newImageView.kf.setImage(with: image)
-    //        } else {
-    //            newImageView.image = UIImage(named: "berlin")
-    //        }
-    //    }}
+    func configureCell(with data: EventType) {
+		eventName.text = data.shortTitle
+//            newNameLabel.text = news
+//            
+//            if let image = image {
+//                newImageView.kf.setImage(with: image)
+//            } else {
+//                newImageView.image = UIImage(named: "berlin")
+//            }
+        }
 }
 @available(iOS 17.0, *)
 #Preview {ExploreViewController()

@@ -213,7 +213,7 @@ final class SignupViewController: UIViewController {
 		Task {
 			do {
 				let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-				let user = User(name: name)
+				let user = User(uid: authResult.user.uid, name: name)
 				DefaultsManager.currentUser = user
 				FirestoreManager.saveUserData(user: user, uid: authResult.user.uid)
 				

@@ -7,10 +7,18 @@
 
 import UIKit
 
-struct User {
+final class User {
+	let uid: String
     var name: String
     var profileImage: UIImage?
     var about: String?
+	
+	init(uid: String, name: String, profileImage: UIImage? = nil, about: String? = nil) {
+		self.uid = uid
+		self.name = name
+		self.profileImage = profileImage
+		self.about = about
+	}
 }
 
 enum ProfileMode {
