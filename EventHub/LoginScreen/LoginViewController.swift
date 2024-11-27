@@ -42,16 +42,12 @@ final class LoginViewController: UIViewController {
     }()
     
     private let emailTextField = CustomTextField(
-        type: .email,
-        placeholderText: "abc@email.com",
-		icon: .authEnvelope
-    )
+        ofType: .email,
+		with: "abc@email.com")
     
     private let passwordTextField = CustomTextField(
-        type: .password,
-        placeholderText: "Your password",
-		icon: .authPassword
-    )
+        ofType: .password,
+        with: "Your password")
     
     private let rememberMeSwitch: UISwitch = {
         let switchControl = UISwitch()

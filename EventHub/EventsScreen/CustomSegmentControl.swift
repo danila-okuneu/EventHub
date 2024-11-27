@@ -6,6 +6,4 @@
 //
 import UIKit
 import WWRoundedSegmentedControl
-class CustomSegmentedControl: WWRoundedSegmentedControl {
-}
-
+typealias CustomSegmentedControl = WWRoundedSegmentedControl
