@@ -25,7 +25,7 @@ class CustomSearchBar: UIView {
         
     }()
     
-    //var delegate: SearchViewControllerDelegate?
+    var delegate: SearchViewControllerDelegate?
     
     
     
@@ -57,6 +57,8 @@ class CustomSearchBar: UIView {
     
     private func configureUI() {
         
+        self.addSomeSubviews(textField, searchButton, filterButton)
+
         self.backgroundColor = .appGray
         self.layer.cornerRadius = 5
         self.clipsToBounds = true
@@ -83,9 +85,7 @@ class CustomSearchBar: UIView {
 
     
     private func setupConstraints() {
-        self.addSubview(textField)
-        self.addSubview(searchButton)
-        self.addSomeSubviews(filterButton)
+        
         NSLayoutConstraint.activate([
             //searchButton.topAnchor.constraint(equalTo: self.topAnchor),
             searchButton.centerYAnchor.constraint(equalTo: self.centerYAnchor),
@@ -117,9 +117,5 @@ class CustomSearchBar: UIView {
         }
         
     }
-
-@available(iOS 17.0, *)
-#Preview {CustomSearchBar()
-}
 
 
