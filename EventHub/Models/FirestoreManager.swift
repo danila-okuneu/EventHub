@@ -16,16 +16,58 @@ struct FirestoreManager {
 	static private let storage = Storage.storage()
 	
 	
-	static func changeName(for name: String, uid: String) async throws {
-		try await db.collection("users").document(uid).updateData(["name": name])
+	static func userExists(uid: String) async throws {
+		
+		let document = try await db.collection("users").document(uid).getDocument()
+		
+		if !document.exists {
+			throw FirestoreError.userNotFound
+		}
 	}
 	
-	static func changeAbout(for about: String, uid: String) async throws {
-		try await db.collection("users").document(uid).updateData(["about": about])
+	static func data(ofUserWith uid: String) async throws -> [String: Any]? {
+		
+		let document = try await db.collection("users").document(uid).getDocument()
+		
+		if !document.exists {
+			throw FirestoreError.userNotFound
+		}
+		
+		return document.data()
+	}
+
+	
+	static func changeName(forUserWith uid: String, to name: String) async throws {
+		guard !name.isEmpty else {
+			try await changeName(forUserWith: uid, to: "Unknown")
+			return
+		}
+		
+		try await userExists(uid: uid)
+		
+		do {
+			try await db.collection("users").document(uid).updateData(["name": name])
+			DefaultsManager.currentUser?.name = name
+		} catch {
+			throw FirestoreError.cannotChangeName
+		}
+	}
+	
+	static func changeAbout(forUserWith uid: String, to about: String) async throws {
+		guard !about.isEmpty else { throw FirestoreError.emptyAbout }
+		try await userExists(uid: uid)
+		
+		do {
+			try await db.collection("users").document(uid).updateData(["about": about])
+			DefaultsManager.currentUser?.about = about
+		} catch {
+			throw FirestoreError.cannotChangeAbout
+		}
 	}
 	
 	
 	static func saveUserData(user: User, uid: String) {
+		
 		
 		let userData: [String: Any] = [
 			"name": user.name,
@@ -38,25 +80,16 @@ struct FirestoreManager {
 		}
 	}
 	
-	static func fetchUserData(uid: String) async throws -> User? {
-		do {
-			let snapshot = try await db.collection("users").document(uid).getDocument()
-			guard let data = snapshot.data() else { throw NSError(domain: "FirestoreManager", code: 404, userInfo: [NSLocalizedDescriptionKey: "Пользователь не найден."]) }
-
-			let name = data["name"] as? String ?? "Unknown"
-			
-			let about = data["about"] as? String ?? ""
-			let image: UIImage? = UIImage(named: "photoProfile")
-
-			let user = User(name: name, profileImage: image, about: about)
-			print(user)
-			
-			DefaultsManager.currentUser = user
-			return user
-		} catch {
-			print("Ошибка получения данных пользователя: \(error.localizedDescription)")
-			throw error
-		}
+	static func fetchUserData(uid: String) async throws {
+		
+		guard let data = try await data(ofUserWith: uid) else { return }
+		
+		let name = data["name"] as? String ?? "Unknown"
+		let about = data["about"] as? String ?? ""
+		let image: UIImage? = UIImage(named: "photoProfile")
+		
+		let user = User(uid: uid, name: name, profileImage: image, about: about)
+		DefaultsManager.currentUser = user
 	}
 	
 	
@@ -66,7 +99,15 @@ struct FirestoreManager {
 		
 		return "url"
 	}
+}
+
+enum FirestoreError: Error {
 	
-	
+	case emptyName
+	case cannotChangeName
+	case emptyAbout
+	case cannotChangeAbout
+	case userNotFound
+	case documentEmpty
 	
 }
