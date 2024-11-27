@@ -111,12 +111,14 @@ class EventCollectionViewCell: UICollectionViewCell {
         bookmarkButton.tintColor = isBookmarked ? .red : .blue
     }
     
-    func configure(with event: Event, isbookmarkHidden: Bool) {
+    func configure(with event: Event, isbookmarkHidden: Bool, isLocationHidden: Bool) {
         dateLabel.text = event.date
         titleLabel.text = event.title
         locationLabel.text = event.location
         eventImageView.image = event.image
         bookmarkButton.isHidden = isbookmarkHidden
+        locationLabel.isHidden = isLocationHidden
+        locationImageView.isHidden = isLocationHidden
 
     }
 }

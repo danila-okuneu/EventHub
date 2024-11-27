@@ -20,9 +20,17 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     private var isShowingUpcomingEvents: Bool {
         return segmentedControl.selectedSegmentIndex == 0
     }
-    let segmentedControl: CustomSegmentedControl = {
+    
+    lazy var segmentedControl: CustomSegmentedControl = {
            let sc = CustomSegmentedControl(items: ["UPCOMING", "PAST EVENTS"])
            sc.selectedSegmentIndex = 0
+           sc.selectedSegmentTintColor = .white
+        sc.setTitleTextAttributes([.foregroundColor: UIColor.appPurple, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .selected)
+            sc.setTitleTextAttributes([.foregroundColor: UIColor.gray, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .normal)
+
+
+
+
            sc.translatesAutoresizingMaskIntoConstraints = false
                    return sc
                }()
@@ -157,7 +165,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
         let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
-         cell.configure(with: event, isbookmarkHidden: true)
+    cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
         return cell
     }
 

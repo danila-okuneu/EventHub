@@ -33,6 +33,9 @@ class EmptyEventView: UIView {
     private let emptyEventImage: UIImageView = {
         var imageV = UIImageView(image: .schedule)
         imageV.translatesAutoresizingMaskIntoConstraints = false
+        imageV.layer.cornerRadius = 50
+        imageV.clipsToBounds = true
+        imageV.contentMode = .scaleAspectFill
         return imageV
     }()
     override init(frame: CGRect) {
