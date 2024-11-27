@@ -74,7 +74,7 @@ class CustomSearchBar: UIView {
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.font = .cerealFont(ofSize: 20.3)
-        textField.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        textField.textColor = .gray
         textField.leftView = stroke
         textField.leftViewMode = .always
         textField.delegate = self
@@ -106,7 +106,7 @@ class CustomSearchBar: UIView {
     extension CustomSearchBar: UITextFieldDelegate {
         
         func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-            // delegate?.startTyping()
+             delegate?.startTyping()
             return true
         }
         

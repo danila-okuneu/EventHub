@@ -95,7 +95,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
         let event = events[indexPath.item]
-        cell.configure(with: event, isbookmarkHidden: false)
+        cell.configure(with: event, isbookmarkHidden: false, isLocationHidden: false)
         return cell
     }
     
