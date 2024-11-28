@@ -1,5 +1,5 @@
 {
-  "originHash" : "ef30b6edacc56ac1429af08193226f507af7d4f608dba305cf824b024d74d24c",
+  "originHash" : "aeca22e2c4633d2c79a7c08e7745e2974a57364a0520ca10f94fcbe282023258",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -143,6 +143,15 @@
       "state" : {
         "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
         "version" : "2.4.0"
+      }
+    },
+    {
+      "identity" : "skeletonview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Juanpe/SkeletonView.git",
+      "state" : {
+        "revision" : "2f5274827d310e32c09325dd3e0007120940988e",
+        "version" : "1.31.0"
       }
     },
     {

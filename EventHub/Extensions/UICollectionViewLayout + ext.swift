@@ -69,7 +69,7 @@ extension UICollectionViewLayout {
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 12.0, leading: 24, bottom: 12, trailing: 12.0)
-        section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+		section.orthogonalScrollingBehavior = .continuous
         let header = createHeader()
         section.boundarySupplementaryItems = [header]
         return section

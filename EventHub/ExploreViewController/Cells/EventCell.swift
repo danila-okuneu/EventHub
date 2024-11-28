@@ -6,8 +6,9 @@
 //
 
 import UIKit
-import Kingfisher
 import SnapKit
+import Kingfisher
+import SkeletonView
 
 class EventCell: UICollectionViewCell {
     static let identifier = String(describing: EventCell.self)
@@ -71,13 +72,25 @@ class EventCell: UICollectionViewCell {
             make.top.equalTo(imageView.snp.bottom).offset(14)
         }
     }
-        
+    
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		
+		imageView.image = nil
+		imageView.kf.cancelDownloadTask()
+		imageView.stopSkeletonAnimation()
+		imageView.showGradientSkeleton()
+	}
+	
         private func setupImageView() {
-            imageView.image = UIImage(named: "hands")
+			imageView.backgroundColor = .appGray
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
             imageView.layer.cornerRadius = 15
             imageView.disableChildrenTAMIC()
+			imageView.isSkeletonable = true
+			
+			imageView.startSkeletonAnimation()
             
             let bluredViewForDate = UIView()
             bluredViewForDate.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
@@ -172,15 +185,15 @@ class EventCell: UICollectionViewCell {
         
     }
     
-    func configureCell(with data: EventType) {
-        
-        if  data.shortTitle != "" {
-            eventName.text = data.shortTitle
-        } else {
-            eventName.text = data.title
-        }
-        
-	
+	func configureCell(with data: EventType) {
+		
+		if  data.shortTitle != "" {
+			eventName.text = data.shortTitle
+		} else {
+			eventName.text = data.title
+		}
+		
+		
 		let attributedString = NSMutableAttributedString(string: data.dates[0].end.formaTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
 		let string = attributedString.string
 		if let range = string.range(of: "\n") {
@@ -189,22 +202,37 @@ class EventCell: UICollectionViewCell {
 		}
 		
 		aboutGoingLabel.text = "+\(data.favoritesCount) Going"
-			  
+		
 		
 		
 		
 		eventDate.attributedText = attributedString
-        if data.place?.address != "" {
-            eventAdrress.text = data.place?.address
+		if data.place?.address != "" {
+			eventAdrress.text = data.place?.address
 		} else {
-            eventAdrress.text = "Adress not provided"
+			eventAdrress.text = "Adress not provided"
 		}
-        if let image = data.images.first?.image {
-            imageView.kf.setImage(with: URL(string: image))
-            } else {
-                imageView.image = UIImage(named: "hands")
-            }
-        }
+
+		Task {
+//			try? await Task.sleep(nanoseconds: 4 * 1_000_000_000)
+			
+			if let imageUrlString = data.images.first?.image, let imageUrl = URL(string: imageUrlString) {
+				
+				
+				
+				imageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
+					
+					self?.imageView.hideSkeleton(transition: .crossDissolve(0.2))
+				}
+			} else {
+				
+				imageView.hideSkeleton()
+				imageView.image = UIImage(named: "hands")
+			}
+		}
+		
+		
+	}
 }
 @available(iOS 17.0, *)
 #Preview {ExploreViewController()
