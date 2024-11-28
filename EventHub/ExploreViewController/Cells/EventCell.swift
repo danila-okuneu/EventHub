@@ -34,15 +34,7 @@ class EventCell: UICollectionViewCell {
         return view
     }()
     
-    let bookmarkButton: UIButton = {
-        let button = UIButton()
-        button.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
-        button.setImage(.bookmarkFill, for: .normal)
-        button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(didTap), for: .touchUpInside)
-        return button
-    }()
-    
+	let bookmarkButton = BookmarkButton(isBookmarked: false)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -58,7 +50,7 @@ class EventCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 15
         contentView.layer.masksToBounds = true
         contentView.backgroundColor = .white
-        
+		bookmarkButton.addTarget(self, action: #selector(didTap), for: .touchUpInside)
         
         contentView.addSomeSubviews(imageView,bookmarkButton, eventName, pinImageView, eventAdrress)
         setupImageView()
@@ -154,6 +146,7 @@ class EventCell: UICollectionViewCell {
         }
     
     @objc func didTap() {
+		bookmarkButton.toggleState()
         print("bookmark tapped")
     }
     
@@ -237,3 +230,4 @@ class EventCell: UICollectionViewCell {
 @available(iOS 17.0, *)
 #Preview {ExploreViewController()
 }
+
