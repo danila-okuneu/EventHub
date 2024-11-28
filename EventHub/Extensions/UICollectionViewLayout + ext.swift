@@ -45,7 +45,7 @@ extension UICollectionViewLayout {
     
     private static func createCategorySection() -> NSCollectionLayoutSection {
         let estimatedHeight: CGFloat = 40
-        let estimatedWidth: CGFloat = 107
+        let estimatedWidth: CGFloat = 140
         let size = NSCollectionLayoutSize(widthDimension: .estimated(estimatedWidth),
                                           heightDimension: .estimated(estimatedHeight))
         let item = NSCollectionLayoutItem(layoutSize: size)

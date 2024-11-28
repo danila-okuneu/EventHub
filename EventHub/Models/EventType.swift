@@ -49,4 +49,6 @@ struct Source: Codable {
 
 struct Place: Codable {
 	let id: Int
+    let address: String
+    let title: String
 }
