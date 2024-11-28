@@ -14,7 +14,7 @@ final class LoginViewController: UIViewController {
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "background")
-        imageView.contentMode = .scaleAspectFit
+		imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
@@ -42,16 +42,12 @@ final class LoginViewController: UIViewController {
     }()
     
     private let emailTextField = CustomTextField(
-        type: .email,
-        placeholderText: "abc@email.com",
-        icon: UIImage(systemName: "envelope")
-    )
+        ofType: .email,
+		with: "abc@email.com")
     
     private let passwordTextField = CustomTextField(
-        type: .password,
-        placeholderText: "Your password",
-        icon: UIImage(systemName: "lock")
-    )
+        ofType: .password,
+        with: "Your password")
     
     private let rememberMeSwitch: UISwitch = {
         let switchControl = UISwitch()
@@ -145,6 +141,7 @@ final class LoginViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         
+		setupTags()
 		signInButton.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
     }
@@ -220,17 +217,16 @@ final class LoginViewController: UIViewController {
     
 	@objc private func signInButtonTapped() {
 		
-		guard let email = emailTextField.textField.text, email != "" else { return }
-		guard let password = passwordTextField.textField.text, password != "" else { return }
+		guard let email = emailTextField.textField.text, email != "" else { emailTextField.showErrorAnimation(); return }
+		guard let password = passwordTextField.textField.text, password != "" else { passwordTextField.showErrorAnimation(); return }
+		
 		
 		
 		DefaultsManager.isRemembered = rememberMeSwitch.isOn
 		Task {
 			do {
 				let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
-				try await FirestoreManager.fetchUserData(uid: authResult.user.uid)
-				
-	
+				try await FirestoreService.fetchUserData(uid: authResult.user.uid)
 				
 				let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
 				if let window = windowScene?.keyWindow {
@@ -240,9 +236,16 @@ final class LoginViewController: UIViewController {
 					}
 				}
 			} catch {
-				print("Login error: \(error.localizedDescription)")
+				
+				switch error.localizedDescription {
+				case "The email address is badly formatted.":
+					emailTextField.showErrorAnimation()
+				default:					passwordTextField.showErrorAnimation()
+				}				
 			}
 		}
+		
+		
 	}
 	
     @objc private func signUpButtonTapped() {
@@ -253,7 +256,39 @@ final class LoginViewController: UIViewController {
 }
 
 
+
+// MARK: - TextField Delegate
+extension LoginViewController: UITextFieldDelegate {
+
+	func textFieldDidBeginEditing(_ textField: UITextField) {
+		
+		switch textField.tag {
+		case 1:
+			emailTextField.resetFieldColor()
+		default:
+			passwordTextField.resetFieldColor()
+		}
+			
+		
+		
+	}
+	
+	private func setupTags() {
+		
+		emailTextField.tag = 1
+		passwordTextField.tag = 2
+		
+		emailTextField.textField.tag = 1
+		passwordTextField.textField.tag = 2
+		
+		emailTextField.textField.delegate = self
+		passwordTextField.textField.delegate = self
+		
+	}
+	
+}
+
 @available(iOS 17.0, *)
-#Preview{
+#Preview {
     return LoginViewController()
 }

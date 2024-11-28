@@ -10,18 +10,16 @@ import FirebaseAuth
 
 class ProfileViewController: UIViewController, ProfileViewDelegate {
     
-    var nameTextField: UITextField!
-    var aboutTextView: UITextView!
-    
-    // mock user
-	
 	var user: User! = DefaultsManager.currentUser
 	
+	var profileMode: ProfileMode = .view
+
+	var nameTextField: UITextField!
+    var aboutTextView: UITextView!
+    
     private var profileView: ProfileView {
         return view as! ProfileView
     }
-    
-    var profileMode: ProfileMode = .view
     
     override func loadView() {
         view = ProfileView()
@@ -44,41 +42,49 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         profileView.signOutButton.addTarget(self, action: #selector(signOutButtonTapped), for: .touchUpInside)
         
         let readMoreGesture = UITapGestureRecognizer(target: self, action: #selector(didTapReadMore))
-        profileView.aboutLabel.addGestureRecognizer(readMoreGesture)
+		aboutTextView.addGestureRecognizer(readMoreGesture)
     }
     
     private func updateUI() {
         
         // Назначаем делегаты для текстовых полей
         nameTextField.delegate = self
-        aboutTextView.delegate = self
+		aboutTextView.delegate = self
         
         // Добавляем жест для скрытия клавиатуры
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
-        
-        let commonElements: [UIView] = [profileView.header1, profileView.profileImageView, profileView.header2]
-        let viewModeElements: [UIView] = [profileView.nameLabel, profileView.aboutLabel, profileView.editButton, profileView.signOutButton]
-        let editModeElements: [UIView] = [profileView.nameTextField, profileView.aboutTextView, profileView.backSaveButton, profileView.editAboutIcon]
-        
-        // Set visibility based on mode
-        commonElements.forEach { $0.isHidden = false }
+		
+		profileView.nameTextField.text = user.name
+		profileView.aboutTextView.text = user.about
 		
         if profileMode == .view {
             // using mock data
-            profileView.profileImageView.image = user.profileImage
-            profileView.nameLabel.text = user.name
+			self.profileView.nameTextField.isEnabled = false
+			
+			UIView.animate(withDuration: 0.3) {
+				self.profileView.editButton.layer.opacity = 1.0
+				self.profileView.backSaveButton.layer.opacity = 0.0
+				self.profileView.editNameButton.layer.opacity = 0.0
+				self.profileView.editAboutButton.layer.opacity = 0.0
+			}
+			
+			profileView.profileImageView.image = user.profileImage
             setupAboutLabel(with: user.about ?? "")
             
-            viewModeElements.forEach { $0.isHidden = false }
-            editModeElements.forEach { $0.isHidden = true }
+      
         } else {
-            // using mock data
-            profileView.nameTextField.text = user.name
-            profileView.aboutTextView.text = user.about
-            
-            editModeElements.forEach { $0.isHidden = false }
-            viewModeElements.forEach { $0.isHidden = true }
+			
+			self.profileView.nameTextField.isEnabled = true
+			
+			UIView.animate(withDuration: 0.3) {
+				self.profileView.editButton.layer.opacity = 0.0
+				self.profileView.backSaveButton.layer.opacity = 1.0
+				self.profileView.editNameButton.layer.opacity = 1.0
+				self.profileView.editAboutButton.layer.opacity = 1.0
+			}
+
+			aboutTextView.attributedText = NSMutableAttributedString(string: user.about ?? "", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .light)])
         }
     }
     
@@ -107,6 +113,12 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     
     //setup "read more" button
     func setupAboutLabel(with text: String) {
+		
+		guard text.count > 150 else {
+			profileView.aboutTextView.text = text
+			return
+		}
+		
         let maxLength = 150
         var truncatedText = String(text.prefix(maxLength))
         
@@ -114,23 +126,23 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
             truncatedText = String(truncatedText[..<lastSpaceIndex])
         }
         
-        truncatedText += "..."
+		truncatedText.append("...")
         
         let fullText = truncatedText + " Read more"
         
-        let attributedString = NSMutableAttributedString(string: fullText)
+		let attributedString = NSMutableAttributedString(string: fullText, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .light)])
         let readMoreRange = (fullText as NSString).range(of: "Read more")
         attributedString.addAttribute(.foregroundColor, value: UIColor.accent, range: readMoreRange)
+		
         
-        profileView.aboutLabel.attributedText = attributedString
-        profileView.aboutLabel.isUserInteractionEnabled = true
+		profileView.aboutTextView.attributedText = attributedString
+		profileView.aboutTextView.isUserInteractionEnabled = true
     }
     
     @objc func didTapReadMore() {
         profileMode = .view
 		
-
-        profileView.aboutLabel.text = user.about
+		aboutTextView.attributedText = NSAttributedString(string: user.about ?? "")
     }
     
     @objc private func signOutButtonTapped() {
@@ -160,26 +172,20 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 }
 
 // MARK: - TextField Delegate
-extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {
+extension ProfileViewController: UITextFieldDelegate {
 
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
-
-		if let text = textField.text, let uid = Auth.auth().currentUser?.uid {
-			Task {
-				await handleNameChange(text: text, uid: uid)
-			}
-		}
-
+		
+		
 		return true
 	}
-
-	private func handleNameChange(text: String, uid: String) async {
-		do {
-			try await FirestoreManager.changeName(for: text, uid: uid)
-			print("Name changed")
-		} catch {
-			print("Failed to change name: \(error.localizedDescription)")
+	
+	func textFieldDidEndEditing(_ textField: UITextField) {
+		guard let uid = Auth.auth().currentUser?.uid else { return }
+		Task {
+			try? await FirestoreService.changeName(forUserWith: uid, to: textField.text ?? "Unknown")
+			textField.text = user.name
 		}
 	}
 	
@@ -197,3 +203,23 @@ extension ProfileViewController: UITextFieldDelegate, UITextViewDelegate {
         view.endEditing(true)
     }
 }
+
+// MARK: - TextView Delegate
+extension ProfileViewController: UITextViewDelegate {
+	
+	func textViewDidEndEditing(_ textView: UITextView) {
+		guard let uid = Auth.auth().currentUser?.uid else { return }
+		
+		Task {
+			try? await FirestoreService.changeAbout(forUserWith: uid, to: textView.text)
+			UIView.transition(with: textView, duration: 0.3, options: [.transitionCrossDissolve]) {
+				textView.text = self.user.about
+			}
+		}
+		
+	}
+	
+}
+
+
+// MARK: - User handlers

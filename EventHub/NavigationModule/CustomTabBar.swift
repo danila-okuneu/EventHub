@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol CustomTabBarDelegate: AnyObject {
+    func didTapFavoriteButton()
+}
+
 final class CustomTabBar: UITabBar {
+    
+    weak var customDelegate: CustomTabBarDelegate?
     
     private let favoriteButton = FavoriteButton(type: .system)
     private let shadowLayer = CALayer()
@@ -30,8 +36,6 @@ final class CustomTabBar: UITabBar {
         unselectedItemTintColor = .appGrayTabbar
     }
     
-    // MARK: - Настройка тени над tabBar
-
     private func addShadow() {
         shadowLayer.shadowColor = UIColor.lightGray.cgColor
         shadowLayer.shadowOpacity = 0.3
@@ -49,10 +53,7 @@ final class CustomTabBar: UITabBar {
         shadowLayer.frame = bounds
     }
     
-    // MARK: - Настройка кнопки favoriteButton
-
     private func setupFavoriteButton() {
-        
         addSubview(favoriteButton)
         NSLayoutConstraint.activate([
             favoriteButton.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -65,9 +66,15 @@ final class CustomTabBar: UITabBar {
     }
     
     @objc private func didTapFavoriteButton() {
+        customDelegate?.didTapFavoriteButton()
+    }
+    
+    func updateFavoriteButtonColor(to color: UIColor) {
+        favoriteButton.backgroundColor = color
     }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         favoriteButton.frame.contains(point) ? favoriteButton : super.hitTest(point, with: event)
     }
 }
+

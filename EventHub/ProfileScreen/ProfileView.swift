@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ProfileViewDelegate: AnyObject {
-    func didTapReadMore()
+    func didTapReadMore()	
 }
 
 class ProfileView: UIView {
@@ -20,12 +20,10 @@ class ProfileView: UIView {
     
     //MARK: - ui properties
     
-    let header1 = UILabel()
-    let profileImageView = UIImageView()
-    let nameLabel = UILabel()
+	let profileImageView = UIImageView()
+    let nameTitleLabel = UILabel()
+	let aboutTitleLabel = UILabel()
     let nameTextField = UITextField()
-    let header2 = UILabel()
-    let aboutLabel = UILabel()
     let aboutTextView = UITextView()
 	
     let editButton = CustomButton(title: "Edit Profile", icon: .editIcon, hasBorder: true, borderColor: .accent, textColor: .accent, iconTintColor: .accent)
@@ -33,8 +31,8 @@ class ProfileView: UIView {
     let backSaveButton = UIButton(type: .system)
     let signOutButton = CustomButton(title: "Sign Out", icon: .signOutIcon, hasBorder: false, textColor: .black, iconTintColor: .gray)
     
-    let editNameIcon = UIImageView(image: .editIcon)
-    let editAboutIcon = UIImageView(image: .editIcon)
+    let editNameButton = UIButton()
+	let editAboutButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -73,10 +71,10 @@ class ProfileView: UIView {
     //MARK: - ui settings
         
         // profile header
-        header1.text = "Profile"
-        header1.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-        header1.textAlignment = .center
-        header1.textColor = .black
+        nameTitleLabel.text = "Profile"
+        nameTitleLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
+        nameTitleLabel.textAlignment = .center
+        nameTitleLabel.textColor = .black
         
         // back arrow
         backSaveButton.setImage(UIImage(systemName: "arrow.left"), for: .normal)
@@ -92,31 +90,26 @@ class ProfileView: UIView {
         profileImageView.contentMode = .scaleAspectFill
         
 		// name
-        nameLabel.textAlignment = .center
-        nameLabel.textColor = .black
-        nameLabel.font = UIFont.systemFont(ofSize: 24, weight: .regular)
-        
         nameTextField.textAlignment = .center
         nameTextField.font = UIFont.systemFont(ofSize: 24, weight: .regular)
         nameTextField.backgroundColor = .white
         nameTextField.textColor = .black
-        nameTextField.rightView = editNameIcon
+        nameTextField.rightView = editNameButton
         nameTextField.rightViewMode = .always
+		nameTextField.isEnabled = false
+		nameTextField.tag = 1
+		nameTextField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 22, height: 22))
+		nameTextField.leftViewMode = .always
+		
+		editNameButton.layer.opacity = 0.0
+		editNameButton.setBackgroundImage(.editIcon, for: .normal)
+		editNameButton.addTarget(self, action: #selector(editNameButtonTapped), for: .touchUpInside)
+		
         
-        // About me header
-        header2.text = "About me"
-        header2.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        header2.textColor = .black
-        
-        // user info "about"
-        aboutLabel.font = UIFont.systemFont(ofSize: 16, weight: .light)
-        aboutLabel.textColor = .black
-        aboutLabel.numberOfLines = 0
-        aboutLabel.lineBreakMode = .byWordWrapping
-        aboutLabel.isUserInteractionEnabled = true
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapReadMore))
-        aboutLabel.addGestureRecognizer(tapGesture)
+        // About me
+        aboutTitleLabel.text = "About me"
+        aboutTitleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        aboutTitleLabel.textColor = .black
         
         aboutTextView.layer.borderColor = UIColor.systemGray5.cgColor
         aboutTextView.layer.borderWidth = 0.5
@@ -124,28 +117,31 @@ class ProfileView: UIView {
         aboutTextView.font = UIFont.systemFont(ofSize: 16, weight: .light)
         aboutTextView.textColor = .black
         aboutTextView.backgroundColor = .white
-        aboutTextView.isEditable = true
+		aboutTextView.typingAttributes = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .light)]
+		aboutTextView.allowsEditingTextAttributes = false
+		
+		editNameButton.layer.opacity = 0.0
+		editAboutButton.setBackgroundImage(.editIcon, for: .normal)
+		editAboutButton.addTarget(self, action: #selector(editAboutButtonTapped), for: .touchUpInside)
         
     //MARK: - constraint settings
         
-        let views: [UIView] = [header1, profileImageView, nameLabel, nameTextField, header2, editAboutIcon, aboutLabel, aboutTextView, backSaveButton, editButton, signOutButton]
+        let views: [UIView] = [nameTitleLabel, profileImageView, nameTextField, aboutTitleLabel, editAboutButton, aboutTextView, backSaveButton, editButton, signOutButton]
         
         views.forEach { view in
             contentView.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
+		
         
         NSLayoutConstraint.activate([
-            header1.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            header1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            nameTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            nameTitleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
             profileImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            profileImageView.topAnchor.constraint(equalTo: header1.bottomAnchor, constant: 29),
+            profileImageView.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 29),
             profileImageView.widthAnchor.constraint(equalToConstant: 96),
             profileImageView.heightAnchor.constraint(equalToConstant: 96),
-            
-            nameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 21),
             
             nameTextField.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             nameTextField.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 21),
@@ -155,32 +151,28 @@ class ProfileView: UIView {
 			editButton.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 15),
             editButton.widthAnchor.constraint(equalToConstant: 200),
             
-            backSaveButton.centerYAnchor.constraint(equalTo: header1.centerYAnchor),
+            backSaveButton.centerYAnchor.constraint(equalTo: nameTitleLabel.centerYAnchor),
             backSaveButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 25),
             backSaveButton.widthAnchor.constraint(equalToConstant: 22),
             backSaveButton.heightAnchor.constraint(equalToConstant: 22),
             
-            header2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
-            header2.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 154),
+            aboutTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
+            aboutTitleLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 154),
             
-            editAboutIcon.leadingAnchor.constraint(equalTo: header2.trailingAnchor, constant: 8),
-            editAboutIcon.centerYAnchor.constraint(equalTo: header2.centerYAnchor),
-            editAboutIcon.heightAnchor.constraint(equalTo: header2.heightAnchor),
-            editAboutIcon.widthAnchor.constraint(equalTo: header2.heightAnchor),
+            editAboutButton.leadingAnchor.constraint(equalTo: aboutTitleLabel.trailingAnchor, constant: 8),
+            editAboutButton.centerYAnchor.constraint(equalTo: aboutTitleLabel.centerYAnchor),
+            editAboutButton.heightAnchor.constraint(equalTo: aboutTitleLabel.heightAnchor),
+            editAboutButton.widthAnchor.constraint(equalTo: aboutTitleLabel.heightAnchor),
             
-            aboutLabel.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 19),
-            aboutLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
-            aboutLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -35),
+           
             
-            aboutTextView.topAnchor.constraint(equalTo: header2.bottomAnchor, constant: 19),
+            aboutTextView.topAnchor.constraint(equalTo: aboutTitleLabel.bottomAnchor, constant: 19),
             aboutTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             aboutTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -35),
             aboutTextView.heightAnchor.constraint(equalToConstant: 300),
             
             signOutButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            signOutButton.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 100),
-            signOutButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
-
+			signOutButton.topAnchor.constraint(equalTo: aboutTextView.bottomAnchor, constant: 50),
             contentView.bottomAnchor.constraint(equalTo: signOutButton.bottomAnchor, constant: 20)
         ])
     }
@@ -188,4 +180,18 @@ class ProfileView: UIView {
     @objc private func didTapReadMore() {
         delegate?.didTapReadMore()
     }
+	
+	@objc private func editNameButtonTapped() {
+		nameTextField.becomeFirstResponder()
+	}
+	
+	@objc private func editAboutButtonTapped() {
+		aboutTextView.becomeFirstResponder()
+	}
+}
+
+@available(iOS 17.0, *)
+#Preview {
+	return ProfileViewController()
+	
 }

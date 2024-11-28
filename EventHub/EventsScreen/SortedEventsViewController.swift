@@ -12,7 +12,7 @@ final class SortedEventsViewController: UIViewController, UICollectionViewDataSo
     
     var sortedEvents: [Event] = []
 
-    var collectionView: UICollectionView = {
+   lazy var collectionView: UICollectionView = {
            let layout = UICollectionViewFlowLayout()
            let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
            cv.translatesAutoresizingMaskIntoConstraints = false
@@ -73,7 +73,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
         let event = sortedEvents[indexPath.item]
-         cell.configure(with: event, isbookmarkHidden: true)
+    cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
         return cell
     }
 

@@ -24,9 +24,14 @@ let mockEvent: [Event] = [
  
 ]
 
+protocol FavouritesViewControllerDelegate: AnyObject {
+    func didCloseFavouritesScreen()
+}
 
 class FavouritesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     // MARK: - Property
+    
+    weak var delegate: FavouritesViewControllerDelegate?
     
     private let emptyView = EmptyView()
     
@@ -48,6 +53,11 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         else {
             setupCollectionView()
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        delegate?.didCloseFavouritesScreen()
     }
     
     private func setupCollectionView() {
@@ -95,7 +105,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
         let event = events[indexPath.item]
-        cell.configure(with: event, isbookmarkHidden: false)
+        cell.configure(with: event, isbookmarkHidden: false, isLocationHidden: false)
         return cell
     }
     

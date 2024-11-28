@@ -20,9 +20,17 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     private var isShowingUpcomingEvents: Bool {
         return segmentedControl.selectedSegmentIndex == 0
     }
-    let segmentedControl: CustomSegmentedControl = {
+    
+    lazy var segmentedControl: CustomSegmentedControl = {
            let sc = CustomSegmentedControl(items: ["UPCOMING", "PAST EVENTS"])
            sc.selectedSegmentIndex = 0
+           sc.selectedSegmentTintColor = .white
+        sc.setTitleTextAttributes([.foregroundColor: UIColor.appPurple, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .selected)
+            sc.setTitleTextAttributes([.foregroundColor: UIColor.gray, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .normal)
+
+
+
+
            sc.translatesAutoresizingMaskIntoConstraints = false
                    return sc
                }()
@@ -42,19 +50,17 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     
     
     // MARK: - Life Cicle
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        view.backgroundColor = .appGray
-                setupCollectionView()
-                setupEmptyView()
-                setupSegmentedControl()
-                setupExploreButton()
-                loadMockData() // Загрузка моковых данных
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [unowned self] in
-            segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
-        }
-            }
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .appGray
+		setupCollectionView()
+		setupEmptyView()
+		setupSegmentedControl()
+		setupExploreButton()
+		loadMockData() // Загрузка моковых данных
+		segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
+	}
 
     
     func setupSegmentedControl() {
@@ -157,7 +163,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
         let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
-         cell.configure(with: event, isbookmarkHidden: true)
+    cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
         return cell
     }
 

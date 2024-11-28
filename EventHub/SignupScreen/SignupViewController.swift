@@ -7,13 +7,14 @@
 
 import UIKit
 import FirebaseAuth
+import GoogleSignIn
 
 final class SignupViewController: UIViewController {
 
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "background")
-        imageView.contentMode = .scaleAspectFit
+		imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
@@ -35,28 +36,20 @@ final class SignupViewController: UIViewController {
     }()
     
     private let fullNameTextField = CustomTextField(
-        type: .default,
-        placeholderText: "Full name",
-        icon: UIImage(systemName: "person")
-    )
+        ofType: .default,
+        with: "Full name")
 
     private let emailTextField = CustomTextField(
-        type: .email,
-        placeholderText: "abc@email.com",
-        icon: UIImage(systemName: "envelope")
-    )
+        ofType: .email,
+		with: "abc@email.com")
 
     private let passwordTextField = CustomTextField(
-        type: .password,
-        placeholderText: "Your password",
-        icon: UIImage(systemName: "lock")
-    )
+        ofType: .password,
+        with: "Your password")
 
     private let confirmPasswordTextField = CustomTextField(
-        type: .password,
-        placeholderText: "Confirm password",
-        icon: UIImage(systemName: "lock")
-    )
+        ofType: .password,
+        with: "Confirm password")
 
     private let signUpButton: UIButton = {
         let button = UIButton(type: .system)
@@ -206,16 +199,33 @@ final class SignupViewController: UIViewController {
 	@objc private func signUpButtonTapped() {
 		
 		print("sign UP tapper")
-		guard let name = fullNameTextField.textField.text, name != "" else { return }
-		guard let email = emailTextField.textField.text, email != "" else { return }
-		guard let password = passwordTextField.textField.text, password != "" else { return }
+		guard let name = fullNameTextField.textField.text, name != "" else {
+			fullNameTextField.showErrorAnimation()
+			return
+		}
+		
+		guard let email = emailTextField.textField.text, email != "", email.contains("@") else {
+			emailTextField.showErrorAnimation()
+			return
+		}
+		guard let password = passwordTextField.textField.text,
+			!password.isEmpty, password.count >= 8,
+			!password.contains(" ") else {
+			passwordTextField.showErrorAnimation()
+			return
+		}
+		
+		guard let confirmPassword = confirmPasswordTextField.textField.text, confirmPassword == password else {
+			confirmPasswordTextField.showErrorAnimation()
+			return
+		}
 		
 		Task {
 			do {
 				let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-				let user = User(name: name)
+				let user = User(uid: authResult.user.uid, name: name)
 				DefaultsManager.currentUser = user
-				FirestoreManager.saveUserData(user: user, uid: authResult.user.uid)
+				FirestoreService.saveUserData(user: user, uid: authResult.user.uid)
 				
 				
 				DefaultsManager.isRegistered = true
@@ -254,31 +264,36 @@ extension SignupViewController: UITextFieldDelegate {
 	}
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		
-		
-		
-		print("TFDelegate")
-		if textField.tag == 1, textField.text == "" {
-			print("false")
-			return false
-		}
-		
-		if textField.tag == 1, textField.text == "" {
-			print("false")
-			return false
-		}
-
-		if textField.tag == 2, textField.text?.count(where:  {$0 == "@" }) != 1 {
-			return false
-		}
-		
-		if (textField.tag == 3 || textField.tag == 4), (textField.text!.contains(" ") || textField.text!.count < 8) {
-			return false
-		}
-		
-		
 		textField.endEditing(true)
 		return true
+	}
+	
+	func textFieldDidEndEditing(_ textField: UITextField) {
+		switch textField.tag {
+		case 1 where textField.text == "": fullNameTextField.showError()
+		case 2 where textField.text?.count(where: { $0 == "@" } ) != 1:
+			emailTextField.showError()
+		case 3 where textField.text!.count < 8 || textField.text!.contains(" "):
+			passwordTextField.showError()
+		case 4 where textField.text != passwordTextField.textField.text:
+			confirmPasswordTextField.showError()
+		default:
+			return
+		}
+	}
+	
+	func textFieldDidBeginEditing(_ textField: UITextField) {
+		switch textField.tag {
+		case 1:
+			fullNameTextField.resetFieldColor()
+		case 2:
+			emailTextField.resetFieldColor()
+		case 3:
+			passwordTextField.resetFieldColor()
+		default:
+			confirmPasswordTextField.resetFieldColor()
+			
+		}
 	}
 	
 	

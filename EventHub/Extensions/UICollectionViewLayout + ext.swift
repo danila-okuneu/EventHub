@@ -27,7 +27,7 @@ extension UICollectionViewLayout {
     
     private static func createSearchSection() -> NSCollectionLayoutSection {
         let estimatedHeight: CGFloat = 132
-//        let estimatedWidth: CGFloat = 86
+        let estimatedWidth: CGFloat = 86
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                           heightDimension: .estimated(estimatedHeight))
         let item = NSCollectionLayoutItem(layoutSize: size)
