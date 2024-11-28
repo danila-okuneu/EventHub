@@ -10,7 +10,7 @@ final class SortedEventsViewController: UIViewController, UICollectionViewDataSo
     
     // MARK: - Property
     
-    var sortedEvents: [Event] = []
+	var sortedEvents: [EventType] = []
 
    lazy var collectionView: UICollectionView = {
            let layout = UICollectionViewFlowLayout()
@@ -30,13 +30,33 @@ final class SortedEventsViewController: UIViewController, UICollectionViewDataSo
                 loadMockData() // Загрузка моковых данных
             }
 
-    private func loadMockData() {
-
-        sortedEvents = [Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
-               Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA")]
-           
-           collectionView.reloadData()
-       }
+	private func loadMockData() {
+		
+		sortedEvents = [
+			EventType(
+				id: 1,
+				dates: [DateElement(start: -12321321, end: 132312312)],
+				title: "Jo Malone London’s Mother’s Day Presents",
+				place: Place(id: 1234, address: "sdsdsd", title: "fsfd"),
+				bodyText: "Body mock 1",
+				images: [],
+				favoritesCount: 1,
+				shortTitle: "Short title mock 1"
+			),
+			EventType(
+				id: 2,
+				dates: [DateElement(start: -12321321, end: 132312312)],
+				title: "Jo Malone London’s Mother’s Day Presents",
+				place: Place(id: 5678, address: "sdsdsd", title: "fsfd"),
+				bodyText: "Body mock 1",
+				images: [],
+				favoritesCount: 1,
+				shortTitle: "Short title mock 2"
+			)
+		]
+		
+		collectionView.reloadData()
+	}
 
 
 private func setupCollectionView() {

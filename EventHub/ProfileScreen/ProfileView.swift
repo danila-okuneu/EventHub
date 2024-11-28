@@ -119,6 +119,7 @@ class ProfileView: UIView {
         aboutTextView.backgroundColor = .white
 		aboutTextView.typingAttributes = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .light)]
 		aboutTextView.allowsEditingTextAttributes = false
+		aboutTextView.isUserInteractionEnabled = false
 		
 		editNameButton.layer.opacity = 0.0
 		editAboutButton.setBackgroundImage(.editIcon, for: .normal)

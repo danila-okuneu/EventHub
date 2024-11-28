@@ -15,7 +15,8 @@ class EventCell: UICollectionViewCell {
     private var eventDate = UILabel()
     private let friendsView = UIView()
     private let pinImageView = UIImageView(image: .mappin)
-    
+	let aboutGoingLabel = UILabel()
+	
     private var eventAdrress: UILabel = {
         var label = UILabel()
         label.textColor = UIColor(red: 0.167, green: 0.157, blue: 0.287, alpha: 1)
@@ -87,7 +88,8 @@ class EventCell: UICollectionViewCell {
             
             eventDate.textColor = UIColor(red: 0.941, green: 0.39, blue: 0.354, alpha: 1)
             if #available(iOS 16.0, *) {
-                eventDate.font = .systemFont(ofSize: 12, weight: .ultraLight, width: .compressed)
+				eventDate.font = .systemFont(ofSize: 18, weight: .thin, width: .condensed)
+				
             } else {
                 eventDate.font = .systemFont(ofSize: 12, weight: .ultraLight)
             }
@@ -114,7 +116,7 @@ class EventCell: UICollectionViewCell {
             let friendOneImageView = UIImageView(image: .friend1)
             let friendTwoImageView = UIImageView(image: .friend2)
             let friendThreeImageView = UIImageView(image: .friend3)
-            let aboutGoingLabel = UILabel()
+            
             aboutGoingLabel.text = "+20 Going"
             aboutGoingLabel.font = .systemFont(ofSize: 12, weight: .medium)
             aboutGoingLabel.textColor =  UIColor(red: 0.247, green: 0.22, blue: 0.867, alpha: 1)
@@ -178,14 +180,25 @@ class EventCell: UICollectionViewCell {
             eventName.text = data.title
         }
         
-        
-        eventDate.text = "30 марта"
-        if  data.place?.address != "" {
+	
+		let attributedString = NSMutableAttributedString(string: data.dates[0].end.formaTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
+		let string = attributedString.string
+		if let range = string.range(of: "\n") {
+			let startIndex = string.distance(from: string.startIndex, to: range.upperBound)
+			attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 12, weight: .semibold), range: NSRange(location: startIndex, length: string.count - startIndex))
+		}
+		
+		aboutGoingLabel.text = "+\(data.favoritesCount) Going"
+			  
+		
+		
+		
+		eventDate.attributedText = attributedString
+        if data.place?.address != "" {
             eventAdrress.text = data.place?.address
-        } else {
-            eventAdrress.text = data.place?.title
-        }
-        
+		} else {
+            eventAdrress.text = "Adress not provided"
+		}
         if let image = data.images.first?.image {
             imageView.kf.setImage(with: URL(string: image))
             } else {
