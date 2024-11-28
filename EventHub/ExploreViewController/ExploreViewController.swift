@@ -77,10 +77,10 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
             self.collectionView.reloadSections(IndexSet(integer: 1))
         }
     
-    private func getUpcommingEvents() {
+    private func getEventsWithCategory(category: String) {
         Task {
             do {
-                let events = try await networkService.getEventsList(type: .eventsList, eventsCount: 8)
+                let events = try await networkService.getEventsList(type: .eventsList, categories: category)
                 self.upcommingEvents = events
                 print(upcommingEvents)
                 self.collectionView.reloadData()
@@ -90,6 +90,22 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
+    
+    private func getUpcommingEvents() {
+        Task {
+            do {
+                let events = try await networkService.getEventsList(type: .eventsList)
+                self.upcommingEvents = events
+                print(upcommingEvents)
+                self.collectionView.reloadData()
+            }
+            catch {
+                self.shwoErrorAllertWith(error: error as! NetworkError)
+            }
+        }
+    }
+    
+    
     
     private func shwoErrorAllertWith(error: NetworkError) {
         let allert = UIAlertController(title: "Ошибка", message: error.errorText, preferredStyle: .alert)
@@ -151,12 +167,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return cell
         case .categories:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategorieCell.identifier, for: indexPath) as! CategorieCell
-//            if categoriesAll.count > 0 {
-                cell.configureCell(with: categoriesAll[indexPath.row])
-//            } else {
-////                cell.configureCell(with: Category(name: "Category", color: .appRed, sfSymbol: "folder"))
-//            }
-            
+            cell.configureCell(with: categoriesAll[indexPath.row])
             return cell
         case .upcoming, .nearby:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell
@@ -164,6 +175,20 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
                 cell.configureCell(with: upcommingEvents[indexPath.row])
             }
             return cell
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let section = sections[indexPath.section]
+        switch section {
+        case .categories:
+            getEventsWithCategory(category: categoriesAll[indexPath.row].slug)
+        case .upcoming:
+            break
+        case .nearby:
+            break
+        default:
+            break
         }
     }
     
