@@ -10,6 +10,7 @@ struct Category {
     let name: String
     let color: UIColor
     let sfSymbol: String
+    let slug: String
 }
 
 struct EventCategory: Codable {

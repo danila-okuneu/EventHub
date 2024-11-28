@@ -61,7 +61,6 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         
         configureCollectionView()
         getUpcommingEvents()
-//        print(categoriesAll)
         Task {
             await getCategories()
         }
@@ -81,7 +80,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     private func getUpcommingEvents() {
         Task {
             do {
-                let events = try await networkService.getEventsList(type: .eventsList)
+                let events = try await networkService.getEventsList(type: .eventsList, eventsCount: 8)
                 self.upcommingEvents = events
                 print(upcommingEvents)
                 self.collectionView.reloadData()
@@ -135,11 +134,11 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .search:
             return 1
         case .categories:
-            return 21
+            return categoriesAll.count
         case .upcoming:
-            return 8
+            return upcommingEvents.count
         case .nearby:
-            return 8
+            return upcommingEvents.count
         }
     }
     
@@ -152,11 +151,11 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return cell
         case .categories:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategorieCell.identifier, for: indexPath) as! CategorieCell
-            if categoriesAll.count > 0 {
+//            if categoriesAll.count > 0 {
                 cell.configureCell(with: categoriesAll[indexPath.row])
-            } else {
-                cell.configureCell(with: Category(name: "Category", color: .appRed, sfSymbol: "folder"))
-            }
+//            } else {
+////                cell.configureCell(with: Category(name: "Category", color: .appRed, sfSymbol: "folder"))
+//            }
             
             return cell
         case .upcoming, .nearby:
@@ -189,6 +188,6 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     }
 }
 
-//@available(iOS 17.0, *)
-//#Preview {ExploreViewController()
-//}
+@available(iOS 17.0, *)
+#Preview {ExploreViewController()
+}

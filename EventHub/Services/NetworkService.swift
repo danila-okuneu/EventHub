@@ -12,7 +12,7 @@
 
 
 enum RequestType: String {
-    case eventsList = "events/?location=krd&actual_since=1732313335&fields=id,dates,short_title,title,place,body_text,images,favorites_count,categorires&expand=place"
+    case eventsList = "events/?location=msk&actual_since=1732313335&fields=id,dates,short_title,title,place,body_text,images,favorites_count,categorires&expand=place"
     case allCategories = "event-categories/?lang=&order_by=&fields="
 }
 
@@ -26,9 +26,9 @@ final class NetworkService {
     
     
     
-	func getEventsList(type: RequestType) async throws -> [EventType] {
+    func getEventsList(type: RequestType, eventsCount: Int, categories: String = "") async throws -> [EventType] {
 		
-		guard let url = URL(string: baseURLString + type.rawValue) else { throw NetworkError.invalidURL }
+		guard let url = URL(string: baseURLString + type.rawValue + "&number=\(eventsCount)" + "&categories=\(categories)") else { throw NetworkError.invalidURL }
 		let (data, response) = try await session.data(from: url)
         guard let response = response as? HTTPURLResponse else { throw NetworkError.invalidResponse }
         print(response.statusCode)
@@ -55,51 +55,6 @@ final class NetworkService {
         default: throw NetworkError.unknowedError
         }
     }
-//    func getEventsList(completion: @escaping (Result<[EventType], NetworkError>) -> Void) {
-//        let getUrlResult = getURL(forRequestType: .eventsList)
-//        switch getUrlResult {
-//        case .success(let url):
-//			print(url)
-//            let request = URLRequest(url: url)
-//			
-//            let dataTask = session.dataTask(with: request) { [weak self] data, response, error in
-//                print(response ?? "No response")
-//                guard let self, let response else {
-//                    completion(.failure(.unknowedError))
-//                    return
-//                }
-//                let responseResult = self.handle(response: response)
-//                switch responseResult {
-//                case .success:
-//                    if let error = error {
-//                        completion(.failure(.networkError))
-//                        return
-//                    }
-//                    if let data {
-//						print(String(data: data, encoding: .utf8))
-//                        let decoder = JSONDecoder()
-//                        decoder.keyDecodingStrategy = .convertFromSnakeCase
-//						
-//                        if let events = try? decoder.decode(DataResponse.self, from: data) {
-//                            completion(.success(events.results))
-//                            
-//                        } else {
-//                            completion(.failure(.decodingError))
-//                        }
-//                    }
-//                case .failure(let error):
-//                    completion(.failure(error))
-//                }
-//               
-//                
-//                
-//            }
-//            dataTask.resume()
-//        case .failure(let error):
-//            completion(.failure(error))
-//            return
-//        }
-        
 	
 	    
     private func getURL(forRequestType type: RequestType) -> Result<URL, NetworkError> {
@@ -108,21 +63,6 @@ final class NetworkService {
         }
         return .success(url)
     }
-    
-//    private func handle(response: URLResponse) -> Result<Void, NetworkError> {
-//        guard let response = response as? HTTPURLResponse,
-//              let code = HTTPResonseCode(rawValue: response.statusCode) else{
-//            return .failure(.invalidResponse)
-//        }
-//        switch code {
-//        case .success:
-//            return .success(())
-//        case .notFound, .serverError:
-//            return .failure(.serverError)
-//            
-//    
-//        }
-//        
-//    }
+
 }
 
