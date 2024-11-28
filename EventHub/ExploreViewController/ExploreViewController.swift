@@ -137,9 +137,9 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .categories:
             return 21
         case .upcoming:
-            return 10
+            return 8
         case .nearby:
-            return 10
+            return 8
         }
     }
     
