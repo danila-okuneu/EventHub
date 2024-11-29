@@ -16,9 +16,9 @@ class SearchBarVC: UIViewController {
     
     // MARK: - Properties
     
-    var sortedEvents: [Event] = mockEvent
-    var allEvents: [Event] = []
-    var events: [Event] = mockEvent
+	var sortedEvents: [EventType] = mockEvent
+	var allEvents: [EventType] = []
+	var events: [EventType] = mockEvent
 
     private var collectionView: UICollectionView!
     

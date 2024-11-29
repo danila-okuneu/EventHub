@@ -5,6 +5,8 @@
 //  Created by Igor Guryan on 23.11.2024.
 //
 
+import Foundation
+
 struct DataResponse: Codable {
 //    let count: Int
     let results: [EventType]
@@ -33,6 +35,10 @@ struct EventType: Codable {
 struct DateElement: Codable {
 	let start: Int
 	let end: Int
+	
+//	var startFormatted: String { print(start.toAppDateFormat())
+//		return start.toAppDateFormat() }
+//	var endFormatted: String { end.toAppDateFormat() }
 }
 
 // MARK: - Image
@@ -49,4 +55,7 @@ struct Source: Codable {
 
 struct Place: Codable {
 	let id: Int
+    let address: String
+    let title: String
 }
+

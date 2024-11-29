@@ -13,10 +13,11 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	
     private let networkService = NetworkService()
     private var upcommingEvents: [EventType] = []
+    private var categoriesAll: [Category] = []
+    private var selectedCategory: Int?
     
     private let collectionView: UICollectionView = .createCollectionView(with: .eventsLayout())
     private var sections: [ExploreSection] = ExploreSection.allCases
-    private let categories: [String] = ["Sports", "Music", "Food", "Art"]
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .white
@@ -44,17 +45,25 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
-	override func viewDidLoad() {
+//    init(categoriesAll: [Category], selectedCategory: Int? = 1) {
+//        super.init(nibName: nil, bundle: nil)
+//        self.categoriesAll = categoriesAll
+//    }
+    
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
+    override func viewDidLoad() {
         view.backgroundColor = .white
+        
+        
+        
         configureCollectionView()
-		Task {
-			do {
-				try await networkService.getEventsList(type: .eventsList)
-			} catch {
-				self.shwoErrorAllertWith(error: error as! NetworkError)
-			}
-		}
-//        getUpcommingEvents()
+        getUpcommingEvents()
+        Task {
+            await getCategories()
+        }
 	}
     
     override func viewDidLayoutSubviews() {
@@ -62,17 +71,22 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
 //        scrollView.frame = view.bounds
     }
     
+    private func getCategories() async  {
+            let categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
+            self.categoriesAll = categories
+            self.collectionView.reloadSections(IndexSet(integer: 1))
+        }
+    
     private func getUpcommingEvents() {
-        networkService.getEventsList {[weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let events):
-                    self?.upcommingEvents = events
-                    self?.collectionView.reloadData()
-                case.failure(let error):
-					self?.shwoErrorAllertWith(error: error)
-                    
-                }
+        Task {
+            do {
+                let events = try await networkService.getEventsList(type: .eventsList, eventsCount: 8)
+                self.upcommingEvents = events
+                print(upcommingEvents)
+                self.collectionView.reloadData()
+            }
+            catch {
+                self.shwoErrorAllertWith(error: error as! NetworkError)
             }
         }
     }
@@ -85,7 +99,6 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	
     
     private func configureCollectionView() {
-        
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(blueView)
@@ -97,15 +110,6 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         collectionView.register(SearchCell.self, forCellWithReuseIdentifier: SearchCell.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
-        
-//        scrollView.snp.makeConstraints{ make in
-//            make.edges.equalTo(view)
-//        }
-//        contentView.snp.makeConstraints{ make in
-//            make.top.leading.trailing.equalTo(scrollView)
-//            make.width.equalTo(scrollView)
-//            make.height.equalTo(1500)
-//        }
         
         blueView.snp.makeConstraints{ make in
             make.top.equalTo(contentView.snp.top).offset(-300)
@@ -130,11 +134,11 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .search:
             return 1
         case .categories:
-            return categories.count
+            return categoriesAll.count
         case .upcoming:
-            return 10
+            return upcommingEvents.count
         case .nearby:
-            return 10
+            return upcommingEvents.count
         }
     }
     
@@ -147,7 +151,12 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return cell
         case .categories:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategorieCell.identifier, for: indexPath) as! CategorieCell
-            cell.configureCell(with: categories[indexPath.row])
+//            if categoriesAll.count > 0 {
+                cell.configureCell(with: categoriesAll[indexPath.row])
+//            } else {
+////                cell.configureCell(with: Category(name: "Category", color: .appRed, sfSymbol: "folder"))
+//            }
+            
             return cell
         case .upcoming, .nearby:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell

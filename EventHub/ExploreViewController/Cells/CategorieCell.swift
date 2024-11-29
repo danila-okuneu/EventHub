@@ -53,24 +53,27 @@ class CategorieCell: UICollectionViewCell {
         imageView.image = UIImage(systemName: imageName)?.withTintColor(.white).withRenderingMode(.alwaysOriginal)
     }
     
-    func configureCell(with category: String) {
-        titleLabel.text = category
-        switch category {
-        case "Sports":
-            setupImageView(imageName: "basketball.fill")
-            contentView.backgroundColor = .appRed
-        case "Music":
-            setupImageView(imageName: "music.note")
-            contentView.backgroundColor = .appOrange
-        case "Food":
-            setupImageView(imageName: "fork.knife")
-            contentView.backgroundColor = .appGreen
-        case "Art":
-            setupImageView(imageName: "paintbrush.pointed.fill")
-            contentView.backgroundColor = .appCyan
-        default:
-            break
-        }
+    func configureCell(with category: Category) {
+        titleLabel.text = category.name
+        setupImageView(imageName: category.sfSymbol)
+        contentView.backgroundColor = category.color
+        
+//        switch category {
+//        case "Sports":
+//            setupImageView(imageName: "basketball.fill")
+//            contentView.backgroundColor = .appRed
+//        case "Music":
+//            setupImageView(imageName: "music.note")
+//            contentView.backgroundColor = .appOrange
+//        case "Food":
+//            setupImageView(imageName: "fork.knife")
+//            contentView.backgroundColor = .appGreen
+//        case "Art":
+//            setupImageView(imageName: "paintbrush.pointed.fill")
+//            contentView.backgroundColor = .appCyan
+//        default:
+//            break
+//        }
     }
 }
 //"Sports", "Music", "Food", "Art"

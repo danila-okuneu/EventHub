@@ -27,7 +27,7 @@ extension UICollectionViewLayout {
     
     private static func createSearchSection() -> NSCollectionLayoutSection {
         let estimatedHeight: CGFloat = 132
-        let estimatedWidth: CGFloat = 86
+//        let estimatedWidth: CGFloat = 86
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                           heightDimension: .estimated(estimatedHeight))
         let item = NSCollectionLayoutItem(layoutSize: size)
@@ -45,7 +45,7 @@ extension UICollectionViewLayout {
     
     private static func createCategorySection() -> NSCollectionLayoutSection {
         let estimatedHeight: CGFloat = 40
-        let estimatedWidth: CGFloat = 107
+        let estimatedWidth: CGFloat = 140
         let size = NSCollectionLayoutSize(widthDimension: .estimated(estimatedWidth),
                                           heightDimension: .estimated(estimatedHeight))
         let item = NSCollectionLayoutItem(layoutSize: size)
@@ -69,7 +69,7 @@ extension UICollectionViewLayout {
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 12.0, leading: 24, bottom: 12, trailing: 12.0)
-        section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+		section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         let header = createHeader()
         section.boundarySupplementaryItems = [header]
         return section

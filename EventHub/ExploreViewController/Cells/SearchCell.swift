@@ -7,17 +7,17 @@
 
 import UIKit
 
-class SearchCell: UICollectionViewCell, UITextFieldDelegate {
+final class SearchCell: UICollectionViewCell, UITextFieldDelegate {
     static let identifier = String(describing: SearchCell.self)
     
-    private var notificationButton: UIButton = {
+    var notificationButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "bell"), for: .normal)
 //        button.addTarget(SearchCell.self, action: #selector (notificationButtonTapped), for: .touchUpInside)
         return button
     }()
     
-    private var selectLocationButton: UIButton = {
+    var selectLocationButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "vector"), for: .normal)
         button.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: 0.7), for: .normal)
