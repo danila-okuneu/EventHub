@@ -14,8 +14,8 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     
     private let emptyView = EmptyEventView()
     
-    var upcomingEvents: [Event] = []
-    var pastEvents: [Event] = []
+    var upcomingEvents: [EventType] = []
+    var pastEvents: [EventType] = []
 
     private var isShowingUpcomingEvents: Bool {
         return segmentedControl.selectedSegmentIndex == 0
@@ -104,14 +104,10 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
            emptyView.isHidden = hasData
        }
     private func loadMockData() {
-//           upcomingEvents = [
-//            Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
-//            Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
-//        ]
-        upcomingEvents = []
-           pastEvents = [Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
-               Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA")]
-           
+           upcomingEvents = [EventType(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
+//        upcomingEvents = []
+           pastEvents = [EventType(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
+//
            collectionView.reloadData()
            updateEmptyViewVisibility()
        }

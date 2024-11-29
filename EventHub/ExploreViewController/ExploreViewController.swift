@@ -94,7 +94,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     private func getUpcommingEvents() {
         Task {
             do {
-                let events = try await networkService.getEventsList(type: .eventsList)
+                let events = try await networkService.getEventsList(type: .eventsList, eventsCount: 40)
                 self.upcommingEvents = events
                 print(upcommingEvents)
                 self.collectionView.reloadData()
@@ -199,19 +199,29 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeaderView.identifier, for: indexPath) as! SectionHeaderView
         if sections[indexPath.section] == .upcoming {
-            header.configure(with: "Upcomming events", isButtonHidden: false, buttonTitle: "See All", tapAction: didTapSeeAll)
+            header.configure(with: "Upcomming events", isButtonHidden: false, buttonTitle: "See All", tapAction: didTapSeeAllUpcomming)
             return header
         } else if sections[indexPath.section] == .nearby {
-            header.configure(with: "Nearby you", isButtonHidden: false, buttonTitle: "See All", tapAction: didTapSeeAll)
+            header.configure(with: "Nearby you", isButtonHidden: false, buttonTitle: "See All", tapAction: didTapSeeAllNearby)
             return header
         }
         return header
     }
     
-    @objc func didTapSeeAll() {
-        //Нажатие кнопки seeAll
+    @objc func didTapSeeAllUpcomming() {
+        getUpcommingEvents()
+        let vc = SortedEventsViewController(with: upcommingEvents)
+        let navigationController = UINavigationController(rootViewController: vc)
+        navigationController.modalPresentationStyle = .custom
+        present(navigationController, animated: true)
+    }
+    
+    @objc func didTapSeeAllNearby() {
+        
     }
 }
+    
+
 
 @available(iOS 17.0, *)
 #Preview {ExploreViewController()

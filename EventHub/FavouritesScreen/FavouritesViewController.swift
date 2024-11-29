@@ -18,11 +18,11 @@ struct Event {
    
 }
 
-let mockEvent: [Event] = [
-    Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
-    Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
- 
-]
+//let mockEvent: [Event] = [
+//    Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
+//    Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
+// 
+//]
 
 protocol FavouritesViewControllerDelegate: AnyObject {
     func didCloseFavouritesScreen()
@@ -30,16 +30,27 @@ protocol FavouritesViewControllerDelegate: AnyObject {
 
 class FavouritesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     // MARK: - Property
-    
+    var events: [EventType] = []
     weak var delegate: FavouritesViewControllerDelegate?
     
     private let emptyView = EmptyView()
     
-    private var events = mockEvent
+//    private var events = mockEvent
     //private var events: [Event] = []
     private var collectionView: UICollectionView!
     private let headerHeightWithNoData: CGFloat = 350
     private let headerHeightWithData: CGFloat = 0
+    
+//    init(with events: [EventType]) {
+//        super.init(nibName: nil, bundle: nil)
+//        self.events = events
+//        
+//    }
+//    
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
     
     // MARK: - Life Cicle
     override func viewDidLoad() {

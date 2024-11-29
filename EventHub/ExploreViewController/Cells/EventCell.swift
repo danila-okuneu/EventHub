@@ -15,6 +15,7 @@ class EventCell: UICollectionViewCell {
     private var eventDate = UILabel()
     private let friendsView = UIView()
     private let pinImageView = UIImageView(image: .mappin)
+    private var aboutGoingLabel = UILabel()
     
     private var eventAdrress: UILabel = {
         var label = UILabel()
@@ -37,7 +38,7 @@ class EventCell: UICollectionViewCell {
         button.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
         button.setImage(.bookmarkFill, for: .normal)
         button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(didTap), for: .touchUpInside)
+        button.addTarget(EventCell.self, action: #selector(didTap), for: .touchUpInside)
         return button
     }()
     
@@ -114,7 +115,6 @@ class EventCell: UICollectionViewCell {
             let friendOneImageView = UIImageView(image: .friend1)
             let friendTwoImageView = UIImageView(image: .friend2)
             let friendThreeImageView = UIImageView(image: .friend3)
-            let aboutGoingLabel = UILabel()
             aboutGoingLabel.text = "+20 Going"
             aboutGoingLabel.font = .systemFont(ofSize: 12, weight: .medium)
             aboutGoingLabel.textColor =  UIColor(red: 0.247, green: 0.22, blue: 0.867, alpha: 1)
@@ -177,7 +177,7 @@ class EventCell: UICollectionViewCell {
         } else {
             eventName.text = data.title
         }
-        
+        aboutGoingLabel.text = "\(data.favoritesCount.formatted())+ Going"
         
         eventDate.text = "30 марта"
         if  data.place?.address != "" {

@@ -10,7 +10,7 @@ final class SortedEventsViewController: UIViewController, UICollectionViewDataSo
     
     // MARK: - Property
     
-    var sortedEvents: [Event] = []
+    var sortedEvents: [EventType] = []
 
    lazy var collectionView: UICollectionView = {
            let layout = UICollectionViewFlowLayout()
@@ -19,7 +19,17 @@ final class SortedEventsViewController: UIViewController, UICollectionViewDataSo
            cv.backgroundColor = .white
            return cv
        }()
-  
+    
+    init(with events: [EventType]) {
+        super.init(nibName: nil, bundle: nil)
+        self.sortedEvents = events
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     // MARK: - Life Cicle
     override func viewDidLoad() {
@@ -27,16 +37,16 @@ final class SortedEventsViewController: UIViewController, UICollectionViewDataSo
         super.viewDidLoad()
         view.backgroundColor = .appGray
                 setupCollectionView()
-                loadMockData() // Загрузка моковых данных
+//                loadMockData() // Загрузка моковых данных
             }
 
-    private func loadMockData() {
-
-        sortedEvents = [Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
-               Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA")]
-           
-           collectionView.reloadData()
-       }
+//    private func loadMockData() {
+//
+//        sortedEvents = [Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
+//               Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA")]
+//           
+//           collectionView.reloadData()
+//       }
 
 
 private func setupCollectionView() {
