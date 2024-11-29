@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DEE50AFC2CF33E6A004E53C2 /* WWRoundedSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = DEE50AFB2CF33E6A004E53C2 /* WWRoundedSegmentedControl */; };
+		F178255E2CF91ADB00622FC0 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = F178255D2CF91ADB00622FC0 /* SkeletonView */; };
 		F1912BE82CE7A33C00F90E9C /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F1912BE72CE7A33C00F90E9C /* SnapKit */; };
 		F1A81B9D2CF22069004F3365 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F1A81B9C2CF22069004F3365 /* FirebaseAuth */; };
 		F1A81B9F2CF22069004F3365 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F1A81B9E2CF22069004F3365 /* FirebaseCore */; };
@@ -45,6 +46,7 @@
 				F1E4F47B2CEA750C00A237AD /* Kingfisher in Frameworks */,
 				F1A81B9D2CF22069004F3365 /* FirebaseAuth in Frameworks */,
 				F1A81B9F2CF22069004F3365 /* FirebaseCore in Frameworks */,
+				F178255E2CF91ADB00622FC0 /* SkeletonView in Frameworks */,
 				F1A81BA12CF22069004F3365 /* FirebaseFirestore in Frameworks */,
 				F1912BE82CE7A33C00F90E9C /* SnapKit in Frameworks */,
 				F1A81BB12CF35381004F3365 /* FirebaseDatabase in Frameworks */,
@@ -101,6 +103,7 @@
 				F1A81BB02CF35381004F3365 /* FirebaseDatabase */,
 				DEE50AFB2CF33E6A004E53C2 /* WWRoundedSegmentedControl */,
 				F1C57A872CF69F4F00E954FB /* GoogleSignIn */,
+				F178255D2CF91ADB00622FC0 /* SkeletonView */,
 			);
 			productName = EventHub;
 			productReference = F1912BC92CE7784500F90E9C /* EventHub.app */;
@@ -137,6 +140,7 @@
 				F1A81B9B2CF22069004F3365 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				DEE50AFA2CF33E6A004E53C2 /* XCRemoteSwiftPackageReference "WWRoundedSegmentedControl" */,
 				F1C57A862CF69F4F00E954FB /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				F178255C2CF91ADB00622FC0 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 			);
 			productRefGroup = F1912BCA2CE7784500F90E9C /* Products */;
 			projectDirPath = "";
@@ -383,6 +387,14 @@
 				minimumVersion = 1.1.0;
 			};
 		};
+		F178255C2CF91ADB00622FC0 /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.31.0;
+			};
+		};
 		F1912BE62CE7A33C00F90E9C /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -422,6 +434,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DEE50AFA2CF33E6A004E53C2 /* XCRemoteSwiftPackageReference "WWRoundedSegmentedControl" */;
 			productName = WWRoundedSegmentedControl;
+		};
+		F178255D2CF91ADB00622FC0 /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F178255C2CF91ADB00622FC0 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
 		};
 		F1912BE72CE7A33C00F90E9C /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

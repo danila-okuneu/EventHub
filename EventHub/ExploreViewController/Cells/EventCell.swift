@@ -6,8 +6,9 @@
 //
 
 import UIKit
-import Kingfisher
 import SnapKit
+import Kingfisher
+import SkeletonView
 
 class EventCell: UICollectionViewCell {
     static let identifier = String(describing: EventCell.self)
@@ -15,8 +16,8 @@ class EventCell: UICollectionViewCell {
     private var eventDate = UILabel()
     private let friendsView = UIView()
     private let pinImageView = UIImageView(image: .mappin)
-    private var aboutGoingLabel = UILabel()
-    
+	let aboutGoingLabel = UILabel()
+	
     private var eventAdrress: UILabel = {
         var label = UILabel()
         label.textColor = UIColor(red: 0.167, green: 0.157, blue: 0.287, alpha: 1)
@@ -33,15 +34,7 @@ class EventCell: UICollectionViewCell {
         return view
     }()
     
-    let bookmarkButton: UIButton = {
-        let button = UIButton()
-        button.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
-        button.setImage(.bookmarkFill, for: .normal)
-        button.layer.cornerRadius = 10
-        button.addTarget(EventCell.self, action: #selector(didTap), for: .touchUpInside)
-        return button
-    }()
-    
+	let bookmarkButton = BookmarkButton(isBookmarked: false)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,7 +50,7 @@ class EventCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 15
         contentView.layer.masksToBounds = true
         contentView.backgroundColor = .white
-        
+		bookmarkButton.addTarget(self, action: #selector(didTap), for: .touchUpInside)
         
         contentView.addSomeSubviews(imageView,bookmarkButton, eventName, pinImageView, eventAdrress)
         setupImageView()
@@ -71,13 +64,25 @@ class EventCell: UICollectionViewCell {
             make.top.equalTo(imageView.snp.bottom).offset(14)
         }
     }
-        
+    
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		
+		imageView.image = nil
+		imageView.kf.cancelDownloadTask()
+		imageView.stopSkeletonAnimation()
+		imageView.showGradientSkeleton()
+	}
+	
         private func setupImageView() {
-            imageView.image = UIImage(named: "hands")
+			imageView.backgroundColor = .appGray
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
             imageView.layer.cornerRadius = 15
             imageView.disableChildrenTAMIC()
+			imageView.isSkeletonable = true
+			
+			imageView.startSkeletonAnimation()
             
             let bluredViewForDate = UIView()
             bluredViewForDate.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
@@ -88,7 +93,8 @@ class EventCell: UICollectionViewCell {
             
             eventDate.textColor = UIColor(red: 0.941, green: 0.39, blue: 0.354, alpha: 1)
             if #available(iOS 16.0, *) {
-                eventDate.font = .systemFont(ofSize: 12, weight: .ultraLight, width: .compressed)
+				eventDate.font = .systemFont(ofSize: 18, weight: .thin, width: .condensed)
+				
             } else {
                 eventDate.font = .systemFont(ofSize: 12, weight: .ultraLight)
             }
@@ -115,6 +121,7 @@ class EventCell: UICollectionViewCell {
             let friendOneImageView = UIImageView(image: .friend1)
             let friendTwoImageView = UIImageView(image: .friend2)
             let friendThreeImageView = UIImageView(image: .friend3)
+            
             aboutGoingLabel.text = "+20 Going"
             aboutGoingLabel.font = .systemFont(ofSize: 12, weight: .medium)
             aboutGoingLabel.textColor =  UIColor(red: 0.247, green: 0.22, blue: 0.867, alpha: 1)
@@ -139,6 +146,7 @@ class EventCell: UICollectionViewCell {
         }
     
     @objc func didTap() {
+		bookmarkButton.toggleState()
         print("bookmark tapped")
     }
     
@@ -170,29 +178,56 @@ class EventCell: UICollectionViewCell {
         
     }
     
-    func configureCell(with data: EventType) {
-        
-        if  data.shortTitle != "" {
-            eventName.text = data.shortTitle
-        } else {
-            eventName.text = data.title
-        }
-        aboutGoingLabel.text = "\(data.favoritesCount.formatted())+ Going"
-        
-        eventDate.text = "30 марта"
-        if  data.place?.address != "" {
-            eventAdrress.text = data.place?.address
-        } else {
-            eventAdrress.text = data.place?.title
-        }
-        
-        if let image = data.images.first?.image {
-            imageView.kf.setImage(with: URL(string: image))
-            } else {
-                imageView.image = UIImage(named: "hands")
-            }
-        }
+	func configureCell(with data: EventType) {
+		
+		if  data.shortTitle != "" {
+			eventName.text = data.shortTitle
+		} else {
+			eventName.text = data.title
+		}
+		
+		
+		let attributedString = NSMutableAttributedString(string: data.dates[0].end.formaTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
+		let string = attributedString.string
+		if let range = string.range(of: "\n") {
+			let startIndex = string.distance(from: string.startIndex, to: range.upperBound)
+			attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 12, weight: .semibold), range: NSRange(location: startIndex, length: string.count - startIndex))
+		}
+		
+		aboutGoingLabel.text = "+\(data.favoritesCount) Going"
+		
+		
+		
+		
+		eventDate.attributedText = attributedString
+		if data.place?.address != "" {
+			eventAdrress.text = data.place?.address
+		} else {
+			eventAdrress.text = "Adress not provided"
+		}
+
+		Task {
+//			try? await Task.sleep(nanoseconds: 4 * 1_000_000_000)
+			
+			if let imageUrlString = data.images.first?.image, let imageUrl = URL(string: imageUrlString) {
+				
+				
+				
+				imageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
+					
+					self?.imageView.hideSkeleton(transition: .crossDissolve(0.2))
+				}
+			} else {
+				
+				imageView.hideSkeleton()
+				imageView.image = UIImage(named: "hands")
+			}
+		}
+		
+		
+	}
 }
 @available(iOS 17.0, *)
 #Preview {ExploreViewController()
 }
+

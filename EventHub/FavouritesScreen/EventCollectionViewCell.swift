@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Kingfisher
 
 class EventCollectionViewCell: UICollectionViewCell {
     
@@ -112,19 +111,11 @@ class EventCollectionViewCell: UICollectionViewCell {
         bookmarkButton.tintColor = isBookmarked ? .red : .blue
     }
     
-    func configure(with event: EventType, isbookmarkHidden: Bool, isLocationHidden: Bool) {
-        dateLabel.text = event.dates.first?.start.formatted()
+	func configure(with event: EventType, isbookmarkHidden: Bool, isLocationHidden: Bool) {		
+		dateLabel.text = event.dates.first?.end.formaTo(.eventPreview)
         titleLabel.text = event.title
-        if  event.place?.address != "" {
-            locationLabel.text = event.place?.address
-        } else {
-            locationLabel.text = event.place?.title
-        }
-        if let image = event.images.first?.image {
-            eventImageView.kf.setImage(with: URL(string: image))
-        } else {
-            eventImageView.image = UIImage(named: "hands")
-        }
+		locationLabel.text = "\(event.place?.id)"
+		eventImageView.image = ._1
         bookmarkButton.isHidden = isbookmarkHidden
         locationLabel.isHidden = isLocationHidden
         locationImageView.isHidden = isLocationHidden
