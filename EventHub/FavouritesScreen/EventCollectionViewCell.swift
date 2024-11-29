@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class EventCollectionViewCell: UICollectionViewCell {
     
@@ -102,6 +103,7 @@ class EventCollectionViewCell: UICollectionViewCell {
             locationImageView.heightAnchor.constraint(equalToConstant: 14),
             locationStackView.bottomAnchor.constraint(equalTo: eventImageView.bottomAnchor, constant: -5),
             locationStackView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: 5),
+            locationStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
  
         ])
     }
@@ -114,8 +116,27 @@ class EventCollectionViewCell: UICollectionViewCell {
 	func configure(with event: EventType, isbookmarkHidden: Bool, isLocationHidden: Bool) {		
 		dateLabel.text = event.dates.first?.end.formaTo(.eventPreview)
         titleLabel.text = event.title
-		locationLabel.text = "\(event.place?.id)"
-		eventImageView.image = ._1
+        
+        if let eventPlace = event.place {
+            if eventPlace.address != "" {
+                locationLabel.text = eventPlace.address
+            } else if eventPlace.title != "" {
+                locationLabel.text = eventPlace.title
+            }
+        } else {
+            locationLabel.text = "Adress not provided"
+        }
+
+        if let imageUrlString = event.images.first?.image, let imageUrl = URL(string: imageUrlString) {
+            eventImageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
+                self?.eventImageView.hideSkeleton(transition: .crossDissolve(0.2))
+            }
+        } else {
+            
+            eventImageView.hideSkeleton()
+            eventImageView.image = UIImage(named: "hands")
+        }
+//		eventImageView.image = ._1
         bookmarkButton.isHidden = isbookmarkHidden
         locationLabel.isHidden = isLocationHidden
         locationImageView.isHidden = isLocationHidden

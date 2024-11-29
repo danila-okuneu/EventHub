@@ -209,11 +209,9 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     @objc func didTapSeeAllUpcomming() {
-        getUpcommingEvents()
         let vc = SortedEventsViewController(with: upcommingEvents)
-        let navigationController = UINavigationController(rootViewController: vc)
-        navigationController.modalPresentationStyle = .custom
-        present(navigationController, animated: true)
+        self.navigationController?.modalPresentationStyle = .fullScreen
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func didTapSeeAllNearby() {
