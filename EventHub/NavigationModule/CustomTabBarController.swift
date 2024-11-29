@@ -23,7 +23,7 @@ class CustomTabBarController: UITabBarController, CustomTabBarDelegate {
     }
     
     private func setupTabItems() {
-        let exploreVC = ExploreViewController()
+        let exploreVC = UINavigationController(rootViewController: ExploreViewController())
         exploreVC.tabBarItem.title = "Explore"
         exploreVC.tabBarItem.image = UIImage(named: "explore")
         

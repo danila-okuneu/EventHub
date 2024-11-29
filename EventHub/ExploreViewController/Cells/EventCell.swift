@@ -200,15 +200,18 @@ class EventCell: UICollectionViewCell {
 		
 		
 		eventDate.attributedText = attributedString
-		if data.place?.address != "" {
-			eventAdrress.text = data.place?.address
-		} else {
-			eventAdrress.text = "Adress not provided"
-		}
-
-		Task {
-//			try? await Task.sleep(nanoseconds: 4 * 1_000_000_000)
-			
+        
+        if let eventPlace = data.place {
+            if eventPlace.address != "" {
+                eventAdrress.text = eventPlace.address
+            } else if eventPlace.title != "" {
+                eventAdrress.text = eventPlace.title
+            }
+        } else {
+            eventAdrress.text = "Adress not provided"
+        }
+        
+        
 			if let imageUrlString = data.images.first?.image, let imageUrl = URL(string: imageUrlString) {
 				
 				
@@ -222,9 +225,6 @@ class EventCell: UICollectionViewCell {
 				imageView.hideSkeleton()
 				imageView.image = UIImage(named: "hands")
 			}
-		}
-		
-		
 	}
 }
 @available(iOS 17.0, *)

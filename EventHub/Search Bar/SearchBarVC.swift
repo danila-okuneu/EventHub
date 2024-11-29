@@ -16,9 +16,9 @@ class SearchBarVC: UIViewController {
     
     // MARK: - Properties
     
-	var sortedEvents: [EventType] = mockEvent
-	var allEvents: [EventType] = []
-	var events: [EventType] = mockEvent
+    var sortedEvents: [EventType] = [EventType(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
+    var allEvents: [Event] = []
+    var events: [EventType] = [EventType(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
 
     private var collectionView: UICollectionView!
     

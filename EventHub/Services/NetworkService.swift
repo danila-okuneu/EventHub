@@ -26,7 +26,7 @@ final class NetworkService {
     
     
     
-    func getEventsList(type: RequestType, eventsCount: Int, categories: String = "") async throws -> [EventType] {
+    func getEventsList(type: RequestType, eventsCount: Int = 20, categories: String = "") async throws -> [EventType] {
 		
 		guard let url = URL(string: baseURLString + type.rawValue + "&number=\(eventsCount)" + "&categories=\(categories)") else { throw NetworkError.invalidURL }
 		let (data, response) = try await session.data(from: url)
