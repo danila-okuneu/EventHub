@@ -66,7 +66,7 @@ private func setupCollectionView() {
     NSLayoutConstraint.activate([
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-        collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+        collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
         collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
     ])
 
@@ -105,7 +105,6 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         
         backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
         backButton.semanticContentAttribute = .forceRightToLeft
-        backButton.sizeToFit()
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     
     let searchButton = UIButton(type: .system)
