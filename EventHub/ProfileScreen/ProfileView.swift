@@ -119,7 +119,7 @@ class ProfileView: UIView {
         aboutTextView.backgroundColor = .white
 		aboutTextView.typingAttributes = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .light)]
 		aboutTextView.allowsEditingTextAttributes = false
-		aboutTextView.isUserInteractionEnabled = false
+		aboutTextView.isScrollEnabled = false
 		
 		editNameButton.layer.opacity = 0.0
 		editAboutButton.setBackgroundImage(.editIcon, for: .normal)
@@ -170,7 +170,6 @@ class ProfileView: UIView {
             aboutTextView.topAnchor.constraint(equalTo: aboutTitleLabel.bottomAnchor, constant: 19),
             aboutTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             aboutTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -35),
-            aboutTextView.heightAnchor.constraint(equalToConstant: 300),
             
             signOutButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 			signOutButton.topAnchor.constraint(equalTo: aboutTextView.bottomAnchor, constant: 50),
