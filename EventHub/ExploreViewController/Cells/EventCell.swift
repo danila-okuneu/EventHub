@@ -70,7 +70,7 @@ class EventCell: UICollectionViewCell {
 		
 		imageView.image = nil
 		imageView.kf.cancelDownloadTask()
-		imageView.stopSkeletonAnimation()
+		imageView.hideSkeleton()
 		imageView.showGradientSkeleton()
 	}
 	
@@ -206,23 +206,21 @@ class EventCell: UICollectionViewCell {
 			eventAdrress.text = "Adress not provided"
 		}
 
-		Task {
-//			try? await Task.sleep(nanoseconds: 4 * 1_000_000_000)
+	
+		if let imageUrlString = data.images.first?.image, let imageUrl = URL(string: imageUrlString) {
 			
-			if let imageUrlString = data.images.first?.image, let imageUrl = URL(string: imageUrlString) {
+			
+			
+			imageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
 				
-				
-				
-				imageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
-					
-					self?.imageView.hideSkeleton(transition: .crossDissolve(0.2))
-				}
-			} else {
-				
-				imageView.hideSkeleton()
-				imageView.image = UIImage(named: "hands")
+				self?.imageView.hideSkeleton(transition: .crossDissolve(0.2))
 			}
+		} else {
+			
+			imageView.hideSkeleton()
+			imageView.image = UIImage(named: "hands")
 		}
+		
 		
 		
 	}
