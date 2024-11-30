@@ -22,5 +22,8 @@ extension Int {
 		case explorePreview = "d \n MMM"
 		case exploreMonth = "MMM"
 		case eventPreview = "E, MMM d • h:mm a"
+		case detailsHeaderDate = "d MMMM, yyyy"
+		case detailsDayTime = "EE h:mm a"
+		case detailsTime = "h:mm a"
 	}
 }
