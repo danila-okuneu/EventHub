@@ -12,12 +12,11 @@ import SkeletonView
 
 final class DetailsViewController: UIViewController {
 	
-	var event: EventType?
-	
 	// MARK: - UI Components
 	private let scrollView: UIScrollView = {
 		let scrollView = UIScrollView()
 		scrollView.showsVerticalScrollIndicator = false
+		scrollView.bounces = false
 		scrollView.contentInsetAdjustmentBehavior = .never
 		scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
 		return scrollView
@@ -40,7 +39,6 @@ final class DetailsViewController: UIViewController {
 		imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
 		imageView.layer.cornerRadius = 25
 		imageView.layer.masksToBounds = true
-		imageView.isSkeletonable = true
 		return imageView
 	}()
 
@@ -84,12 +82,24 @@ final class DetailsViewController: UIViewController {
 		label.text = "body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body "
 		return label
 	}()
+	
+	
+
+	// MARK: - Initializers
+	init(event: EventType) {
+		super.init(nibName: nil, bundle: nil)
+		configure(with: event)
+	}
+	
+	@available(*, unavailable)
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+	
 	// MARK: - Life cycle
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		headerImageView.showGradientSkeleton()
-		headerImageView.startSkeletonAnimation()
 		
 		setupViews()
 	}
@@ -156,20 +166,19 @@ final class DetailsViewController: UIViewController {
 	}
 
 	// MARK: - Methods
-	func configure(for event: EventType) {
+	func configure(with event: EventType) {
 		
-		titleLabel.text = event.title
+		titleLabel.text = event.title.capitalized
 		
-		if !event.images.isEmpty, let url = URL(string: event.images[0].image) {
-			headerImageView.kf.setImage(with: url) { result in
-				self.headerImageView.hideSkeleton()
-			}
+		if let urlString = event.images.first?.image, let url = URL(string: urlString) {
+			headerImageView.kf.setImage(with: url)
 		}
+		
 	
 		if !event.dates.isEmpty {
 			let date = event.dates[0].end
-			dateComponentView.updateTitle(with: date.formaTo(.detailsHeaderDate))
-			dateComponentView.updateSubtitle(with: date.formaTo(.detailsDayTime))
+			dateComponentView.updateTitle(with: date.formatTo(.detailsHeaderDate))
+			dateComponentView.updateSubtitle(with: date.formatTo(.detailsDayTime))
 		} else {
 			dateComponentView.updateTitle(with: "Date not provided")
 			dateComponentView.updateSubtitle(with: "")
@@ -186,7 +195,42 @@ final class DetailsViewController: UIViewController {
 			placeComponentView.updateTitle(with: "Adress not provided")
 		}
 		
-		eventBodyLabel.text = event.bodyText
+		if let data = event.bodyText.data(using: .utf8) {
+			do {
+				let attributedString = try NSMutableAttributedString(
+					data: data,
+					options: [.documentType: NSAttributedString.DocumentType.html,
+							  .characterEncoding: String.Encoding.utf8.rawValue],
+					documentAttributes: nil)
+				
+				let standardFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+				
+				// Scale Ratio
+				let scalingFactor: CGFloat = 1.3
+				
+				attributedString.enumerateAttribute(.font, in: NSRange(location: 0, length: attributedString.length), options: []) { (value, range, stop) in
+					if let font = value as? UIFont {
+						let newFontDescriptor = standardFont.fontDescriptor.withSymbolicTraits(font.fontDescriptor.symbolicTraits) ?? standardFont.fontDescriptor
+						let scaledFontSize = font.pointSize * scalingFactor
+						let newFont = UIFont(descriptor: newFontDescriptor, size: scaledFontSize)
+						attributedString.addAttribute(.font, value: newFont, range: range)
+					}
+				}
+				
+				let textColor = UIColor.detailsText
+				attributedString.addAttribute(.foregroundColor, value: textColor, range: NSRange(location: 0, length: attributedString.length))
+				
+				let paragraphStyle = NSMutableParagraphStyle()
+				paragraphStyle.lineSpacing = 4
+				attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attributedString.length))
+				
+				eventBodyLabel.attributedText = attributedString
+			} catch {
+				print("Ошибка преобразования HTML в атрибутированную строку: \(error)")
+			}
+		}
+		
+		
 	}
 }
 
@@ -210,12 +254,5 @@ extension DetailsViewController {
 		
 	}
 	
-	
-}
-
-@available(iOS 17.0, *)
-#Preview {
-	
-	return DetailsViewController()
 	
 }

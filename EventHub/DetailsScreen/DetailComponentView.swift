@@ -87,8 +87,3 @@ final class DetailComponentView: UIView {
 		subtitleLabel.text = subtitle
 	}
 }
-
-@available(iOS 17.0, *)
-#Preview {
-	return DetailsViewController()
-}

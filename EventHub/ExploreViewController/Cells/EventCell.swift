@@ -187,7 +187,7 @@ class EventCell: UICollectionViewCell {
 		}
 		
 		
-		let attributedString = NSMutableAttributedString(string: data.dates[0].end.formaTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
+		let attributedString = NSMutableAttributedString(string: data.dates[0].end.formatTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
 		let string = attributedString.string
 		if let range = string.range(of: "\n") {
 			let startIndex = string.distance(from: string.startIndex, to: range.upperBound)
