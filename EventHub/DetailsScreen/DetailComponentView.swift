@@ -28,6 +28,9 @@ final class DetailComponentView: UIView {
 	private let titleLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = .detailsText
+		label.numberOfLines = 1
+		label.minimumScaleFactor = 0.8
+		label.adjustsFontSizeToFitWidth = true
 		label.font = .systemFont(ofSize: 16, weight: .semibold)
 		return label
 	}()
