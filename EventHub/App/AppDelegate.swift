@@ -17,9 +17,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		FirebaseApp.configure()
-		// Override point for customization after application launch.
-		return true
-	}
+        
+        let navigationBarAppearance = UINavigationBar.appearance()
+               navigationBarAppearance.titleTextAttributes = [
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24, weight: .medium),
+                   NSAttributedString.Key.foregroundColor: UIColor.black
+               ]
+               
+               return true
+           }
+
 
 	// MARK: UISceneSession Lifecycle
 
@@ -42,4 +49,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 }
-

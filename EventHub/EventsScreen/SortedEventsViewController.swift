@@ -99,7 +99,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
         
         let backButton = UIButton(type: .system)
         backButton.setTitle(" Events", for: .normal)
-        backButton.titleLabel?.font = .systemFont(ofSize: 20, weight: .medium)
+        backButton.titleLabel?.font = .systemFont(ofSize: 24, weight: .medium)
         backButton.setImage(UIImage(named: "arrow-left" ), for: .normal)
         backButton.tintColor = .black
         
