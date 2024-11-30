@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CustomTabBarController: UITabBarController, CustomTabBarDelegate {
+class CustomTabBarController: UITabBarController, CustomTabBarDelegate, UINavigationControllerDelegate {
     
     private let customTabBar = CustomTabBar()
     
@@ -27,31 +27,40 @@ class CustomTabBarController: UITabBarController, CustomTabBarDelegate {
         exploreVC.tabBarItem.title = "Explore"
         exploreVC.tabBarItem.image = UIImage(named: "explore")
         
-        let eventsVC = EventsViewController()
+        let eventsVC = UINavigationController(rootViewController: EventsViewController())
         eventsVC.tabBarItem.title = "Events"
         eventsVC.tabBarItem.image = UIImage(named: "calendar")
         
-        let emptyVC = UIViewController()
+        let emptyVC = UINavigationController(rootViewController:UIViewController())
         emptyVC.tabBarItem.title = " "
         emptyVC.tabBarItem.image = nil
         
-        let mapVC = MapViewController()
+        let mapVC = UINavigationController(rootViewController:MapViewController())
         mapVC.tabBarItem.title = "Map"
         mapVC.tabBarItem.image = UIImage(named: "Location")
         
-        let profileVC = ProfileViewController()
+        let profileVC = UINavigationController(rootViewController:ProfileViewController())
         profileVC.tabBarItem.title = "Profile"
         profileVC.tabBarItem.image = UIImage(named: "Profile")
         
-        setViewControllers([exploreVC, eventsVC, emptyVC, mapVC, profileVC], animated: false)
+        setViewControllers([ exploreVC,
+                            eventsVC,
+                            emptyVC,
+                            mapVC,
+                            profileVC],
+                            animated: false)
     }
     
     func didTapFavoriteButton() {
-        let favouritesVC = FavouritesViewController()
+        
+
+
+        let favouritesVC = UINavigationController(rootViewController:FavouritesViewController())
         favouritesVC.tabBarItem.title = ""
         favouritesVC.tabBarItem.image = UIImage(named: "favorites")
         favouritesVC.delegate = self
         
+
         var controllers = viewControllers ?? []
         controllers[2] = favouritesVC
         setViewControllers(controllers, animated: true)

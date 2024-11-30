@@ -43,6 +43,7 @@ class SearchBarVC: UIViewController {
         setupUI()
         setupLayout()
         setupGestureRecognizer()
+        setupNavBar()
     }
     
     // MARK: - Setup
@@ -68,7 +69,7 @@ class SearchBarVC: UIViewController {
         view.addSubview(collectionView)
          
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 110),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             searchBar.heightAnchor.constraint(equalToConstant: 40),
@@ -144,8 +145,24 @@ extension SearchBarVC: SearchViewControllerDelegate {
         endTyping()
         guard let text = searchBar.textField.text else { return }
         filterEvents(for: text)
-       
+        
     }
-
+    
+    
+    // MARK: - setupNavBar
+    private func setupNavBar() {
+        navigationItem.title = "Search"
+        let backButton = UIButton(type: .system)
+        backButton.setImage(UIImage(named: "arrow-left" ), for: .normal)
+        backButton.tintColor = .black
+        
+        backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        backButton.semanticContentAttribute = .forceRightToLeft
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+    }
+    
+    
+    @objc private func backButtonAction() {
+        navigationController?.popViewController(animated: true)
+    }
 }
-

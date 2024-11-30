@@ -55,4 +55,38 @@ extension UIButton {
 
         return button
     }
+    
+//    static func createNavButton(
+//        icon: String = "arrow-left",
+//        title: String?,
+//        uiFont: UIFont = UIFont.systemFont(ofSize: 24, weight: .medium),
+//        buttonHeight: CGFloat = 30,
+//        tintColol: UIColor = .clear,
+//        textColor: UIColor = .black,
+//        imagePadding: CGFloat = 5
+//
+//    ) -> UIButton {
+//        let button = UIButton(type: .system)
+//
+//        var config = UIButton.Configuration.filled()
+//
+//
+//        config.title = title
+//        config.baseForegroundColor = textColor
+//        config.imagePlacement = .leading
+//        config.imagePadding = imagePadding
+//        
+//        if !icon.isEmpty,  let image = UIImage(named: icon) {
+//            config.image = image
+//        }
+//
+//        button.configuration = config
+//        button.layer.masksToBounds = true
+//        button.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+//        button.tintColor = tintColol
+//        
+//
+//        return button
+//    }
 }
+

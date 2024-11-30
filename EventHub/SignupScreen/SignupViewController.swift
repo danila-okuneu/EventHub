@@ -250,55 +250,53 @@ final class SignupViewController: UIViewController {
 
 // MARK: - TextField Delegate
 extension SignupViewController: UITextFieldDelegate {
-	
-	private func setupTextFields() {
-		fullNameTextField.textField.delegate = self
-		emailTextField.textField.delegate = self
-		passwordTextField.textField.delegate = self
-		confirmPasswordTextField.textField.delegate = self
-		
-		fullNameTextField.textField.tag = 1
-		emailTextField.textField.tag = 2
-		passwordTextField.textField.tag = 3
-		confirmPasswordTextField.textField.tag = 4
-	}
-	
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.endEditing(true)
-		return true
-	}
-	
-	func textFieldDidEndEditing(_ textField: UITextField) {
-		switch textField.tag {
-		case 1 where textField.text == "": fullNameTextField.showError()
-		case 2 where textField.text?.count(where: { $0 == "@" } ) != 1:
-			emailTextField.showError()
-		case 3 where textField.text!.count < 8 || textField.text!.contains(" "):
-			passwordTextField.showError()
-		case 4 where textField.text != passwordTextField.textField.text:
-			confirmPasswordTextField.showError()
-		default:
-			return
-		}
-	}
-	
-	func textFieldDidBeginEditing(_ textField: UITextField) {
-		switch textField.tag {
-		case 1:
-			fullNameTextField.resetFieldColor()
-		case 2:
-			emailTextField.resetFieldColor()
-		case 3:
-			passwordTextField.resetFieldColor()
-		default:
-			confirmPasswordTextField.resetFieldColor()
-			
-		}
-	}
-	
-	
+    
+    private func setupTextFields() {
+        fullNameTextField.textField.delegate = self
+        emailTextField.textField.delegate = self
+        passwordTextField.textField.delegate = self
+        confirmPasswordTextField.textField.delegate = self
+        
+        fullNameTextField.textField.tag = 1
+        emailTextField.textField.tag = 2
+        passwordTextField.textField.tag = 3
+        confirmPasswordTextField.textField.tag = 4
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.endEditing(true)
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        switch textField.tag {
+        case 1 where textField.text == "": fullNameTextField.showError()
+        case 2 where textField.text?.count(where: { $0 == "@" } ) != 1:
+            emailTextField.showError()
+        case 3 where textField.text!.count < 8 || textField.text!.contains(" "):
+            passwordTextField.showError()
+        case 4 where textField.text != passwordTextField.textField.text:
+            confirmPasswordTextField.showError()
+        default:
+            return
+        }
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        switch textField.tag {
+        case 1:
+            fullNameTextField.resetFieldColor()
+        case 2:
+            emailTextField.resetFieldColor()
+        case 3:
+            passwordTextField.resetFieldColor()
+        default:
+            confirmPasswordTextField.resetFieldColor()
+            
+        }
+    }
+    
 }
-
 extension SignupViewController {
 	
 	private func register() {

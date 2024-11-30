@@ -56,7 +56,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .appGray
-
+        setupNavBar()
         
         if events.isEmpty {
             setupEmptyView()
@@ -64,6 +64,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         else {
             setupCollectionView()
         }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -126,5 +127,24 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         return CGSize(width: collectionView.bounds.width, height: 140)
     }
     
+    // MARK: - setupNavBar
+        private func setupNavBar() {
+            
+            navigationItem.title = "Favorites"
+        let searchButton = UIButton(type: .system)
+            searchButton.setImage(UIImage(named: "searchBlue"), for: .normal)
+            searchButton.tintColor = .black
+            searchButton.addTarget(self, action: #selector(searchButtonAction), for: .touchUpInside)
+
+            searchButton.semanticContentAttribute = .forceRightToLeft
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchButton)
+    }
+        
+        
+        @objc private func searchButtonAction() {
+            
+            let searchVC = SearchBarVC()
+            navigationController?.pushViewController(searchVC, animated: true)
+        }
 }
 
