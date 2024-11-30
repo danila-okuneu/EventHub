@@ -25,7 +25,7 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
            let sc = CustomSegmentedControl(items: ["UPCOMING", "PAST EVENTS"])
            sc.selectedSegmentIndex = 0
            sc.selectedSegmentTintColor = .white
-        sc.setTitleTextAttributes([.foregroundColor: UIColor.appPurple, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .selected)
+           sc.setTitleTextAttributes([.foregroundColor: UIColor.appPurple, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .selected)
             sc.setTitleTextAttributes([.foregroundColor: UIColor.gray, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .normal)
 
 
@@ -54,12 +54,14 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
 		super.viewDidLoad()
 		
 		view.backgroundColor = .appGray
-		setupCollectionView()
+        setupSegmentedControl()
+        setupCollectionView()
 		setupEmptyView()
-		setupSegmentedControl()
 		setupExploreButton()
 		loadMockData() // Загрузка моковых данных
 		segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
+        
+        navigationItem.title = "Events"
 	}
 
     
@@ -68,7 +70,7 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
         NSLayoutConstraint.activate([
             segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             segmentedControl.heightAnchor.constraint(equalToConstant: 45)
 ])
         segmentedControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
@@ -96,6 +98,8 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
             }
 
     @objc private func exploreButtonTapped() {
+        let sortedVC = SortedEventsViewController(with: upcomingEvents)
+        navigationController?.pushViewController(sortedVC, animated: true)
 
             }
     
@@ -129,7 +133,7 @@ private func setupCollectionView() {
     NSLayoutConstraint.activate([
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-        collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 170),
+        collectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 10),
         collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
     ])
     emptyView.isHidden = true

@@ -37,6 +37,7 @@ final class SortedEventsViewController: UIViewController, UICollectionViewDataSo
         super.viewDidLoad()
         view.backgroundColor = .appGray
                 setupCollectionView()
+        setupNavBar()
 //                loadMockData() // Загрузка моковых данных
             }
 
@@ -93,16 +94,37 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
     return CGSize(width: collectionView.bounds.width, height: 140)
 }
 
+// MARK: - setupNavBar
+    private func setupNavBar() {
+        
+        let backButton = UIButton(type: .system)
+        backButton.setTitle(" Events", for: .normal)
+        backButton.titleLabel?.font = .systemFont(ofSize: 20, weight: .medium)
+        backButton.setImage(UIImage(named: "arrow-left" ), for: .normal)
+        backButton.tintColor = .black
+        
+        backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        backButton.semanticContentAttribute = .forceRightToLeft
+        backButton.sizeToFit()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+    
+    let searchButton = UIButton(type: .system)
+        searchButton.setImage(UIImage(named: "searchBlue"), for: .normal)
+        searchButton.tintColor = .black
+        searchButton.addTarget(self, action: #selector(searchButtonAction), for: .touchUpInside)
+
+        searchButton.semanticContentAttribute = .forceRightToLeft
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchButton)
+}
+    
+    @objc private func backButtonAction() {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func searchButtonAction() {
+        
+        let searchVC = SearchBarVC()
+        navigationController?.pushViewController(searchVC, animated: true)
+    }
 }
 
-class SegmentedControl: UISegmentedControl {
-    override func layoutSubviews() {
-      super.layoutSubviews()
-      layer.cornerRadius = self.bounds.size.height / 2.0
-      layer.borderColor = UIColor(red: 170.0/255.0, green: 170.0/255.0, blue: 170.0/255.0, alpha: 1.0).cgColor
-      layer.borderWidth = 1.0
-      layer.masksToBounds = true
-      clipsToBounds = true
-
-   }
-}
