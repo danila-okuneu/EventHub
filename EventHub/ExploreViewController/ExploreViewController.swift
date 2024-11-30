@@ -142,6 +142,15 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         }
     }
     
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		
+		let event = upcommingEvents[indexPath.row]
+		let detailsVC = DetailsViewController(event: event)
+		detailsVC.modalPresentationStyle = .currentContext
+		self.navigationController?.pushViewController(detailsVC, animated: true)
+
+	}
+	
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
         switch section {
@@ -189,5 +198,6 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
 }
 
 @available(iOS 17.0, *)
-#Preview {ExploreViewController()
+#Preview {
+	UINavigationController(rootViewController: ExploreViewController())
 }

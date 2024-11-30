@@ -9,7 +9,7 @@ import Foundation
 
 extension Int {
 	
-	func formaTo(_ format: DateFormat) -> String {
+	func formatTo(_ format: DateFormat) -> String {
 		let date = Date(timeIntervalSince1970: TimeInterval(self))
 		let formatter = DateFormatter()
 		formatter.dateFormat = format.rawValue
@@ -23,7 +23,7 @@ extension Int {
 		case exploreMonth = "MMM"
 		case eventPreview = "E, MMM d • h:mm a"
 		case detailsHeaderDate = "d MMMM, yyyy"
-		case detailsDayTime = "EE h:mm a"
+		case detailsDayTime = "EEEE h:mm a"
 		case detailsTime = "h:mm a"
 	}
 }

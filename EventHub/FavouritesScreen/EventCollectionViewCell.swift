@@ -112,7 +112,7 @@ class EventCollectionViewCell: UICollectionViewCell {
     }
     
 	func configure(with event: EventType, isbookmarkHidden: Bool, isLocationHidden: Bool) {		
-		dateLabel.text = event.dates.first?.end.formaTo(.eventPreview)
+		dateLabel.text = event.dates.first?.end.formatTo(.eventPreview)
         titleLabel.text = event.title
 		locationLabel.text = "\(event.place?.id)"
 		eventImageView.image = ._1
