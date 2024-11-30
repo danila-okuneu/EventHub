@@ -141,15 +141,6 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return upcommingEvents.count
         }
     }
-    
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		
-		let event = upcommingEvents[indexPath.row]
-		let detailsVC = DetailsViewController(event: event)
-		detailsVC.modalPresentationStyle = .currentContext
-		self.navigationController?.pushViewController(detailsVC, animated: true)
-
-	}
 	
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
