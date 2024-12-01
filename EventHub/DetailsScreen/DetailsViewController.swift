@@ -334,8 +334,8 @@ extension DetailsViewController: UIScrollViewDelegate {
 		
 		guard let navBar = self.navigationController?.navigationBar else { return }
 		let headerImageViewBottomY = headerImageView.frame.maxY
-		let contentOffsetY = scrollView.contentOffset.y
-		
+		let contentOffsetY = scrollView.contentOffset.y + navBar.frame.midY
+
 		
 		let shouldHideBookmark = contentOffsetY > headerImageViewBottomY
 		
