@@ -10,7 +10,16 @@ import SnapKit
 import Kingfisher
 import SkeletonView
 
+protocol EventCellDelegate: AnyObject {
+    func didTapBookmark(for event: EventType)
+}
+
 class EventCell: UICollectionViewCell {
+    weak var delegate: EventCellDelegate?
+    var event: EventType?
+    
+    private let favouriteEventStore = FavouriteEventStore()
+    
     static let identifier = String(describing: EventCell.self)
     private let imageView = UIImageView()
     private var eventDate = UILabel()
@@ -146,7 +155,9 @@ class EventCell: UICollectionViewCell {
         }
     
     @objc func didTap() {
-		bookmarkButton.toggleState()
+        guard let event = event else { return }
+        delegate?.didTapBookmark(for: event)
+        bookmarkButton.toggleState()
         print("bookmark tapped")
     }
     
@@ -155,7 +166,7 @@ class EventCell: UICollectionViewCell {
         imageView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(9)
             make.height.equalTo(contentView.snp.height).dividedBy(2)
-//            make.width.equalTo(contentView.snp.width).inset(9)
+            //            make.width.equalTo(contentView.snp.width).inset(9)
         }
         
         bookmarkButton.snp.makeConstraints { make in
@@ -178,54 +189,60 @@ class EventCell: UICollectionViewCell {
         
     }
     
-	func configureCell(with data: EventType) {
-		
-		if  data.shortTitle != "" {
-			eventName.text = data.shortTitle
-		} else {
-			eventName.text = data.title
-		}
-		
-		
-		let attributedString = NSMutableAttributedString(string: data.dates[0].end.formatTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
-		let string = attributedString.string
-		if let range = string.range(of: "\n") {
-			let startIndex = string.distance(from: string.startIndex, to: range.upperBound)
-			attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 12, weight: .semibold), range: NSRange(location: startIndex, length: string.count - startIndex))
-		}
-		
-		aboutGoingLabel.text = "+\(data.favoritesCount) Going"
-		
-		
-		
-		
-		eventDate.attributedText = attributedString
-		if data.place?.address != "" {
-			eventAdrress.text = data.place?.address
-		} else {
-			eventAdrress.text = "Adress not provided"
-		}
-
-	
-		if let imageUrlString = data.images.first?.image, let imageUrl = URL(string: imageUrlString) {
-			
-			
-			
-			imageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
-				
-				self?.imageView.hideSkeleton(transition: .crossDissolve(0.2))
-			}
-		} else {
-			
-			imageView.hideSkeleton()
-			imageView.image = UIImage(named: "hands")
-		}
-		
-		
-		
+    func configureCell(with data: EventType) {
+        
+        self.event = data
+        
+        if  data.shortTitle != "" {
+            eventName.text = data.shortTitle
+        } else {
+            eventName.text = data.title
+        }
+        
+        
+        let attributedString = NSMutableAttributedString(string: data.dates[0].end.formaTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
+        let string = attributedString.string
+        if let range = string.range(of: "\n") {
+            let startIndex = string.distance(from: string.startIndex, to: range.upperBound)
+            attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 12, weight: .semibold), range: NSRange(location: startIndex, length: string.count - startIndex))
+        }
+        
+        aboutGoingLabel.text = "+\(data.favoritesCount) Going"
+        
+        eventDate.attributedText = attributedString
+        
+        if let eventPlace = data.place {
+            if eventPlace.address != "" {
+                eventAdrress.text = eventPlace.address
+            } else if eventPlace.title != "" {
+                eventAdrress.text = eventPlace.title
+            }
+        } else {
+            eventAdrress.text = "Adress not provided"
+        }
+        
+        
+        if let imageUrlString = data.images.first?.image, let imageUrl = URL(string: imageUrlString) {
+            
+            
+            
+            imageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
+                
+                self?.imageView.hideSkeleton(transition: .crossDissolve(0.2))
+            }
+        } else {
+            
+            imageView.hideSkeleton()
+            imageView.image = UIImage(named: "hands")
+        }
+        
+        let savedEvents = favouriteEventStore.fetchAllEvents()
+        let isBookmarked = savedEvents.contains { $0.id == "\(data.id)" }
+        bookmarkButton.isBookmarked = isBookmarked
+        bookmarkButton.setImage(isBookmarked ? .bookmarkFill : .bookmarkEmpty, for: .normal)
 	}
 }
-@available(iOS 17.0, *)
-#Preview {ExploreViewController()
-}
+//@available(iOS 17.0, *)
+//#Preview {ExploreViewController()
+//}
 

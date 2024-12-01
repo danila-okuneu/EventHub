@@ -11,6 +11,8 @@ import SnapKit
 
 final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	
+    private let favouriteEventStore = FavouriteEventStore()
+    
     private let networkService = NetworkService()
     private var upcommingEvents: [EventType] = []
     private var categoriesAll: [Category] = []
@@ -71,6 +73,11 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
 //        scrollView.frame = view.bounds
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        collectionView.reloadData()
+    }
+    
     private func getCategories() async  {
             let categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
             self.categoriesAll = categories
@@ -82,7 +89,6 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
             do {
                 let events = try await networkService.getEventsList(type: .eventsList, categories: category)
                 self.upcommingEvents = events
-                print(upcommingEvents)
                 self.collectionView.reloadData()
             }
             catch {
@@ -173,6 +179,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell
             if upcommingEvents.count > 0 {
                 cell.configureCell(with: upcommingEvents[indexPath.row])
+                cell.delegate = self
             }
             return cell
         }
@@ -220,8 +227,19 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
 }
     
 
+extension ExploreViewController: EventCellDelegate {
+    func didTapBookmark(for event: EventType) {
+        let favouriteEvent = FavouriteEvent.from(event)
+        
+        let events = favouriteEventStore.fetchAllEvents()
+        if events.contains(where: { $0.id == favouriteEvent.id }) {
+            favouriteEventStore.deleteEvent(withId: favouriteEvent.id)
+        } else {
+            favouriteEventStore.saveEvent(favouriteEvent)
+        }
+    }
 
-@available(iOS 17.0, *)
-#Preview {
-	UINavigationController(rootViewController: ExploreViewController())
-}
+
+//@available(iOS 17.0, *)
+//#Preview {ExploreViewController()
+//}
