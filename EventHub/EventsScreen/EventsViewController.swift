@@ -14,8 +14,8 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     
     private let emptyView = EmptyEventView()
     
-    var upcomingEvents: [EventType] = []
-    var pastEvents: [EventType] = []
+    var upcomingEvents: [Event] = []
+    var pastEvents: [Event] = []
 
     private var isShowingUpcomingEvents: Bool {
         return segmentedControl.selectedSegmentIndex == 0
@@ -25,7 +25,7 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
            let sc = CustomSegmentedControl(items: ["UPCOMING", "PAST EVENTS"])
            sc.selectedSegmentIndex = 0
            sc.selectedSegmentTintColor = .white
-        sc.setTitleTextAttributes([.foregroundColor: UIColor.appPurple, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .selected)
+           sc.setTitleTextAttributes([.foregroundColor: UIColor.appPurple, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .selected)
             sc.setTitleTextAttributes([.foregroundColor: UIColor.gray, .font: UIFont.cerealFont(ofSize: 16, weight: .light)], for: .normal)
 
 
@@ -54,12 +54,14 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
 		super.viewDidLoad()
 		
 		view.backgroundColor = .appGray
-		setupCollectionView()
+        setupSegmentedControl()
+        setupCollectionView()
 		setupEmptyView()
-		setupSegmentedControl()
 		setupExploreButton()
 		loadMockData() // Загрузка моковых данных
 		segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
+        
+        navigationItem.title = "Events"
 	}
 
     
@@ -68,7 +70,7 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
         NSLayoutConstraint.activate([
             segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             segmentedControl.heightAnchor.constraint(equalToConstant: 45)
 ])
         segmentedControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
@@ -96,6 +98,8 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
             }
 
     @objc private func exploreButtonTapped() {
+        let sortedVC = SortedEventsViewController(with: upcomingEvents)
+        navigationController?.pushViewController(sortedVC, animated: true)
 
             }
     
@@ -104,9 +108,9 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
            emptyView.isHidden = hasData
        }
     private func loadMockData() {
-           upcomingEvents = [EventType(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
+           upcomingEvents = [Event(id: 1, dates: DateElement(start: 1, end: 1), title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
 //        upcomingEvents = []
-           pastEvents = [EventType(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
+        pastEvents = [Event(id: 1, dates: DateElement(start: 1, end: 1), title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
 //
            collectionView.reloadData()
            updateEmptyViewVisibility()
@@ -129,7 +133,7 @@ private func setupCollectionView() {
     NSLayoutConstraint.activate([
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-        collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 170),
+        collectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 10),
         collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
     ])
     emptyView.isHidden = true

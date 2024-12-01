@@ -7,51 +7,82 @@
 
 import UIKit
 
-class CustomTabBarController: UITabBarController, CustomTabBarDelegate {
+class CustomTabBarController: UITabBarController, CustomTabBarDelegate, UINavigationControllerDelegate {
     
     private let customTabBar = CustomTabBar()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .white
-        
-        setValue(customTabBar, forKey: "tabBar")
-        customTabBar.customDelegate = self
-        
-        setupTabItems()
-    }
+		
+		view.backgroundColor = .white
+		
+		setValue(customTabBar, forKey: "tabBar")
+		customTabBar.customDelegate = self
+		
+		
+		
+		// Создание нового объекта UINavigationBarAppearance
+		let appearance = UINavigationBarAppearance()
+		appearance.configureWithTransparentBackground() // Устанавливает прозрачный фон
+		appearance.backgroundColor = .clear
+		appearance.shadowColor = .clear // Удаляет тень под навигационной панелью
+		
+		// Применение настроек к разным состояниям навигационной панели
+		UINavigationBar.appearance().standardAppearance = appearance
+		UINavigationBar.appearance().scrollEdgeAppearance = appearance
+		UINavigationBar.appearance().compactAppearance = appearance
+		
+		
+		UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
+		
+		
+		// Установка прозрачности
+		UINavigationBar.appearance().isTranslucent = true
+		
+		
+		
+		setupTabItems()
+	}
     
     private func setupTabItems() {
         let exploreVC = UINavigationController(rootViewController: ExploreViewController())
         exploreVC.tabBarItem.title = "Explore"
         exploreVC.tabBarItem.image = UIImage(named: "explore")
         
-        let eventsVC = EventsViewController()
+        let eventsVC = UINavigationController(rootViewController: EventsViewController())
         eventsVC.tabBarItem.title = "Events"
         eventsVC.tabBarItem.image = UIImage(named: "calendar")
         
-        let emptyVC = UIViewController()
+        let emptyVC = UINavigationController(rootViewController:UIViewController())
         emptyVC.tabBarItem.title = " "
         emptyVC.tabBarItem.image = nil
         
-        let mapVC = MapViewController()
+        let mapVC = UINavigationController(rootViewController:MapViewController())
         mapVC.tabBarItem.title = "Map"
         mapVC.tabBarItem.image = UIImage(named: "Location")
         
-        let profileVC = ProfileViewController()
+        let profileVC = UINavigationController(rootViewController:ProfileViewController())
         profileVC.tabBarItem.title = "Profile"
         profileVC.tabBarItem.image = UIImage(named: "Profile")
         
-        setViewControllers([exploreVC, eventsVC, emptyVC, mapVC, profileVC], animated: false)
+        setViewControllers([ exploreVC,
+                            eventsVC,
+                            emptyVC,
+                            mapVC,
+                            profileVC],
+                            animated: false)
     }
     
     func didTapFavoriteButton() {
-        let favouritesVC = FavouritesViewController()
+        
+
+
+        let favouritesVC = UINavigationController(rootViewController:FavouritesViewController())
         favouritesVC.tabBarItem.title = ""
         favouritesVC.tabBarItem.image = UIImage(named: "favorites")
         favouritesVC.delegate = self
         
+
         var controllers = viewControllers ?? []
         controllers[2] = favouritesVC
         setViewControllers(controllers, animated: true)

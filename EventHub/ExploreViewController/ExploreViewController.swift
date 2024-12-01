@@ -11,6 +11,8 @@ import SnapKit
 
 final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	
+    private let favouriteEventStore = FavouriteEventStore()
+    
     private let networkService = NetworkService()
     private var upcommingEvents: [Event] = []
     private var categoriesAll: [Category] = []
@@ -45,25 +47,15 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
-//    init(categoriesAll: [Category], selectedCategory: Int? = 1) {
-//        super.init(nibName: nil, bundle: nil)
-//        self.categoriesAll = categoriesAll
-//    }
-    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
+
+	
     override func viewDidLoad() {
         view.backgroundColor = .white
-        
-        
-        
         configureCollectionView()
 //        getUpcommingEvents()
         Task {
             await getCategories()
-            await getEvents()
+            await getUpcommingEvents()
         }
 	}
     
@@ -72,45 +64,31 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
 //        scrollView.frame = view.bounds
     }
     
-    private func getCategories() async  {
-        let categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
-        self.categoriesAll = categories
-        self.collectionView.reloadSections(IndexSet(integer: 1))
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+		self.navigationController?.navigationBar.isHidden = true
+        collectionView.reloadData()
     }
     
-    private func getEvents(category : String = "") async {
+    private func getCategories() async  {
+            let categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
+            self.categoriesAll = categories
+            self.collectionView.reloadSections(IndexSet(integer: 1))
+        }
+    
+    private func getEventsWithCategory(category: String) async {
         let events = await EventProvider.shared.fetchEventsFromAPI(category: category)
         self.upcommingEvents = events
+        print(upcommingEvents)
         self.collectionView.reloadData()
     }
     
-//    private func getEventsWithCategory(category: String) {
-//        Task {
-//            do {
-//                let events = try await networkService.getEventsList(type: .eventsList, categories: category)
-//                self.upcommingEvents = events
-//                print(upcommingEvents)
-//                self.collectionView.reloadData()
-//            }
-//            catch {
-//                self.shwoErrorAllertWith(error: error as! NetworkError)
-//            }
-//        }
-//    }
-    
-//    private func getUpcommingEvents() {
-//        Task {
-//            do {
-//                let events = try await networkService.getEventsList(type: .eventsList, eventsCount: 40)
-//                self.upcommingEvents = events
-//                print(upcommingEvents)
-//                self.collectionView.reloadData()
-//            }
-//            catch {
-//                self.shwoErrorAllertWith(error: error as! NetworkError)
-//            }
-//        }
-//    }
+    private func getUpcommingEvents() async {
+        let events = await EventProvider.shared.fetchEventsFromAPI()
+        self.upcommingEvents = events
+        print(upcommingEvents)
+        self.collectionView.reloadData()
+    }
     
     
     
@@ -164,7 +142,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return upcommingEvents.count
         }
     }
-    
+	
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
         switch section {
@@ -180,6 +158,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell
             if upcommingEvents.count > 0 {
                 cell.configureCell(with: upcommingEvents[indexPath.row])
+                cell.delegate = self
             }
             return cell
         }
@@ -190,12 +169,19 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         switch section {
         case .categories:
             Task {
-                await getEvents(category: categoriesAll[indexPath.row].slug)
+                await getEventsWithCategory(category: categoriesAll[indexPath.row].slug)
             }
         case .upcoming:
-            break
+			let event = upcommingEvents[indexPath.row]
+			let vc = DetailsViewController(event: event)
+			vc.modalPresentationStyle = .currentContext
+			self.navigationController?.pushViewController(vc, animated: true)
+//			self.navigationController?.navigationBar.isHidden = true
         case .nearby:
-            break
+			let event = upcommingEvents[indexPath.row]
+			let vc = DetailsViewController(event: event)
+			vc.modalPresentationStyle = .currentContext
+			self.navigationController?.pushViewController(vc, animated: true)
         default:
             break
         }
@@ -218,11 +204,10 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     @objc func didTapSeeAllUpcomming() {
-//        let vc = SortedEventsViewController(with: upcommingEvents)
-//        self.navigationController?.modalPresentationStyle = .fullScreen
-//        self.navigationController?.pushViewController(vc, animated: true)
+        let vc = SortedEventsViewController(with: upcommingEvents)
+        self.navigationController?.modalPresentationStyle = .fullScreen
+        self.navigationController?.pushViewController(vc, animated: true)
     }
-    
     
     @objc func didTapSeeAllNearby() {
         
@@ -230,7 +215,18 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
 }
     
 
-
-@available(iOS 17.0, *)
-#Preview {ExploreViewController()
+extension ExploreViewController: EventCellDelegate {
+    func didTapBookmark(for event: Event) {
+		let favouriteEvent = FavouriteEvent.from(event)
+		
+		let events = favouriteEventStore.fetchAllEvents()
+		if events.contains(where: { $0.id == favouriteEvent.id }) {
+			favouriteEventStore.deleteEvent(withId: favouriteEvent.id)
+		} else {
+			favouriteEventStore.saveEvent(favouriteEvent)
+		}
+	}
 }
+//@available(iOS 17.0, *)
+//#Preview {ExploreViewController()
+//}

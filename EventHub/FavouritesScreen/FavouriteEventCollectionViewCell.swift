@@ -1,16 +1,16 @@
 //
-//  FavEventCell.swift
+//  FavouriteEventCollectionViewCell.swift
 //  EventHub
 //
-//  Created by Надежда Капацина on 18.11.2024.
+//  Created by Bakgeldi Alkhabay on 25.11.2024.
 //
 
 import UIKit
 import Kingfisher
 
-class EventCollectionViewCell: UICollectionViewCell {
+class FavouriteEventCollectionViewCell: UICollectionViewCell {
     
-    static let identifier = "EventCollectionViewCell"
+    static let identifier = "FavouriteEventCollectionViewCell"
     
     private let eventImageView = UIImageView()
     private let dateLabel = UILabel()
@@ -22,6 +22,8 @@ class EventCollectionViewCell: UICollectionViewCell {
     private let bookmarkButton = UIButton(type: .system)
     
     private var isBookmarked = true
+    
+    var onDelete: (() -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -103,7 +105,6 @@ class EventCollectionViewCell: UICollectionViewCell {
             locationImageView.heightAnchor.constraint(equalToConstant: 14),
             locationStackView.bottomAnchor.constraint(equalTo: eventImageView.bottomAnchor, constant: -5),
             locationStackView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: 5),
-            locationStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
  
         ])
     }
@@ -111,35 +112,30 @@ class EventCollectionViewCell: UICollectionViewCell {
     @objc private func bookmarkTapped() {
         isBookmarked.toggle()
         bookmarkButton.tintColor = isBookmarked ? .red : .blue
+        
+        if !isBookmarked {
+            onDelete?()
+        }
     }
     
-    func configure(with event: Event, isbookmarkHidden: Bool, isLocationHidden: Bool) {
-		dateLabel.text = event.dates.end.formatTo(.eventPreview)
+    func configure(with event: FavouriteEvent, isbookmarkHidden: Bool) {
+        dateLabel.text = event.date
         titleLabel.text = event.title
+        locationLabel.text = event.place
         
-        if let eventPlace = event.place {
-            if eventPlace.address != "" {
-                locationLabel.text = eventPlace.address
-            } else if eventPlace.title != "" {
-                locationLabel.text = eventPlace.title
-            }
-        } else {
-            locationLabel.text = "Adress not provided"
-        }
-
-        if let imageUrlString = event.images.first?.image, let imageUrl = URL(string: imageUrlString) {
-            eventImageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
-                self?.eventImageView.hideSkeleton(transition: .crossDissolve(0.2))
-            }
-        } else {
-            
-            eventImageView.hideSkeleton()
-            eventImageView.image = UIImage(named: "hands")
-        }
-//		eventImageView.image = ._1
+        let imageUrl = URL(string: event.imageURL)
+        let processor = RoundCornerImageProcessor(cornerRadius: 10)
+        
+        eventImageView.kf.setImage(
+            with: imageUrl,
+            placeholder: nil,
+            options: [
+                .processor(processor),
+                .transition(.fade(0.3))
+            ]
+        )
+        
         bookmarkButton.isHidden = isbookmarkHidden
-        locationLabel.isHidden = isLocationHidden
-        locationImageView.isHidden = isLocationHidden
 
     }
 }

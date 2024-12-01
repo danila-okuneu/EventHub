@@ -7,17 +7,13 @@
 
 import UIKit
 
-final class BookmarkButton: UIButton {
+final class BookmarkButton: RoundedButton {
 	
-	private var isBookmarked: Bool
+    var isBookmarked: Bool
 	
-	init(isBookmarked: Bool = false) {
+	init(colors: (tint: UIColor, background: UIColor), isBookmarked: Bool = false) {
 		self.isBookmarked = isBookmarked
-		super.init(frame: .zero)
-		
-		layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
-		setImage(isBookmarked ? .bookmarkFill : .bookmarkEmpty, for: .normal)
-		layer.cornerRadius = 10
+		super.init(image: isBookmarked ? .bookmarkFill : .bookmarkEmpty, colors: colors)
 
 	}
 	
@@ -31,5 +27,46 @@ final class BookmarkButton: UIButton {
 			self.setImage(self.isBookmarked ? .bookmarkFill : .bookmarkEmpty, for: .normal)
 		}
 		
+	}
+}
+
+
+class RoundedButton: UIButton {
+	
+	init(image: UIImage?, colors: (tint: UIColor, background: UIColor)) {
+		super.init(frame: .zero)
+		
+		layer.backgroundColor = colors.background.cgColor
+		setImage(image?.withRenderingMode(.alwaysTemplate), for: .normal)
+		tintColor = colors.tint
+		
+		
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+		
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		
+		
+		layer.cornerRadius = bounds.width / 4
+		
+		
+		let pading = self.bounds.width * 0.25
+		let imageSide = self.bounds.width - pading * 2
+		
+		imageView?.frame = CGRect(x: pading, y: pading, width: imageSide, height: imageSide)
+	}
+	
+	
+	func change(colors: (tint: UIColor, background: UIColor)) {
+		
+		UIView.animate(withDuration: 0.3, delay:  0.0, options: .curveEaseOut) {
+			self.backgroundColor = colors.background
+			self.tintColor = colors.tint
+		}
 	}
 }

@@ -18,52 +18,30 @@ import UIKit
 //   
 //}
 
-//let mockEvent: [Event] = [
-//    Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),
-//    Event(image: UIImage(named: "1")!, date: "Fri, Apr 26 • 6:00 PM", title: "International Kids Safe Parents Night Out", location: "Lot 13 • Oakland, CA"),
-// 
-//]
-
 protocol FavouritesViewControllerDelegate: AnyObject {
     func didCloseFavouritesScreen()
 }
 
 class FavouritesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     // MARK: - Property
-    var events: [EventType] = []
     weak var delegate: FavouritesViewControllerDelegate?
+    private let favouriteEventStore = FavouriteEventStore()
     
     private let emptyView = EmptyView()
     
-//    private var events = mockEvent
-    //private var events: [Event] = []
+    private var events: [FavouriteEvent] = []
+    
     private var collectionView: UICollectionView!
     private let headerHeightWithNoData: CGFloat = 350
     private let headerHeightWithData: CGFloat = 0
     
-//    init(with events: [EventType]) {
-//        super.init(nibName: nil, bundle: nil)
-//        self.events = events
-//        
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
-    
-    // MARK: - Life Cicle
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .appGray
-
-        
-        if events.isEmpty {
-            setupEmptyView()
-        }
-        else {
-            setupCollectionView()
-        }
+        setupNavBar()
+        fetchEvents()
+        checkForEmpty()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -71,6 +49,23 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         delegate?.didCloseFavouritesScreen()
     }
     
+    // MARK: - Core Data Operations
+    private func fetchEvents() {
+        events = favouriteEventStore.fetchAllEvents()
+    }
+    
+    private func saveEvent(_ event: FavouriteEvent) {
+        favouriteEventStore.saveEvent(event)
+        fetchEvents()
+    }
+    
+    private func deleteEvent(withId id: String) {
+        favouriteEventStore.deleteEvent(withId: id)
+        fetchEvents()
+        collectionView.reloadData()
+    }
+    
+    // MARK: - Setup Views
     private func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -83,6 +78,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         
         
         collectionView.register(EventCollectionViewCell.self, forCellWithReuseIdentifier: EventCollectionViewCell.identifier)
+        collectionView.register(FavouriteEventCollectionViewCell.self, forCellWithReuseIdentifier: FavouriteEventCollectionViewCell.identifier)
         
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -95,6 +91,16 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         ])
         
     }
+    
+    private func checkForEmpty() {
+        if events.isEmpty {
+            setupEmptyView()
+        }
+        else {
+            setupCollectionView()
+        }
+    }
+    
     private func setupEmptyView() {
         view.addSubview(emptyView)
         emptyView.translatesAutoresizingMaskIntoConstraints = false
@@ -113,10 +119,18 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavouriteEventCollectionViewCell.identifier, for: indexPath) as! FavouriteEventCollectionViewCell
         
         let event = events[indexPath.item]
-        cell.configure(with: event, isbookmarkHidden: false, isLocationHidden: false)
+        cell.configure(with: event, isbookmarkHidden: false)
+        
+        cell.onDelete = { [weak self] in
+            guard let self = self else { return }
+            self.deleteEvent(withId: event.id)
+            checkForEmpty()
+            
+        }
+        
         return cell
     }
     
@@ -126,5 +140,24 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         return CGSize(width: collectionView.bounds.width, height: 140)
     }
     
+    // MARK: - setupNavBar
+        private func setupNavBar() {
+            
+            navigationItem.title = "Favorites"
+        let searchButton = UIButton(type: .system)
+            searchButton.setImage(UIImage(named: "searchBlue"), for: .normal)
+            searchButton.tintColor = .black
+            searchButton.addTarget(self, action: #selector(searchButtonAction), for: .touchUpInside)
+
+            searchButton.semanticContentAttribute = .forceRightToLeft
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchButton)
+    }
+        
+        
+        @objc private func searchButtonAction() {
+            
+            let searchVC = SearchBarVC()
+            navigationController?.pushViewController(searchVC, animated: true)
+        }
 }
 

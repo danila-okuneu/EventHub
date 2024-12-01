@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseCore
 import GoogleSignIn
 
 final class SignupViewController: UIViewController {
@@ -124,6 +125,7 @@ final class SignupViewController: UIViewController {
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
 		signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
         signInButton.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
+		loginWithGoogleButton.addTarget(self, action: #selector(googleSignInTapped), for: .touchUpInside)
     }
 
     private func setupUI() {
@@ -242,7 +244,65 @@ final class SignupViewController: UIViewController {
 			}
 		}
 	}
-    
+	
+	
+	private func signInWithGoogle() async {
+		
+		guard let clientID = FirebaseApp.app()?.options.clientID else {
+			fatalError("ID not found")
+		}
+		print(clientID)
+		
+		let config = GIDConfiguration(clientID: clientID)
+		GIDSignIn.sharedInstance.configuration = config
+		
+		guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+			  let window = windowScene.keyWindow,
+			  let rootViewController = window.rootViewController else {
+			print("There is no root VCs")
+			return
+		}
+		
+		do {
+			let userAuthentication = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+			let userAuth = userAuthentication.user
+			guard let idToken = userAuth.idToken else {
+				print("ID token not recieved")
+				return
+			}
+			let accessToken = userAuth.accessToken
+			let creditional = GoogleAuthProvider.credential(withIDToken: idToken.tokenString, accessToken: accessToken.tokenString)
+			
+			
+			let result = try await Auth.auth().signIn(with: creditional)
+			
+			let user = User(uid: result.user.uid)
+			DefaultsManager.currentUser = user
+			FirestoreService.saveUserData(user: user, uid: result.user.uid)
+			
+			DefaultsManager.isRegistered = true
+			
+			let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+			guard let window = windowScene?.keyWindow else { return }
+			
+			UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
+				window.rootViewController = CustomTabBarController()
+			}
+			
+		} catch {
+			print(error.localizedDescription)
+			return
+		}
+	}
+	
+	@objc private func googleSignInTapped() {
+		
+		Task {
+			await signInWithGoogle()
+		}
+		
+	}
+	
     @objc private func signInButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
@@ -250,55 +310,53 @@ final class SignupViewController: UIViewController {
 
 // MARK: - TextField Delegate
 extension SignupViewController: UITextFieldDelegate {
-	
-	private func setupTextFields() {
-		fullNameTextField.textField.delegate = self
-		emailTextField.textField.delegate = self
-		passwordTextField.textField.delegate = self
-		confirmPasswordTextField.textField.delegate = self
-		
-		fullNameTextField.textField.tag = 1
-		emailTextField.textField.tag = 2
-		passwordTextField.textField.tag = 3
-		confirmPasswordTextField.textField.tag = 4
-	}
-	
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.endEditing(true)
-		return true
-	}
-	
-	func textFieldDidEndEditing(_ textField: UITextField) {
-		switch textField.tag {
-		case 1 where textField.text == "": fullNameTextField.showError()
-		case 2 where textField.text?.count(where: { $0 == "@" } ) != 1:
-			emailTextField.showError()
-		case 3 where textField.text!.count < 8 || textField.text!.contains(" "):
-			passwordTextField.showError()
-		case 4 where textField.text != passwordTextField.textField.text:
-			confirmPasswordTextField.showError()
-		default:
-			return
-		}
-	}
-	
-	func textFieldDidBeginEditing(_ textField: UITextField) {
-		switch textField.tag {
-		case 1:
-			fullNameTextField.resetFieldColor()
-		case 2:
-			emailTextField.resetFieldColor()
-		case 3:
-			passwordTextField.resetFieldColor()
-		default:
-			confirmPasswordTextField.resetFieldColor()
-			
-		}
-	}
-	
-	
+    
+    private func setupTextFields() {
+        fullNameTextField.textField.delegate = self
+        emailTextField.textField.delegate = self
+        passwordTextField.textField.delegate = self
+        confirmPasswordTextField.textField.delegate = self
+        
+        fullNameTextField.textField.tag = 1
+        emailTextField.textField.tag = 2
+        passwordTextField.textField.tag = 3
+        confirmPasswordTextField.textField.tag = 4
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.endEditing(true)
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        switch textField.tag {
+        case 1 where textField.text == "": fullNameTextField.showError()
+        case 2 where textField.text?.count(where: { $0 == "@" } ) != 1:
+            emailTextField.showError()
+        case 3 where textField.text!.count < 8 || textField.text!.contains(" "):
+            passwordTextField.showError()
+        case 4 where textField.text != passwordTextField.textField.text:
+            confirmPasswordTextField.showError()
+        default:
+            return
+        }
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        switch textField.tag {
+        case 1:
+            fullNameTextField.resetFieldColor()
+        case 2:
+            emailTextField.resetFieldColor()
+        case 3:
+            passwordTextField.resetFieldColor()
+        default:
+            confirmPasswordTextField.resetFieldColor()
+            
+        }
+    }
+    
 }
-
 extension SignupViewController {
 	
 	private func register() {
@@ -314,3 +372,5 @@ extension SignupViewController {
 #Preview{
     return SignupViewController()
 }
+
+
