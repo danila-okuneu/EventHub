@@ -157,7 +157,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return upcommingEvents.count
         }
     }
-    
+	
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
         switch section {
@@ -222,5 +222,6 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
 
 
 @available(iOS 17.0, *)
-#Preview {ExploreViewController()
+#Preview {
+	UINavigationController(rootViewController: ExploreViewController())
 }
