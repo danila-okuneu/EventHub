@@ -47,20 +47,16 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
-//    init(categoriesAll: [Category], selectedCategory: Int? = 1) {
-//        super.init(nibName: nil, bundle: nil)
-//        self.categoriesAll = categoriesAll
-//    }
     
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(true)
+		
+		self.navigationController?.navigationBar.isHidden = true
+	}
+	
+	
     override func viewDidLoad() {
         view.backgroundColor = .white
-        
-        
-        
         configureCollectionView()
         getUpcommingEvents()
         Task {
@@ -191,9 +187,16 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .categories:
             getEventsWithCategory(category: categoriesAll[indexPath.row].slug)
         case .upcoming:
-            break
+			let event = upcommingEvents[indexPath.row]
+			let vc = DetailsViewController(event: event)
+			vc.modalPresentationStyle = .currentContext
+			self.navigationController?.pushViewController(vc, animated: true)
+			self.navigationController?.navigationBar.isHidden = false
         case .nearby:
-            break
+			let event = upcommingEvents[indexPath.row]
+			let vc = DetailsViewController(event: event)
+			vc.modalPresentationStyle = .currentContext
+			self.navigationController?.pushViewController(vc, animated: true)
         default:
             break
         }

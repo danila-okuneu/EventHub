@@ -13,14 +13,36 @@ class CustomTabBarController: UITabBarController, CustomTabBarDelegate, UINaviga
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .white
-        
-        setValue(customTabBar, forKey: "tabBar")
-        customTabBar.customDelegate = self
-        
-        setupTabItems()
-    }
+		
+		view.backgroundColor = .white
+		
+		setValue(customTabBar, forKey: "tabBar")
+		customTabBar.customDelegate = self
+		
+		
+		
+		// Создание нового объекта UINavigationBarAppearance
+		let appearance = UINavigationBarAppearance()
+		appearance.configureWithTransparentBackground() // Устанавливает прозрачный фон
+		appearance.backgroundColor = .clear
+		appearance.shadowColor = .clear // Удаляет тень под навигационной панелью
+		
+		// Применение настроек к разным состояниям навигационной панели
+		UINavigationBar.appearance().standardAppearance = appearance
+		UINavigationBar.appearance().scrollEdgeAppearance = appearance
+		UINavigationBar.appearance().compactAppearance = appearance
+		
+		
+		UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
+		
+		
+		// Установка прозрачности
+		UINavigationBar.appearance().isTranslucent = true
+		
+		
+		
+		setupTabItems()
+	}
     
     private func setupTabItems() {
         let exploreVC = UINavigationController(rootViewController: ExploreViewController())

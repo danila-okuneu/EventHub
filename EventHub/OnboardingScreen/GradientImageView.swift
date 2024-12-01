@@ -24,5 +24,6 @@ final class GradientImageView: UIImageView {
 		gradientLayer.endPoint = CGPoint(x: 0.5, y: 0.85)
 		
 		layer.mask = gradientLayer
+		
 	}
 }
