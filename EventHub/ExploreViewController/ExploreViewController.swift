@@ -82,7 +82,6 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
             do {
                 let events = try await networkService.getEventsList(type: .eventsList, categories: category)
                 self.upcommingEvents = events
-                print(upcommingEvents)
                 self.collectionView.reloadData()
             }
             catch {
