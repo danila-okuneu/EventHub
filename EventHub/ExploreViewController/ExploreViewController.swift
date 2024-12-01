@@ -11,6 +11,8 @@ import SnapKit
 
 final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	
+    private let favouriteEventStore = FavouriteEventStore()
+    
     private let networkService = NetworkService()
     private var upcommingEvents: [EventType] = []
     private var categoriesAll: [Category] = []
@@ -172,6 +174,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell
             if upcommingEvents.count > 0 {
                 cell.configureCell(with: upcommingEvents[indexPath.row])
+                cell.delegate = self
             }
             return cell
         }
@@ -218,8 +221,22 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     }
 }
     
-
-
-@available(iOS 17.0, *)
-#Preview {ExploreViewController()
+extension ExploreViewController: EventCellDelegate {
+    func didTapBookmark(for event: EventType) {
+        let favouriteEvent = FavouriteEvent.from(event)
+        print("Favourite Event: \(favouriteEvent)")
+        
+        let events = favouriteEventStore.fetchAllEvents()
+        if events.contains(where: { $0.id == favouriteEvent.id }) {
+            favouriteEventStore.deleteEvent(withId: favouriteEvent.id)
+            print("Event with id \(favouriteEvent.id) was deleted from favourites.")
+        } else {
+            favouriteEventStore.saveEvent(favouriteEvent)
+            print("Event with id \(favouriteEvent.id) was added to favourites.")
+        }
+    }
 }
+
+//@available(iOS 17.0, *)
+//#Preview {ExploreViewController()
+//}

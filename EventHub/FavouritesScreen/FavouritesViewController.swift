@@ -18,14 +18,6 @@ struct Event {
    
 }
 
-struct FavouriteEvent {
-    let id: String
-    let title: String
-    let imageURL: String
-    let place: String
-    let date: String
-}
-
 let event = FavouriteEvent(id: "100", title: "Jazz music", imageURL: "1", place: "Concert Hall", date: "Fri, Apr 26 • 6:00 PM")
 
 protocol FavouritesViewControllerDelegate: AnyObject {
@@ -51,7 +43,6 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         view.backgroundColor = .appGray
         setupNavBar()
         
-        saveEvent(event)
         fetchEvents()
         
         if events.isEmpty {

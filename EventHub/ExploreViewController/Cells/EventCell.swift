@@ -10,7 +10,14 @@ import SnapKit
 import Kingfisher
 import SkeletonView
 
+protocol EventCellDelegate: AnyObject {
+    func didTapBookmark(for event: EventType)
+}
+
 class EventCell: UICollectionViewCell {
+    weak var delegate: EventCellDelegate?
+    var event: EventType?
+    
     static let identifier = String(describing: EventCell.self)
     private let imageView = UIImageView()
     private var eventDate = UILabel()
@@ -146,7 +153,9 @@ class EventCell: UICollectionViewCell {
         }
     
     @objc func didTap() {
-		bookmarkButton.toggleState()
+        guard let event = event else { return }
+        delegate?.didTapBookmark(for: event)
+        bookmarkButton.toggleState()
         print("bookmark tapped")
     }
     
@@ -180,6 +189,8 @@ class EventCell: UICollectionViewCell {
     
 	func configureCell(with data: EventType) {
 		
+        self.event = data
+        
 		if  data.shortTitle != "" {
 			eventName.text = data.shortTitle
 		} else {
@@ -227,7 +238,7 @@ class EventCell: UICollectionViewCell {
 			}
 	}
 }
-@available(iOS 17.0, *)
-#Preview {ExploreViewController()
-}
+//@available(iOS 17.0, *)
+//#Preview {ExploreViewController()
+//}
 
