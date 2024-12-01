@@ -26,8 +26,6 @@ final class DetailsViewController: UIViewController {
 		view.backgroundColor = .white
 		return view
 	}()
-
-
 	
 	private let scrollView: UIScrollView = {
 		let scrollView = UIScrollView()
@@ -58,7 +56,8 @@ final class DetailsViewController: UIViewController {
 		return imageView
 	}()
 
-	private let bookmarkButton = BookmarkButton()
+	private let bookmarkButton = BookmarkButton(colors: (tint: .white, background: .white.withAlphaComponent(0.3)))
+	private let shareButton = RoundedButton(image: .detailsShare, colors: (tint: .white, background: .white.withAlphaComponent(0.3)))
 	
 	private let titleLabel: UILabel = {
 		let label = UILabel()
@@ -139,6 +138,7 @@ final class DetailsViewController: UIViewController {
 		view.addSubview(dimmedView)
 		
 		contentView.addSubview(headerImageView)
+		headerImageView.addSubview(shareButton)
 		contentView.addSubview(infoStackView)
 		infoStackView.addArrangedSubview(titleLabel)
 		infoStackView.addArrangedSubview(dateComponentView)
@@ -172,6 +172,10 @@ final class DetailsViewController: UIViewController {
 			make.height.equalTo(Constants.detailElementHeight)
 		}
 
+		shareButton.snp.makeConstraints { make in
+			make.height.width.equalTo(36)
+			make.bottom.right.equalToSuperview().inset(16)
+		}
 	}
 	
 	private func setupScrollView() {
@@ -335,11 +339,20 @@ extension DetailsViewController: UIScrollViewDelegate {
 		
 		let shouldHideBookmark = contentOffsetY > headerImageViewBottomY
 		
+		UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveEaseOut) {
+			if shouldHideBookmark {
+				self.navBarBackground.layer.opacity = 1.0
+			} else {
+				self.navBarBackground.layer.opacity = 0.0
+			}
+		}
+		
+		
 		UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseOut) {
 			if shouldHideBookmark {
 				
-				self.bookmarkButton.layer.opacity = 0.0
-				self.navBarBackground.layer.opacity = 1.0
+				self.bookmarkButton.change(colors: (UIColor.appPurple, UIColor.appPurple.withAlphaComponent(0.1)))
+				
 				
 				navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
 				navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
@@ -347,8 +360,8 @@ extension DetailsViewController: UIScrollViewDelegate {
 				
 			} else {
 				
-				self.bookmarkButton.layer.opacity = 1.0
-				self.navBarBackground.layer.opacity = 0.0
+				self.bookmarkButton.change(colors: (UIColor.white, UIColor.white.withAlphaComponent(0.3)))
+				
 				
 				navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
 				navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]

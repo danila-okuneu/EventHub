@@ -47,13 +47,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
-    
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(true)
-		
-		self.navigationController?.navigationBar.isHidden = true
-	}
-	
+
 	
     override func viewDidLoad() {
         view.backgroundColor = .white
@@ -71,6 +65,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+		self.navigationController?.navigationBar.isHidden = true
         collectionView.reloadData()
     }
     
@@ -231,18 +226,17 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     
 
 extension ExploreViewController: EventCellDelegate {
-    func didTapBookmark(for event: EventType) {
-        let favouriteEvent = FavouriteEvent.from(event)
-        
-        let events = favouriteEventStore.fetchAllEvents()
-        if events.contains(where: { $0.id == favouriteEvent.id }) {
-            favouriteEventStore.deleteEvent(withId: favouriteEvent.id)
-        } else {
-            favouriteEventStore.saveEvent(favouriteEvent)
-        }
-    }
-
-
+	func didTapBookmark(for event: EventType) {
+		let favouriteEvent = FavouriteEvent.from(event)
+		
+		let events = favouriteEventStore.fetchAllEvents()
+		if events.contains(where: { $0.id == favouriteEvent.id }) {
+			favouriteEventStore.deleteEvent(withId: favouriteEvent.id)
+		} else {
+			favouriteEventStore.saveEvent(favouriteEvent)
+		}
+	}
+}
 //@available(iOS 17.0, *)
 //#Preview {ExploreViewController()
 //}
