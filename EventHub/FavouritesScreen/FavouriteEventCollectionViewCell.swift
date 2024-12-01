@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class FavouriteEventCollectionViewCell: UICollectionViewCell {
     
@@ -121,7 +122,19 @@ class FavouriteEventCollectionViewCell: UICollectionViewCell {
         dateLabel.text = event.date
         titleLabel.text = event.title
         locationLabel.text = event.place
-        eventImageView.image = UIImage(named: event.imageURL)
+        
+        let imageUrl = URL(string: event.imageURL)
+        let processor = RoundCornerImageProcessor(cornerRadius: 10)
+        
+        eventImageView.kf.setImage(
+            with: imageUrl,
+            placeholder: nil,
+            options: [
+                .processor(processor),
+                .transition(.fade(0.3))
+            ]
+        )
+        
         bookmarkButton.isHidden = isbookmarkHidden
 
     }

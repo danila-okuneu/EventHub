@@ -9,7 +9,7 @@ import UIKit
 
 final class BookmarkButton: UIButton {
 	
-	private var isBookmarked: Bool
+    var isBookmarked: Bool
 	
 	init(isBookmarked: Bool = false) {
 		self.isBookmarked = isBookmarked

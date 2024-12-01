@@ -18,8 +18,6 @@ struct Event {
    
 }
 
-let event = FavouriteEvent(id: "100", title: "Jazz music", imageURL: "1", place: "Concert Hall", date: "Fri, Apr 26 • 6:00 PM")
-
 protocol FavouritesViewControllerDelegate: AnyObject {
     func didCloseFavouritesScreen()
 }
@@ -42,16 +40,8 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         super.viewDidLoad()
         view.backgroundColor = .appGray
         setupNavBar()
-        
         fetchEvents()
-        
-        if events.isEmpty {
-            setupEmptyView()
-        }
-        else {
-            setupCollectionView()
-        }
-        
+        checkForEmpty()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -101,6 +91,16 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         ])
         
     }
+    
+    private func checkForEmpty() {
+        if events.isEmpty {
+            setupEmptyView()
+        }
+        else {
+            setupCollectionView()
+        }
+    }
+    
     private func setupEmptyView() {
         view.addSubview(emptyView)
         emptyView.translatesAutoresizingMaskIntoConstraints = false
@@ -127,6 +127,8 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         cell.onDelete = { [weak self] in
             guard let self = self else { return }
             self.deleteEvent(withId: event.id)
+            checkForEmpty()
+            
         }
         
         return cell
