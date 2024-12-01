@@ -178,7 +178,7 @@ class EventCell: UICollectionViewCell {
         
     }
     
-	func configureCell(with data: EventType) {
+    func configureCell(with data: Event) {
 		
 		if  data.shortTitle != "" {
 			eventName.text = data.shortTitle
@@ -187,7 +187,7 @@ class EventCell: UICollectionViewCell {
 		}
 		
 		
-		let attributedString = NSMutableAttributedString(string: data.dates[0].end.formaTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
+        let attributedString = NSMutableAttributedString(string: data.dates.start.formaTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
 		let string = attributedString.string
 		if let range = string.range(of: "\n") {
 			let startIndex = string.distance(from: string.startIndex, to: range.upperBound)

@@ -12,6 +12,7 @@ enum NetworkError: Error {
     case unknowedError
     case invalidResponse
     case serverError
+    case noFutureEvents
     
     var errorText: String {
         switch self {
@@ -27,6 +28,8 @@ enum NetworkError: Error {
 //                return "Вы запросили слишком много источников в одном запросе. Попробуйте разделить запрос на два меньших запроса"
 //            case .sourceDoesNotExist:
 //                return "Вы запросили источник, которого не существует"
+        case .noFutureEvents:
+            return "Нету будущих событий"
         case .decodingError:
             return "Не получилось декодировать данные"
         default:

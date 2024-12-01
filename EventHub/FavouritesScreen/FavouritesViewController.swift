@@ -10,13 +10,13 @@ import UIKit
 
 // MARK: - Mock Data
 
-struct Event {
-    let image: UIImage
-    let date: String
-    let title: String
-    let location: String
-   
-}
+//struct Event {
+//    let image: UIImage
+//    let date: String
+//    let title: String
+//    let location: String
+//   
+//}
 
 //let mockEvent: [Event] = [
 //    Event(image: UIImage(named: "2")!, date: "Wed, Apr 28 • 5:30 PM", title: "Jo Malone London’s Mother’s Day Presents", location: "Radius Gallery • Santa Cruz, CA"),

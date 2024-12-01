@@ -12,7 +12,7 @@ import SnapKit
 final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	
     private let networkService = NetworkService()
-    private var upcommingEvents: [EventType] = []
+    private var upcommingEvents: [Event] = []
     private var categoriesAll: [Category] = []
     private var selectedCategory: Int?
     
@@ -60,9 +60,10 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         
         
         configureCollectionView()
-        getUpcommingEvents()
+//        getUpcommingEvents()
         Task {
             await getCategories()
+            await getEvents()
         }
 	}
     
@@ -72,38 +73,44 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func getCategories() async  {
-            let categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
-            self.categoriesAll = categories
-            self.collectionView.reloadSections(IndexSet(integer: 1))
-        }
-    
-    private func getEventsWithCategory(category: String) {
-        Task {
-            do {
-                let events = try await networkService.getEventsList(type: .eventsList, categories: category)
-                self.upcommingEvents = events
-                print(upcommingEvents)
-                self.collectionView.reloadData()
-            }
-            catch {
-                self.shwoErrorAllertWith(error: error as! NetworkError)
-            }
-        }
+        let categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
+        self.categoriesAll = categories
+        self.collectionView.reloadSections(IndexSet(integer: 1))
     }
     
-    private func getUpcommingEvents() {
-        Task {
-            do {
-                let events = try await networkService.getEventsList(type: .eventsList, eventsCount: 40)
-                self.upcommingEvents = events
-                print(upcommingEvents)
-                self.collectionView.reloadData()
-            }
-            catch {
-                self.shwoErrorAllertWith(error: error as! NetworkError)
-            }
-        }
+    private func getEvents(category : String = "") async {
+        let events = await EventProvider.shared.fetchEventsFromAPI(category: category)
+        self.upcommingEvents = events
+        self.collectionView.reloadData()
     }
+    
+//    private func getEventsWithCategory(category: String) {
+//        Task {
+//            do {
+//                let events = try await networkService.getEventsList(type: .eventsList, categories: category)
+//                self.upcommingEvents = events
+//                print(upcommingEvents)
+//                self.collectionView.reloadData()
+//            }
+//            catch {
+//                self.shwoErrorAllertWith(error: error as! NetworkError)
+//            }
+//        }
+//    }
+    
+//    private func getUpcommingEvents() {
+//        Task {
+//            do {
+//                let events = try await networkService.getEventsList(type: .eventsList, eventsCount: 40)
+//                self.upcommingEvents = events
+//                print(upcommingEvents)
+//                self.collectionView.reloadData()
+//            }
+//            catch {
+//                self.shwoErrorAllertWith(error: error as! NetworkError)
+//            }
+//        }
+//    }
     
     
     
@@ -182,7 +189,9 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         let section = sections[indexPath.section]
         switch section {
         case .categories:
-            getEventsWithCategory(category: categoriesAll[indexPath.row].slug)
+            Task {
+                await getEvents(category: categoriesAll[indexPath.row].slug)
+            }
         case .upcoming:
             break
         case .nearby:
@@ -209,10 +218,11 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     @objc func didTapSeeAllUpcomming() {
-        let vc = SortedEventsViewController(with: upcommingEvents)
-        self.navigationController?.modalPresentationStyle = .fullScreen
-        self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = SortedEventsViewController(with: upcommingEvents)
+//        self.navigationController?.modalPresentationStyle = .fullScreen
+//        self.navigationController?.pushViewController(vc, animated: true)
     }
+    
     
     @objc func didTapSeeAllNearby() {
         

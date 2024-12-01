@@ -2,10 +2,21 @@
 //  Event.swift
 //  EventHub
 //
-//  Created by Igor Guryan on 23.11.2024.
+//  Created by Igor Guryan on 29.11.2024.
 //
-
 import Foundation
+
+struct Event {
+    let id: Int
+    let dates: DateElement
+    let title: String
+    let place: Place?
+    let bodyText: String
+    let images: [Image]
+    let favoritesCount: Int
+    let shortTitle: String
+    let isFavorited: Bool = false
+}
 
 struct DataResponse: Codable {
 //    let count: Int
@@ -14,33 +25,23 @@ struct DataResponse: Codable {
 
 struct EventType: Codable {
     let id: Int
-    let dates: [DateElement]
+    var dates: [DateElement]
     let title: String
-	let place: Place?
+    let place: Place?
     let bodyText: String
     let images: [Image]
     let favoritesCount: Int
     let shortTitle: String
-//
-//    enum CodingKeys: String, CodingKey {
-//        case id, dates, title, place
-//        case bodyText = "body_text"
-//        case images
-//        case favoritesCount = "favorites_count"
-//        case shortTitle = "short_title"
-//    }
+    
+    
+    var actualTime: Int { dates.first { $0.end > Int(Date().timeIntervalSince1970) }?.end ?? dates[0].end }
 }
 
 // MARK: - DateElement
 struct DateElement: Codable {
-	let start: Int
-	let end: Int
-	
-//	var startFormatted: String { print(start.toAppDateFormat())
-//		return start.toAppDateFormat() }
-//	var endFormatted: String { end.toAppDateFormat() }
+    let start: Int
+    let end: Int
 }
-
 // MARK: - Image
 struct Image: Codable {
     let image: String
@@ -54,8 +55,9 @@ struct Source: Codable {
 }
 
 struct Place: Codable {
-	let id: Int
+    let id: Int
     let address: String
     let title: String
 }
+
 

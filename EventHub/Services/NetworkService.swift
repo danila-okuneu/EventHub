@@ -12,7 +12,10 @@
 
 
 enum RequestType: String {
-    case eventsList = "events/?location=msk&actual_since=1732313335&fields=id,dates,short_title,title,place,body_text,images,favorites_count,categorires&expand=place"
+    case eventsList = "events/?location=msk&actual_since=1732530568&fields=id,dates,short_title,title,body_text,images,place,favorites_count,categorires&expand=place&order_by="
+//            "events/?location=msk&actual_since=1732313335&fields=id,dates,short_title,title,place,body_text,images,favorites_count,categorires&expand=place"
+    
+    
     case allCategories = "event-categories/?lang=&order_by=&fields="
 }
 
@@ -26,7 +29,7 @@ final class NetworkService {
     
     
     
-    func getEventsList(type: RequestType, eventsCount: Int = 20, categories: String = "") async throws -> [EventType] {
+    func getEventsList(type: RequestType, eventsCount: Int = 50, categories: String = "") async throws -> [EventType] {
 		
 		guard let url = URL(string: baseURLString + type.rawValue + "&number=\(eventsCount)" + "&categories=\(categories)") else { throw NetworkError.invalidURL }
 		let (data, response) = try await session.data(from: url)
@@ -43,7 +46,7 @@ final class NetworkService {
 	}
     
     func getCategories(type: RequestType) async throws -> [EventCategory] {
-        guard let url = URL(string: baseURLString + type.rawValue) else { throw NetworkError.invalidURL }
+        guard let url = try? getURL(forRequestType: type) else { throw NetworkError.invalidURL }
         let (data, response) = try await session.data(from: url)
         guard let response = response as? HTTPURLResponse else { throw NetworkError.invalidResponse }
         switch response.statusCode {
@@ -57,11 +60,16 @@ final class NetworkService {
     }
 	
 	    
-    private func getURL(forRequestType type: RequestType) -> Result<URL, NetworkError> {
-        guard let url = URL(string: baseURLString + type.rawValue) else {
-            return .failure(.invalidURL)
-        }
-        return .success(url)
+    private func getURL(forRequestType type: RequestType) throws -> URL {
+        let urlString: String
+//        switch type {
+//        case .eventsList:
+//            urlString =
+//        case .allCategories:
+//            <#code#>
+//        }
+        guard let url = URL(string: baseURLString + type.rawValue) else { throw NetworkError.invalidURL }
+        return url
     }
 
 }
