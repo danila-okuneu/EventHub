@@ -13,9 +13,9 @@ final class User {
     var profileImage: UIImage?
     var about: String?
 	
-	init(uid: String, name: String, profileImage: UIImage? = nil, about: String? = nil) {
+	init(uid: String, name: String? = nil, profileImage: UIImage? = nil, about: String? = nil) {
 		self.uid = uid
-		self.name = name
+		self.name = name ?? "Unknown"
 		self.profileImage = profileImage
 		self.about = about
 	}
