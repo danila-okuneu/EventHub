@@ -21,14 +21,17 @@ struct EventType: Codable {
     let images: [Image]
     let favoritesCount: Int
     let shortTitle: String
-//
-//    enum CodingKeys: String, CodingKey {
-//        case id, dates, title, place
-//        case bodyText = "body_text"
-//        case images
-//        case favoritesCount = "favorites_count"
-//        case shortTitle = "short_title"
-//    }
+	
+	init(id: Int, dates: [DateElement], title: String, place: Place?, bodyText: String, images: [Image], favoritesCount: Int, shortTitle: String) {
+		self.id = id
+		self.dates = dates
+		self.title = title
+		self.place = place
+		self.bodyText = bodyText
+		self.images = images
+		self.favoritesCount = favoritesCount
+		self.shortTitle = shortTitle
+	}
 }
 
 // MARK: - DateElement

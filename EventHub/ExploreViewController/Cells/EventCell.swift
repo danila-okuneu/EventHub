@@ -79,7 +79,7 @@ class EventCell: UICollectionViewCell {
 		
 		imageView.image = nil
 		imageView.kf.cancelDownloadTask()
-		imageView.stopSkeletonAnimation()
+		imageView.hideSkeleton()
 		imageView.showGradientSkeleton()
 	}
 	

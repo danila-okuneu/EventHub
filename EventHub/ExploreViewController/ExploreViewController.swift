@@ -163,7 +163,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return upcommingEvents.count
         }
     }
-    
+	
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
         switch section {
@@ -226,6 +226,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     }
 }
     
+
 extension ExploreViewController: EventCellDelegate {
     func didTapBookmark(for event: EventType) {
         let favouriteEvent = FavouriteEvent.from(event)
@@ -237,7 +238,7 @@ extension ExploreViewController: EventCellDelegate {
             favouriteEventStore.saveEvent(favouriteEvent)
         }
     }
-}
+
 
 //@available(iOS 17.0, *)
 //#Preview {ExploreViewController()

@@ -59,8 +59,9 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 		profileView.aboutTextView.text = user.about
 		
         if profileMode == .view {
-            // using mock data
-			self.profileView.nameTextField.isEnabled = false
+            
+			nameTextField.isEnabled = false
+			aboutTextView.isEditable = false
 			
 			UIView.animate(withDuration: 0.3) {
 				self.profileView.editButton.layer.opacity = 1.0
@@ -75,7 +76,8 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
       
         } else {
 			
-			self.profileView.nameTextField.isEnabled = true
+			nameTextField.isEnabled = true
+			aboutTextView.isEditable = true
 			
 			UIView.animate(withDuration: 0.3) {
 				self.profileView.editButton.layer.opacity = 0.0
@@ -86,6 +88,10 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 
 			aboutTextView.attributedText = NSMutableAttributedString(string: user.about ?? "", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .light)])
         }
+		
+		UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
+			self.view.layoutIfNeeded()
+		}
     }
     
     
@@ -114,12 +120,12 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     //setup "read more" button
     func setupAboutLabel(with text: String) {
 		
-		guard text.count > 150 else {
+		guard text.count > 100 else {
 			profileView.aboutTextView.text = text
 			return
 		}
 		
-        let maxLength = 150
+        let maxLength = 100
         var truncatedText = String(text.prefix(maxLength))
         
         if let lastSpaceIndex = truncatedText.range(of: " ", options: .backwards)?.lowerBound {
@@ -140,9 +146,27 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     }
     
     @objc func didTapReadMore() {
-        profileMode = .view
 		
-		aboutTextView.attributedText = NSAttributedString(string: user.about ?? "")
+		if profileMode == .view {
+			
+			if aboutTextView.attributedText.string != user.about {
+				
+				aboutTextView.attributedText = NSAttributedString(string: user.about ?? "", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .light)])
+			} else {
+				
+				setupAboutLabel(with: user.about ?? "")
+				
+			}
+			
+			UIView.transition(with: aboutTextView, duration: 0.15, options: [.curveEaseOut, .transitionCrossDissolve]) {
+				self.view.layoutIfNeeded()
+				
+			}
+			
+		} else {
+			aboutTextView.becomeFirstResponder()
+		}
+		
     }
     
     @objc private func signOutButtonTapped() {
