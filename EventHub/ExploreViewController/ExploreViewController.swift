@@ -85,7 +85,7 @@ final class ExploreViewController: UIViewController {
 				self.collectionView.reloadData()
             }
             catch {
-                self.shwoErrorAllertWith(error: error as! NetworkError)
+                self.showErrorAlert(with: error as! NetworkError)
             }
         }
     }
@@ -99,15 +99,15 @@ final class ExploreViewController: UIViewController {
                 self.collectionView.reloadData()
             }
             catch {
-                self.shwoErrorAllertWith(error: error as! NetworkError)
+                self.showErrorAlert(with: error as! NetworkError)
             }
         }
     }
     
     
     
-    private func shwoErrorAllertWith(error: NetworkError) {
-        let allert = UIAlertController(title: "Ошибка", message: error.errorText, preferredStyle: .alert)
+    private func showErrorAlert(with: NetworkError) {
+        let allert = UIAlertController(title: "Ошибка", message: with.errorText, preferredStyle: .alert)
         allert.addAction(UIAlertAction(title: "OK", style: .default))
         present(allert, animated: true)
     }
@@ -134,7 +134,7 @@ final class ExploreViewController: UIViewController {
 			make.height.equalTo(470)
 		}
 		
-        
+		collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = UIColor(red: 0.312, green: 0.334, blue: 0.534, alpha: 0.06)
         collectionView.register(CategorieCell.self, forCellWithReuseIdentifier: CategorieCell.identifier)
         collectionView.register(EventCell.self , forCellWithReuseIdentifier: EventCell.identifier)

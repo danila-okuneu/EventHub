@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 import SkeletonView
 
-
 final class DetailsViewController: UIViewController {
 	
 	private let event: Event
@@ -98,11 +97,9 @@ final class DetailsViewController: UIViewController {
 		label.lineBreakMode = .byWordWrapping
 		label.font = .cerealFont(ofSize: Constants.bodyFontSize, weight: .light)
 		label.textColor = .detailsText
-		label.text = "body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body body "
+		label.text = "body body body body body body body body body body body"
 		return label
 	}()
-	
-	
 
 	// MARK: - Initializers
 	init(event: Event) {
@@ -113,9 +110,8 @@ final class DetailsViewController: UIViewController {
 		
 		if favouriteEvents.contains(where: { $0.id == event.id } ) {
 			bookmarkButton.isBookmarked = true
-			
 		}
-		
+        
 		configure(with: event)
 	}
 	
@@ -139,7 +135,8 @@ final class DetailsViewController: UIViewController {
 		bookmarkButton.bounds.size = CGSize(width: 36, height: 36)
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: bookmarkButton)
 		bookmarkButton.addTarget(self, action: #selector(bookmarkTapped), for: .touchUpInside)
-		shareButton.addTarget(self, action: #selector(shareTapped), for: .touchUpInside)
+  
+    shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
 	}
 	
 	// MARK: - Layout
@@ -151,7 +148,7 @@ final class DetailsViewController: UIViewController {
 		view.addSubview(dimmedView)
 		
 		contentView.addSubview(headerImageView)
-		contentView.addSubview(shareButton)
+    contentView.addSubview(shareButton)
 		contentView.addSubview(infoStackView)
 		infoStackView.addArrangedSubview(titleLabel)
 		infoStackView.addArrangedSubview(dateComponentView)
@@ -227,16 +224,12 @@ final class DetailsViewController: UIViewController {
 		view.addSubview(navBarBackground)
 		navBarBackground.frame = dimmedView.frame
 		
-		
 		title = "Event Details"
 		navBar.tintColor = .white
 		navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
 		navBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal: -Constants.screenWidth * 0.4, vertical: 0)
 		navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
 		navBar.scrollEdgeAppearance?.titlePositionAdjustment = UIOffset(horizontal: -Constants.screenWidth * 0.4, vertical: 0)
-		
-		
-
 
 		let backButton = UIButton()
 		let image = UIImage(named: "arrow-left")?.withRenderingMode(.alwaysTemplate)
@@ -254,13 +247,11 @@ final class DetailsViewController: UIViewController {
 	// MARK: - Methods
 	func configure(with event: Event) {
 		
-		
 		titleLabel.text = "\(String(event.title.prefix(1)).capitalized)\(event.title.dropFirst())"
 		
 		if let urlString = event.images.first?.image, let url = URL(string: urlString) {
 			headerImageView.kf.setImage(with: url)
 		}
-		
 	
 		if !event.dates.isEmpty {
 			let date = event.actualDate
@@ -319,22 +310,35 @@ final class DetailsViewController: UIViewController {
 	}
 	
 	@objc private func bookmarkTapped() {
-		
 		bookmarkButton.isBookmarked.toggle()
 		if bookmarkButton.isBookmarked {
 			FavouriteEventStore().saveEvent(event)
 		} else {
 			FavouriteEventStore().deleteEvent(withId: event.id)
 		}
-		
-		
-		
 	}
-	
-	@objc private func shareTapped() {
-		print("share")
-		
-	}
+    
+  @objc private func shareButtonTapped() {
+
+            UIView.animate(withDuration: 0.2,
+                           animations: {
+                               self.shareButton.alpha = 0.5
+                           }) { _ in
+                               UIView.animate(withDuration: 0.2) {
+                                   self.shareButton.alpha = 1.0
+                               }
+                           }
+            
+        let textToShare = "\(titleLabel.text ?? "Share with your friend")"
+            let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
+            
+            activityVC.excludedActivityTypes = [
+                .print,               // Исключить Print
+                .assignToContact,     // Исключить Assign to Contact
+            ]
+            
+            present(activityVC, animated: true, completion: nil)
+        }
 }
 
 // MARK: - Constants
@@ -354,10 +358,7 @@ extension DetailsViewController {
 		static let titleFontSize = screenHeight * 35 / 812
 		static let aboutFontSize = screenHeight * 18 / 812
 		static let bodyFontSize = screenHeight * 16 / 812
-		
 	}
-	
-	
 }
 
 extension DetailsViewController: UIScrollViewDelegate {
@@ -379,12 +380,10 @@ extension DetailsViewController: UIScrollViewDelegate {
 			}
 		}
 		
-		
 		UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseOut) {
 			if shouldHideBookmark {
 				
 				self.bookmarkButton.change(colors: (UIColor.appPurple, UIColor.appPurple.withAlphaComponent(0.1)))
-				
 				
 				navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
 				navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
@@ -394,15 +393,10 @@ extension DetailsViewController: UIScrollViewDelegate {
 				
 				self.bookmarkButton.change(colors: (UIColor.white, UIColor.white.withAlphaComponent(0.3)))
 				
-				
 				navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
 				navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
 				navBar.tintColor = .white
-				
-				
 			}
 		}
-		
-		
 	}
 }

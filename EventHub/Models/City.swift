@@ -23,20 +23,20 @@ enum City: String, CaseIterable {
     
     var cityName: String {
         switch self {
-        case .spb: return "Санкт-Петербург"
-        case .msk: return "Москва"
-        case .nsk: return "Новосибирск"
-        case .ekb: return "Екатеринбург"
-        case .nnv: return "Нижний Новгород"
-        case .kzn: return "Казань"
-        case .vbg: return "Выборг"
-        case .smr: return "Самара"
-        case .krd: return "Краснодар"
-        case .sochi: return "Сочи"
-        case .ufa: return "Уфа"
-        case .krasnoyarsk: return "Красноярск"
-        case .kev: return "Киев"
-        case .new: return "Нью-Йорк"
+		case .spb: return "Saint Petersburg"
+		case .msk: return "Moscow"
+		case .nsk: return "Novosibirsk"
+		case .ekb: return "Yekaterinburg"
+		case .nnv: return "Nizhny Novgorod"
+		case .kzn: return "Kazan"
+		case .vbg: return "Vyborg"
+		case .smr: return "Samara"
+		case .krd: return "Krasnodar"
+		case .sochi: return "Sochi"
+		case .ufa: return "Ufa"
+		case .krasnoyarsk: return "Krasnoyarsk"
+		case .kev: return "Kyiv"
+		case .new: return "New York"
         }
     }
 }
