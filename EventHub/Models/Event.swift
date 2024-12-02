@@ -14,7 +14,7 @@ struct DataResponse: Codable {
 
 struct Event: Codable {
     let id: Int
-    let dates: [DateElement]
+    var dates: [DateElement]
     let title: String
 	let shortTitle: String
 	let place: Place?

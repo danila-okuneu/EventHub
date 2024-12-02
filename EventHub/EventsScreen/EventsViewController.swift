@@ -111,11 +111,25 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
 		
 		async let upcomingEvents = network.getEventsList(type: .nextWeek)
 		async let pastEvents = network.getEventsList(type: .pastWeek)
-		
-		
+        var past = try await pastEvents
+        let actualUntil = Int(Date().timeIntervalSince1970)
+        let actualSince = actualUntil - 60 * 60 * 24 * 7
+        past = past.filter { event in
+            let validDates = event.dates.map{$0.end}.filter({ $0 >= actualSince && $0 <= actualUntil })
+            return !validDates.isEmpty
+        }.map { event in
+            var mutableEvent = event
+            mutableEvent.dates = event.dates.filter { $0.end ?? 0 >= actualSince && $0.end ?? 0 <= actualUntil }
+            return mutableEvent
+        }.sorted { event1, event2 in
+            
+            let date1 = event1.dates.compactMap({ $0.end }).max() ?? 0
+            let date2 = event2.dates.compactMap({ $0.end }).max() ?? 0
+            return date1 > date2
+        }
 		self.upcomingEvents = try await upcomingEvents
 
-		self.pastEvents = try await pastEvents
+        self.pastEvents = past
 		
 		isDataLoaded = true
 		collectionView.reloadData()

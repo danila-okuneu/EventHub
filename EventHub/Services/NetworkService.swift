@@ -78,7 +78,8 @@ final class NetworkService {
     }
 	
 	    
-	private func getURL(forRequestType type: RequestType, eventsNumber: Int = 20, categories: String = "") throws -> URL {
+	private func getURL(forRequestType type: RequestType, eventsNumber: Int = 100
+                        , categories: String = "") throws -> URL {
 		
 		
 		var urlPostfix = ""
@@ -93,7 +94,7 @@ final class NetworkService {
 		case .nextWeek:
 			urlPostfix = "&number=\(eventsNumber)&categories=\(categories)&location=\(citySlug)&actual_since=\(currentDate)&actual_until=\(currentDate + weekInSeconds)"
 		case .pastWeek:
-			urlPostfix = "&number=\(eventsNumber)&categories=\(categories)&location=\(citySlug)&actual_since=\(currentDate - weekInSeconds)&actual_until=\(currentDate)"
+			urlPostfix = "&number=\(eventsNumber)&categories=\(categories)&location=\(citySlug)&actual_since=\(currentDate - weekInSeconds)&actual_until=\(currentDate)&include_inactual=1"
 		}
     
 		guard let url = URL(string: urlPrefix + urlSuffix + urlPostfix) else { throw NetworkError.invalidURL }
