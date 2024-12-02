@@ -13,9 +13,11 @@ protocol SearchViewControllerDelegate: AnyObject {
 }
 
 class SearchBarVC: UIViewController {
-    
+    let networkService = NetworkService()
+    var searchText: String? = ""
     // MARK: - Properties
     
+    var searchedEvents: [Event] = []
     var sortedEvents: [Event] = [Event(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
     var allEvents: [Event] = []
     var events: [Event] = [Event(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
@@ -44,6 +46,11 @@ class SearchBarVC: UIViewController {
         setupLayout()
         setupGestureRecognizer()
         setupNavBar()
+        Task {
+            await searchEvents(withText: searchText!)
+        }
+        
+        
     }
     
     // MARK: - Setup
@@ -51,6 +58,7 @@ class SearchBarVC: UIViewController {
     private func setupUI() {
         view.backgroundColor = .appGray
         searchBar.delegate = self
+        searchBar.textField.text = searchText
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -61,6 +69,19 @@ class SearchBarVC: UIViewController {
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: -10, right: 0)
         collectionView.register(EventCollectionViewCell.self, forCellWithReuseIdentifier: EventCollectionViewCell.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func searchEvents(withText text: String) async {
+        Task {
+            do {
+                let events = try await networkService.searchEvents(withText: text)
+                self.searchedEvents = events
+                self.collectionView.reloadData()
+            }
+            catch {
+                print(error)
+            }
+        }
     }
     
     private func setupLayout() {
@@ -107,7 +128,7 @@ private func filterEvents(for searchText: String) {
 extension SearchBarVC:  UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = events.count
+        let count = searchedEvents.count
         errorLabel.isHidden = count > 0
         return count
     }
@@ -117,9 +138,18 @@ extension SearchBarVC:  UICollectionViewDataSource, UICollectionViewDelegate, UI
             return UICollectionViewCell()
         }
         
-        let event = events[indexPath.item]
-        cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: true)
+//        let event = events[indexPath.item]
+        cell.configure(with: searchedEvents[indexPath.item], isbookmarkHidden: true, isLocationHidden: true)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let event = searchedEvents[indexPath.row]
+        
+        let vc = DetailsViewController(event: event)
+        vc.modalPresentationStyle = .currentContext
+        self.navigationController?.pushViewController(vc, animated: true)
+        self.navigationController?.navigationBar.isHidden = false
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -138,15 +168,22 @@ extension SearchBarVC: SearchViewControllerDelegate {
         gestureRecognizer.isEnabled = false
         _ = searchBar.resignFirstResponder()
         guard let text = searchBar.textField.text else { return }
-        filterEvents(for: text)
+        Task {
+            await searchEvents(withText: text)
+        }
+//        filterEvents(for: text)
     }
     
     @objc func searchButtonTapped() {
         endTyping()
         guard let text = searchBar.textField.text else { return }
-        filterEvents(for: text)
+        Task {
+            await searchEvents(withText: text)
+        }
+//        filterEvents(for: text)
         
     }
+
     
     
     // MARK: - setupNavBar

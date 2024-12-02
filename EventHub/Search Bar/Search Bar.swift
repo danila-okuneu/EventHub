@@ -113,6 +113,7 @@ class CustomSearchBar: UIView {
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
             textField.resignFirstResponder()
             searchButton.sendActions(for: .touchUpInside)
+            delegate?.endTyping()
             return true
         }
         
