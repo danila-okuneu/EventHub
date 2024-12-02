@@ -12,6 +12,8 @@ import SkeletonView
 
 final class DetailsViewController: UIViewController {
 	
+	private let event: EventType
+	
 	// MARK: - UI Components
 	private let dimmedView: UIView = {
 		
@@ -56,7 +58,7 @@ final class DetailsViewController: UIViewController {
 		return imageView
 	}()
 
-	private let bookmarkButton = BookmarkButton(colors: (tint: .white, background: .white.withAlphaComponent(0.3)))
+	@objc private let bookmarkButton = BookmarkButton(colors: (tint: .white, background: .white.withAlphaComponent(0.3)))
 	private let shareButton = RoundedButton(image: .detailsShare, colors: (tint: .white, background: .white.withAlphaComponent(0.3)))
 	
 	private let titleLabel: UILabel = {
@@ -104,6 +106,7 @@ final class DetailsViewController: UIViewController {
 
 	// MARK: - Initializers
 	init(event: EventType) {
+		self.event = event
 		super.init(nibName: nil, bundle: nil)
 		
 		let favouriteEvents = FavouriteEventStore().fetchAllEvents()
@@ -135,6 +138,7 @@ final class DetailsViewController: UIViewController {
 		
 		bookmarkButton.bounds.size = CGSize(width: 36, height: 36)
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: bookmarkButton)
+		bookmarkButton.addTarget(self, action: #selector(bookmarkTapped), for: .touchUpInside)
 	}
 	
 	// MARK: - Layout
@@ -310,6 +314,19 @@ final class DetailsViewController: UIViewController {
 				print("Ошибка преобразования HTML в атрибутированную строку: \(error)")
 			}
 		}
+	}
+	
+	@objc private func bookmarkTapped() {
+		
+		bookmarkButton.isBookmarked.toggle()
+		if bookmarkButton.isBookmarked {
+			FavouriteEventStore().saveEvent(event)
+		} else {
+			FavouriteEventStore().deleteEvent(withId: event.id)
+		}
+		
+		
+		
 	}
 }
 
