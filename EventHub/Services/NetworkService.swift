@@ -27,7 +27,7 @@ final class NetworkService {
     
     
     func getEventsList(type: RequestType, eventsCount: Int = 20, categories: String = "") async throws -> [Event] {
-        let citySlug = DefaultsManager.citySlug
+//        let citySlug = DefaultsManager.citySlug
 		let url = try getURL(forRequestType: type, eventsNumber: eventsCount, categories: categories)
 			
 		let (data, response) = try await session.data(from: url)
@@ -56,6 +56,26 @@ final class NetworkService {
         default: throw NetworkError.unknowedError
         }
     }
+    
+    
+    func searchEvents(withText text: String) async throws -> [Event] {
+        let citySlug = DefaultsManager.citySlug
+        guard let url = URL(string: urlPrefix + "search/?&lang=ru&expand=place,dates&ctype=event&is_free=&lat=&lon=&radius=" + "&q=\(text)" + "&location=\(citySlug)") else { throw NetworkError.invalidURL }
+        let (data, response) = try await session.data(from: url)
+        guard let response = response as? HTTPURLResponse else { throw NetworkError.invalidResponse }
+        print(response.statusCode)
+        switch response.statusCode {
+        case 200:
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            guard let dataResponse = try? decoder.decode(SearchEventResponse.self, from: data) else { throw NetworkError.decodingError }
+            let events = dataResponse.results.map { event in
+                return Event(id: event.id, dates: [event.daterange], title: event.title, place: event.place, bodyText: event.description, images: [event.firstImage], favoritesCount: event.favoritesCount, shortTitle: event.title)
+            }
+            return events
+        default: throw NetworkError.unknowedError
+        }
+    }
 	
 	    
 	private func getURL(forRequestType type: RequestType, eventsNumber: Int = 20, categories: String = "") throws -> URL {
@@ -75,6 +95,7 @@ final class NetworkService {
 		case .pastWeek:
 			urlPostfix = "&number=\(eventsNumber)&categories=\(categories)&location=\(citySlug)&actual_since=\(currentDate - weekInSeconds)&actual_until=\(currentDate)"
 		}
+    
 		
 		guard let url = URL(string: urlPrefix + urlSuffix + urlPostfix) else { throw NetworkError.invalidURL }
 		return url
