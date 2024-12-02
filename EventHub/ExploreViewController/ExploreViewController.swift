@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 
-final class ExploreViewController: UIViewController, UITextFieldDelegate {
+final class ExploreViewController: UIViewController {
 	
     
     private let favouriteEventStore = FavouriteEventStore()
@@ -243,7 +243,9 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     @objc func didTapSeeAllNearby() {
-        
+        let vc = SeeAllEvenetsViewController(with: nearbyEvents)
+        self.navigationController?.modalPresentationStyle = .fullScreen
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
     
@@ -267,8 +269,16 @@ extension ExploreViewController: CityCheckerDelegate {
     func didChangeCity() {
         getUpcommingEvents()
     }
-    
+}
 
+extension ExploreViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        let vc = SearchBarVC()
+        vc.searchText = textField.text
+        navigationController?.pushViewController(vc, animated: true)
+        return true
+    }
 }
 //@available(iOS 17.0, *)
 //#Preview {ExploreViewController()
