@@ -8,16 +8,6 @@
 import UIKit
 
 
-// MARK: - Mock Data
-
-struct Event {
-    let image: UIImage
-    let date: String
-    let title: String
-    let location: String
-   
-}
-
 protocol FavouritesViewControllerDelegate: AnyObject {
     func didCloseFavouritesScreen()
 }
@@ -29,7 +19,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
     
     private let emptyView = EmptyView()
     
-	private var events: [EventType] = []
+	private var events: [Event] = []
     
     private var collectionView: UICollectionView!
     private let headerHeightWithNoData: CGFloat = 350
@@ -54,7 +44,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         events = favouriteEventStore.fetchAllEvents()
     }
     
-	private func saveEvent(_ event: EventType) {
+	private func saveEvent(_ event: Event) {
         favouriteEventStore.saveEvent(event)
         fetchEvents()
     }

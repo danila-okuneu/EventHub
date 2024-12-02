@@ -119,7 +119,7 @@ class FavouriteEventCollectionViewCell: UICollectionViewCell {
         }
     }
     
-	func configure(with event: EventType, isbookmarkHidden: Bool) {
+	func configure(with event: Event, isbookmarkHidden: Bool) {
 		dateLabel.text = event.actualDate.formatTo(.eventPreview)
 		titleLabel.text = event.shortTitle
 		locationLabel.text = event.place?.address

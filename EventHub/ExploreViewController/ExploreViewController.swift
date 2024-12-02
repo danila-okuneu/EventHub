@@ -14,8 +14,8 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     private let favouriteEventStore = FavouriteEventStore()
     
     private let networkService = NetworkService()
-    private var upcommingEvents: [EventType] = []
-	private var nearbyEvents: [EventType] = [ ]
+    private var upcommingEvents: [Event] = []
+	private var nearbyEvents: [Event] = [ ]
     private var categoriesAll: [Category] = []
     private var selectedCategory: Int?
     
@@ -246,7 +246,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     
 
 extension ExploreViewController: EventCellDelegate {
-	func didTapBookmark(for event: EventType) -> Bool {
+	func didTapBookmark(for event: Event) -> Bool {
 		
 		let events = favouriteEventStore.fetchAllEvents()
 		if events.contains(where: { $0.id == event.id }) {

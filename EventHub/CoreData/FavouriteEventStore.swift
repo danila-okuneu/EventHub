@@ -16,7 +16,7 @@ final class FavouriteEventStore {
     }
     
     // MARK: - Save Event
-	func saveEvent(_ event: EventType) {
+	func saveEvent(_ event: Event) {
         let favouriteEvent = FavouriteEventCoreData(context: context)
 		
 		favouriteEvent.id = Int64(event.id)
@@ -45,13 +45,13 @@ final class FavouriteEventStore {
     }
     
     // MARK: - Fetch Events
-	func fetchAllEvents() -> [EventType] {
+	func fetchAllEvents() -> [Event] {
         let fetchRequest: NSFetchRequest<FavouriteEventCoreData> = FavouriteEventCoreData.fetchRequest()
         
         do {
             let results = try context.fetch(fetchRequest)
             return results.map { coreDataEvent in
-				EventType(
+				Event(
 					id: Int(coreDataEvent.id),
 					dates: [DateElement(start: -1, end: Int(coreDataEvent.actualDate))],
 					title: coreDataEvent.title ?? "",

@@ -12,7 +12,7 @@ import SkeletonView
 
 final class DetailsViewController: UIViewController {
 	
-	private let event: EventType
+	private let event: Event
 	
 	// MARK: - UI Components
 	private let dimmedView: UIView = {
@@ -105,7 +105,7 @@ final class DetailsViewController: UIViewController {
 	
 
 	// MARK: - Initializers
-	init(event: EventType) {
+	init(event: Event) {
 		self.event = event
 		super.init(nibName: nil, bundle: nil)
 		
@@ -251,7 +251,7 @@ final class DetailsViewController: UIViewController {
 	}
 
 	// MARK: - Methods
-	func configure(with event: EventType) {
+	func configure(with event: Event) {
 		
 		titleLabel.text = event.title.capitalized
 		
