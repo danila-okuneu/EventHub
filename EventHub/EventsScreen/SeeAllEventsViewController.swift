@@ -10,7 +10,7 @@ final class SeeAllEvenetsViewController: UIViewController, UICollectionViewDataS
     
     // MARK: - Property
     
-    var sortedEvents: [EventType] = []
+    var sortedEvents: [Event] = []
 	
 	lazy var collectionView: UICollectionView = {
 		let layout = UICollectionViewFlowLayout()
@@ -21,7 +21,7 @@ final class SeeAllEvenetsViewController: UIViewController, UICollectionViewDataS
 		return cv
 	}()
     
-    init(with events: [EventType]) {
+    init(with events: [Event]) {
         super.init(nibName: nil, bundle: nil)
         self.sortedEvents = events
         

@@ -14,7 +14,7 @@ struct FavouriteEvent {
     let place: String
     let date: Int
     
-    static func from(_ event: EventType) -> FavouriteEvent {
+    static func from(_ event: Event) -> FavouriteEvent {
         // Извлекаем ID
         let id = event.id
         

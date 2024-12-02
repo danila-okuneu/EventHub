@@ -9,10 +9,10 @@ import Foundation
 
 struct DataResponse: Codable {
 //    let count: Int
-    let results: [EventType]
+    let results: [Event]
 }
 
-struct EventType: Codable {
+struct Event: Codable {
     let id: Int
     let dates: [DateElement]
     let title: String

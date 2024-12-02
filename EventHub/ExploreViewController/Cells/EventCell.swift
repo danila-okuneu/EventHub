@@ -11,12 +11,12 @@ import Kingfisher
 import SkeletonView
 
 protocol EventCellDelegate: AnyObject {
-	func didTapBookmark(for event: EventType) -> Bool
+	func didTapBookmark(for event: Event) -> Bool
 }
 
 final class EventCell: UICollectionViewCell {
 	
-	var event: EventType?
+	var event: Event?
     weak var delegate: EventCellDelegate?
     
     private let favouriteEventStore = FavouriteEventStore()
@@ -193,7 +193,7 @@ final class EventCell: UICollectionViewCell {
         
     }
     
-    func configureCell(with event: EventType) {
+    func configureCell(with event: Event) {
 		
 		print("Configuring cell for event ID: \(event.id)")
 		
