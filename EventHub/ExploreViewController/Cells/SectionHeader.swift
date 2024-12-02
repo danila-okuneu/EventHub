@@ -65,8 +65,10 @@ class SectionHeaderView: UICollectionReusableView {
         button.setTitle(buttonTitle, for: .normal)
         buttonEvent = tapAction
         button.isHidden = isButtonHidden
+		button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
-    
-  	
-    
+	
+	@objc private func buttonTapped() {
+		buttonEvent?()
+	}
 }

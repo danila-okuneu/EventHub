@@ -43,7 +43,7 @@ final class ExploreViewController: UIViewController {
     
     lazy var blueView: UIView = {
         let view = UIView()
-        view.backgroundColor = .appPurple
+        view.backgroundColor = .appPurpleDark
         view.layer.cornerRadius = 40
         view.clipsToBounds = true
         return view
@@ -142,10 +142,6 @@ final class ExploreViewController: UIViewController {
         collectionView.register(SearchCell.self, forCellWithReuseIdentifier: SearchCell.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
-        
-      
-     
-        
     }
     
 }
@@ -238,12 +234,14 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     
     @objc func didTapSeeAllUpcomming() {
         let vc = SeeAllEvenetsViewController(with: upcommingEvents)
+		self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.modalPresentationStyle = .fullScreen
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func didTapSeeAllNearby() {
         let vc = SeeAllEvenetsViewController(with: nearbyEvents)
+		self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.modalPresentationStyle = .fullScreen
         self.navigationController?.pushViewController(vc, animated: true)
     }

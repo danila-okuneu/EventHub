@@ -137,35 +137,31 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
 	
 	    
     // MARK: - setupNavBar
-        private func setupNavBar() {
-            guard let navBar = self.navigationController?.navigationBar else { return }
-            navBar.tintColor = .black
-            
-            navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
-            navBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 0)
-            navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
-            navBar.scrollEdgeAppearance?.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 0)
-            
-            
-            
-            navigationItem.title = "Favorites"
-            navigationController?.navigationBar.tintColor = .black
-            navigationItem.titleView?.tintColor = .black
-            
-        let searchButton = UIButton(type: .system)
-            searchButton.setImage(UIImage(named: "searchBlue"), for: .normal)
-            searchButton.tintColor = .black
-            searchButton.addTarget(self, action: #selector(searchButtonAction), for: .touchUpInside)
-
-            searchButton.semanticContentAttribute = .forceRightToLeft
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchButton)
-            
-            
-            
-            
-            
-    }
-        
+	private func setupNavBar() {
+		guard let navBar = self.navigationController?.navigationBar else { return }
+		navBar.tintColor = .black
+		
+		navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+		navBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 0)
+		navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+		navBar.scrollEdgeAppearance?.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 0)
+		
+		
+		
+		navigationItem.title = "Favorites"
+		navigationController?.navigationBar.tintColor = .black
+		navigationItem.titleView?.tintColor = .black
+		
+		let searchButton = UIButton(type: .system)
+		searchButton.setImage(UIImage(named: "searchBlue"), for: .normal)
+		searchButton.tintColor = .black
+		searchButton.addTarget(self, action: #selector(searchButtonAction), for: .touchUpInside)
+		
+		searchButton.semanticContentAttribute = .forceRightToLeft
+		navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchButton)
+		
+	}
+	
         
         @objc private func searchButtonAction() {
             
