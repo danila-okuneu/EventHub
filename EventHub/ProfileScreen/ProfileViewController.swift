@@ -30,11 +30,26 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
+        navigationItem.title = "Profile"
         profileView.delegate = self
         setupActions()
         updateUI()
     }
+    
+    
+    
+    
+    
+    @objc private func backButtonAction() {
+        profileMode = .view
+        updateUI()
+    }
+    
+    
+    
+    
+    
+    
     
     private func setupActions() {
         profileView.editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
@@ -46,6 +61,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     }
     
     private func updateUI() {
+        let backButton = UIButton(type: .system)
         
         // Назначаем делегаты для текстовых полей
         nameTextField.delegate = self
@@ -59,6 +75,11 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 		profileView.aboutTextView.text = user.about
 		
         if profileMode == .view {
+            
+            // remove left buttons (in case you added some)
+             self.navigationItem.leftBarButtonItems = []
+            // hide the default back buttons
+             self.navigationItem.hidesBackButton = true
             
 			nameTextField.isEnabled = false
 			aboutTextView.isEditable = false
@@ -75,13 +96,23 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
             
       
         } else {
+            
+            
+            
+            
+            backButton.setImage(UIImage(named: "arrow-left" ), for: .normal)
+            backButton.tintColor = .black
+            
+            backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+            
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
 			
 			nameTextField.isEnabled = true
 			aboutTextView.isEditable = true
 			
 			UIView.animate(withDuration: 0.3) {
 				self.profileView.editButton.layer.opacity = 0.0
-				self.profileView.backSaveButton.layer.opacity = 1.0
+				self.profileView.backSaveButton.layer.opacity = 0.0 //TODO: remove backSaveButton
 				self.profileView.editNameButton.layer.opacity = 1.0
 				self.profileView.editAboutButton.layer.opacity = 1.0
 			}
@@ -188,6 +219,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 		}
 
     }
+    
 
 }
 

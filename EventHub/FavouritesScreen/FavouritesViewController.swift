@@ -26,14 +26,18 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
     private let headerHeightWithData: CGFloat = 0
     
     // MARK: - Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .appGray
-        setupNavBar()
+        
         fetchEvents()
         checkForEmpty()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        setupNavBar()
+    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         delegate?.didCloseFavouritesScreen()
@@ -133,8 +137,20 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
 	    
     // MARK: - setupNavBar
         private func setupNavBar() {
+            guard let navBar = self.navigationController?.navigationBar else { return }
+            navBar.tintColor = .black
+            
+            navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+            navBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 0)
+            navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+            navBar.scrollEdgeAppearance?.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 0)
+            
+            
             
             navigationItem.title = "Favorites"
+            navigationController?.navigationBar.tintColor = .black
+            navigationItem.titleView?.tintColor = .black
+            
         let searchButton = UIButton(type: .system)
             searchButton.setImage(UIImage(named: "searchBlue"), for: .normal)
             searchButton.tintColor = .black
@@ -142,6 +158,11 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
 
             searchButton.semanticContentAttribute = .forceRightToLeft
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchButton)
+            
+            
+            
+            
+            
     }
         
         
