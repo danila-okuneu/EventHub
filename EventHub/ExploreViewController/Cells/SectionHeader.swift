@@ -26,7 +26,6 @@ class SectionHeaderView: UICollectionReusableView {
         view.titleLabel?.font = .cerealFont(ofSize: 14)
         view.setTitleColor(UIColor(red: 0.456, green: 0.464, blue: 0.534, alpha: 1), for: .normal)
         view.titleLabel?.textAlignment = .right
-        view.addTarget(self, action: #selector(Self.buttonTapped), for: .touchUpInside)
         return view
     }()
     
@@ -68,8 +67,6 @@ class SectionHeaderView: UICollectionReusableView {
         button.isHidden = isButtonHidden
     }
     
-    @objc func buttonTapped() {
-        buttonEvent?()
-    }
+  	
     
 }

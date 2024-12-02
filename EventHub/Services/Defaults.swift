@@ -33,5 +33,14 @@ struct DefaultsManager {
 			UserDefaults.standard.setValue(newValue, forKey: "isRemembered")
 		}
 	}
+    
+    static var citySlug: String {
+        get {
+            return (UserDefaults.standard.value(forKey: "citySlug") ?? "msk") as! String
+        } set {
+            UserDefaults.standard.setValue(newValue, forKey: "citySlug")
+            print(UserDefaults.standard.value(forKey: "citySlug"))
+        }
+    }
 }
 

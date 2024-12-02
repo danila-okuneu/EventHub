@@ -7,8 +7,15 @@
 
 import UIKit
 
+
+protocol CityCheckerDelegate: AnyObject {
+    func didChangeCity()
+}
+
 final class SearchCell: UICollectionViewCell, UITextFieldDelegate {
     static let identifier = String(describing: SearchCell.self)
+    
+    weak var delegate: CityCheckerDelegate?
     
     var notificationButton: UIButton = {
         let button = UIButton()
@@ -31,7 +38,6 @@ final class SearchCell: UICollectionViewCell, UITextFieldDelegate {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 13)
-        label.text = "New York, USA"
         return label
     }()
     
@@ -52,21 +58,39 @@ final class SearchCell: UICollectionViewCell, UITextFieldDelegate {
         super.init(frame: frame)
         setupCell()
         setupSearchView()
-		
-		selectLocationButton.addTarget(self, action: #selector(locationButtonTapped), for: .touchUpInside)
+        setupCurrentCity()
+        selectLocationButton.menu = setupLocationMenu()
+        selectLocationButton.showsMenuAsPrimaryAction = true
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 	
-	private func setupLocationMenu() {
-		
-		let menu = UIMenu()
-		
-		
-		
-	}
+    private func setupLocationMenu() -> UIMenu {
+        let cities = City.allCases
+        var menuItems: [UIAction] = []
+        
+        for city in cities {
+            menuItems.append(UIAction(title: city.cityName) { action in
+                DefaultsManager.citySlug = city.rawValue
+                self.setupCurrentCity()
+                self.delegate?.didChangeCity()
+            }
+            )}
+        var demoMenu: UIMenu {
+            return UIMenu(title: "Выбирите город", image: nil, identifier: nil, options: [], children: menuItems)
+        }
+        return demoMenu
+        
+        
+    }
+    
+    private func setupCurrentCity() {
+        let city = DefaultsManager.citySlug
+        selectedLoacationLabel.text = City.allCases.first(where: { $0.rawValue == city })?.cityName
+    }
     
     private func setupSearchView() {
         let glassButton = UIButton()
@@ -131,10 +155,7 @@ final class SearchCell: UICollectionViewCell, UITextFieldDelegate {
         }
     }
 	
-	@objc private func locationButtonTapped() {
-		
-		
-		
+	@objc private func selectLocationButtonTapped() {
 		
 	}
 }

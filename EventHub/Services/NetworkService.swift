@@ -12,7 +12,7 @@
 
 
 enum RequestType: String {
-    case eventsList = "events/?location=msk&actual_since=1732313335&fields=id,dates,short_title,title,place,body_text,images,favorites_count,categorires&expand=place"
+    case eventsList = "events/?&fields=id,dates,short_title,title,place,body_text,images,favorites_count,categorires&expand=place"
     case allCategories = "event-categories/?lang=&order_by=&fields="
 }
 
@@ -26,9 +26,9 @@ final class NetworkService {
     
     
     
-    func getEventsList(type: RequestType, eventsCount: Int = 20, categories: String = "") async throws -> [Event] {
-		
-		guard let url = URL(string: baseURLString + type.rawValue + "&number=\(eventsCount)" + "&categories=\(categories)") else { throw NetworkError.invalidURL }
+    func getEventsList(type: RequestType, eventsCount: Int = 50, categories: String = "") async throws -> [Event] {
+        let citySlug = DefaultsManager.citySlug
+		guard let url = URL(string: baseURLString + type.rawValue + "&number=\(eventsCount)" + "&categories=\(categories) + &location=\(citySlug) + &actual_since=\(Date().timeIntervalSince1970)") else { throw NetworkError.invalidURL }
 		let (data, response) = try await session.data(from: url)
         guard let response = response as? HTTPURLResponse else { throw NetworkError.invalidResponse }
         print(response.statusCode)
