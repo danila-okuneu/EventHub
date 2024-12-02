@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import SkeletonView
 
 class EventCollectionViewCell: UICollectionViewCell {
     
@@ -26,9 +27,25 @@ class EventCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
-
+		setupSkeletons()
+		
+		self.layoutIfNeeded()
+		self.contentView.showAnimatedGradientSkeleton()
+		self.locationLabel.showAnimatedGradientSkeleton()
+	
+	
     }
+	
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		
+		eventImageView.image = nil
+		contentView.showAnimatedGradientSkeleton()
+		titleLabel.showAnimatedGradientSkeleton()
+		locationLabel.showAnimatedGradientSkeleton()
+	}
     
+	
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -44,17 +61,23 @@ class EventCollectionViewCell: UICollectionViewCell {
         
         dateLabel.font = UIFont.cerealFont(ofSize: 13, weight: .light)
         dateLabel.textColor = .accent
+		dateLabel.numberOfLines = 1
         
         titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        titleLabel.numberOfLines = 0
+        titleLabel.numberOfLines = 3
         
         locationLabel.font = UIFont.cerealFont(ofSize: 13)
         locationLabel.textColor = .appGrayTabbar
-        locationLabel.numberOfLines = 0
+        locationLabel.numberOfLines = 1
+		locationLabel.isSkeletonable = true
+		
+		locationImageView.contentMode = .scaleAspectFill
         locationImageView.image = .location
+		
         
         bookmarkButton.setImage(UIImage(systemName: "bookmark.fill"), for: .normal)
         bookmarkButton.tintColor = UIColor.appRed
+		bookmarkButton.isHidden = true
 
         bookmarkButton.addTarget(self, action: #selector(bookmarkTapped), for: .touchUpInside)
         
@@ -82,16 +105,18 @@ class EventCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             eventImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             eventImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+			eventImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             eventImageView.widthAnchor.constraint(equalToConstant: 100),
-            eventImageView.heightAnchor.constraint(equalToConstant: 120),
 
             
             dateLabel.topAnchor.constraint(equalTo: eventImageView.topAnchor, constant: 5),
             dateLabel.leadingAnchor.constraint(equalTo: eventImageView.trailingAnchor, constant: 10),
+			dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             
             titleLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 5),
             titleLabel.leadingAnchor.constraint(equalTo: dateLabel.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+			titleLabel.bottomAnchor.constraint(equalTo: locationImageView.topAnchor, constant: -10),
             
             bookmarkButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             bookmarkButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
@@ -115,6 +140,7 @@ class EventCollectionViewCell: UICollectionViewCell {
     
 	func configure(with event: Event, isbookmarkHidden: Bool, isLocationHidden: Bool) {
 		
+		hideSkeletons()
 		print(event.actualDate)
 		dateLabel.text = event.actualDate.formatTo(.eventPreview)
         titleLabel.text = event.title
@@ -138,10 +164,33 @@ class EventCollectionViewCell: UICollectionViewCell {
             eventImageView.hideSkeleton()
             eventImageView.image = UIImage(named: "hands")
         }
+		
+		
+		
 //		eventImageView.image = ._1
         bookmarkButton.isHidden = isbookmarkHidden
         locationLabel.isHidden = isLocationHidden
         locationImageView.isHidden = isLocationHidden
 
     }
+}
+
+
+// MARK: - Skeletons
+extension EventCollectionViewCell {
+	
+	func setupSkeletons() {
+		
+		contentView.isSkeletonable = true
+		eventImageView.isSkeletonable = true
+		dateLabel.isSkeletonable = true
+		locationLabel.isSkeletonable = true
+		titleLabel.isSkeletonable = true
+	}
+	
+	func hideSkeletons() {
+		dateLabel.hideSkeleton()
+		locationLabel.hideSkeleton()
+		titleLabel.hideSkeleton()
+	}
 }

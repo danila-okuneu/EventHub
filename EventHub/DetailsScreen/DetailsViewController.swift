@@ -135,8 +135,8 @@ final class DetailsViewController: UIViewController {
 		bookmarkButton.bounds.size = CGSize(width: 36, height: 36)
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: bookmarkButton)
 		bookmarkButton.addTarget(self, action: #selector(bookmarkTapped), for: .touchUpInside)
-        
-        shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
+  
+    shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
 	}
 	
 	// MARK: - Layout
@@ -148,7 +148,7 @@ final class DetailsViewController: UIViewController {
 		view.addSubview(dimmedView)
 		
 		contentView.addSubview(headerImageView)
-        contentView.addSubview(shareButton)
+    contentView.addSubview(shareButton)
 		contentView.addSubview(infoStackView)
 		infoStackView.addArrangedSubview(titleLabel)
 		infoStackView.addArrangedSubview(dateComponentView)
@@ -318,7 +318,7 @@ final class DetailsViewController: UIViewController {
 		}
 	}
     
-    @objc private func shareButtonTapped() {
+  @objc private func shareButtonTapped() {
 
             UIView.animate(withDuration: 0.2,
                            animations: {
