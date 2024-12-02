@@ -329,7 +329,7 @@ final class DetailsViewController: UIViewController {
                                }
                            }
             
-            let textToShare = "Share with your friends"
+        let textToShare = "\(titleLabel.text ?? "Share with your friend")"
             let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
             
             activityVC.excludedActivityTypes = [
