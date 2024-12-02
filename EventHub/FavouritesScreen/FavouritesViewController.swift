@@ -190,7 +190,5 @@ extension FavouritesViewController: UICollectionViewDelegate {
 		
 		
 	}
-
-	
 	
 }

@@ -29,8 +29,10 @@ class EventCollectionViewCell: UICollectionViewCell {
         setupViews()
 		setupSkeletons()
 		
+		self.layoutIfNeeded()
 		self.contentView.showAnimatedGradientSkeleton()
 		self.locationLabel.showAnimatedGradientSkeleton()
+	
 	
     }
 	
@@ -43,6 +45,7 @@ class EventCollectionViewCell: UICollectionViewCell {
 		locationLabel.showAnimatedGradientSkeleton()
 	}
     
+	
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -67,6 +70,8 @@ class EventCollectionViewCell: UICollectionViewCell {
         locationLabel.textColor = .appGrayTabbar
         locationLabel.numberOfLines = 1
 		locationLabel.isSkeletonable = true
+		
+		locationImageView.contentMode = .scaleAspectFill
         locationImageView.image = .location
 		
         
@@ -184,8 +189,6 @@ extension EventCollectionViewCell {
 	}
 	
 	func hideSkeletons() {
-		
-		contentView.hideSkeleton()
 		dateLabel.hideSkeleton()
 		locationLabel.hideSkeleton()
 		titleLabel.hideSkeleton()

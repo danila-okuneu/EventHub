@@ -166,26 +166,37 @@ private func setupCollectionView() {
 		guard isDataLoaded else { return 8 }
 		
 		return isShowingUpcomingEvents ? upcomingEvents.count : pastEvents.count
-		}
-
-
-func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
+	}
 	
+	
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
+		
 		guard isDataLoaded else { return cell }
+		
+		let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
+		
+		cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
+		return cell
+	}
 	
-        let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		
+		guard isDataLoaded else { return }
+		let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
+		
+		let vc = DetailsViewController(event: event)
+		vc.modalPresentationStyle = .currentContext
+		self.navigationController?.pushViewController(vc, animated: true)
+		
+	}
 	
-    cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
-        return cell
-    }
-
-// MARK: - UICollectionViewDelegateFlowLayout
-
-func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    return CGSize(width: collectionView.bounds.width, height: 140)
-}
-
+	// MARK: - UICollectionViewDelegateFlowLayout
+	
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+		return CGSize(width: collectionView.bounds.width, height: 140)
+	}
+	
 }
 
 
