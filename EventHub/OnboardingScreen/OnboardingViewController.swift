@@ -188,7 +188,17 @@ final class OnboardingViewController: UIViewController {
 	}
 	
 	@objc private func skipTapped() {
-		self.dismiss(animated: true)
+		
+		let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+		guard let window = windowScene.keyWindow else { return }
+		
+		
+		let rootVC = SignupViewController()
+		
+		UIView.transition(with: window, duration: 0.4, options: .transitionCrossDissolve) {
+			window.rootViewController = rootVC
+		}
+		
 		
 	}
 	
@@ -218,7 +228,18 @@ final class OnboardingViewController: UIViewController {
 			update(button: nextButton, title: "Start")
 			update(button: skipButton, title: "")
 		default:
-			dismiss(animated: true)
+			
+			
+			let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+			guard let window = windowScene.keyWindow else { return }
+			
+			
+			let rootVC = SignupViewController()
+			
+			UIView.transition(with: window, duration: 0.4, options: .transitionCrossDissolve) {
+				window.rootViewController = rootVC
+			}
+			
 		}
 		
 		pageControl.currentPage = currentPage

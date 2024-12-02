@@ -19,14 +19,6 @@ final class SignupViewController: UIViewController {
         return imageView
     }()
     
-    private let backButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(named: "arrow-left")?.withRenderingMode(.alwaysOriginal), for: .normal)
-        button.tintColor = .black
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Sign up"
@@ -111,7 +103,7 @@ final class SignupViewController: UIViewController {
 
     private let signInButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Signin", for: .normal)
+        button.setTitle("Sign In", for: .normal)
         button.setTitleColor(UIColor.appPurple, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         return button
@@ -122,14 +114,13 @@ final class SignupViewController: UIViewController {
         setupUI()
 		
 		setupTextFields()
-        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
 		signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
         signInButton.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
 		loginWithGoogleButton.addTarget(self, action: #selector(googleSignInTapped), for: .touchUpInside)
     }
 
     private func setupUI() {
-        [backgroundImageView, backButton, titleLabel, fullNameTextField, emailTextField, passwordTextField, confirmPasswordTextField, signUpButton, signUpButtonImageView, orLabel, loginWithGoogleButton, alreadyHaveAccountLabel, signInButton].forEach {
+        [backgroundImageView, titleLabel, fullNameTextField, emailTextField, passwordTextField, confirmPasswordTextField, signUpButton, signUpButtonImageView, orLabel, loginWithGoogleButton, alreadyHaveAccountLabel, signInButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -140,13 +131,9 @@ final class SignupViewController: UIViewController {
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 9),
-            backButton.widthAnchor.constraint(equalToConstant: 22),
-            backButton.heightAnchor.constraint(equalToConstant: 22),
 
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+			titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 9),
             
             fullNameTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 40),
             fullNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
@@ -304,7 +291,10 @@ final class SignupViewController: UIViewController {
 	}
 	
     @objc private func signInButtonTapped() {
-        dismiss(animated: true, completion: nil)
+		let vc = LoginViewController()
+		vc.modalPresentationStyle = .overCurrentContext
+		
+		self.present(vc, animated: true)
     }
 }
 

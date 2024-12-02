@@ -24,6 +24,7 @@ final class ExploreViewController: UIViewController {
     private var sections: [ExploreSection] = ExploreSection.allCases
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
+		scrollView.showsVerticalScrollIndicator = false
         scrollView.backgroundColor = .white
         scrollView.frame = view.bounds
         scrollView.contentSize = contentSize

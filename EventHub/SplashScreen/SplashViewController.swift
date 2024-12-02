@@ -33,6 +33,9 @@ final class SplashViewController: UIViewController {
 		setupViews()
 		animateLogo()
 		Task {
+			
+			try? await Task.sleep(nanoseconds: 4 * 1_000_000_000)
+			
 			await loadUserData()
 			DefaultsManager.categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
 			transitionVCs()
@@ -69,8 +72,8 @@ final class SplashViewController: UIViewController {
 	// MARK: - Methods
 	private func animateLogo() {
 		
-		if Auth.auth().currentUser == nil { return }
-		
+//		if Auth.auth().currentUser == nil { return }
+//		
 		UIView.animate(withDuration: 0.75, delay: 0, options: [.autoreverse, .repeat, .curveEaseOut]) {
 			self.logoImageView.layer.opacity = 0.4
 		}
@@ -100,12 +103,11 @@ final class SplashViewController: UIViewController {
 			return CustomTabBarController()
 		} else if DefaultsManager.isRegistered {
 			return LoginViewController()
+		} else if !DefaultsManager.isOnboarded {
+			return OnboardingViewController()
 		} else {
 			return SignupViewController()
 		}
-		
-		
-		
 	}
 	
 	private func loadUserData() async {

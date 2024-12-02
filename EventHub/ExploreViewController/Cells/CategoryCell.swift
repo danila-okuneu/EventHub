@@ -38,6 +38,7 @@ final class CategoryCell: UICollectionViewCell {
         titleLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(imageView.snp.trailing).offset(8)
+			make.trailing.equalToSuperview().offset(-10)
         }
         
     }
@@ -47,6 +48,8 @@ final class CategoryCell: UICollectionViewCell {
         contentView.backgroundColor = .appRed
         titleLabel.font = .cerealFont(ofSize: 15)
         titleLabel.textColor = .white
+		titleLabel.adjustsFontSizeToFitWidth = true
+		titleLabel.minimumScaleFactor = 0.5
     }
     
     private func setupImageView(imageName: String) {

@@ -26,7 +26,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
         nameTextField = profileView.nameTextField
         aboutTextView = profileView.aboutTextView
     }
-    
+	
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -91,8 +91,8 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
 				self.profileView.editAboutButton.layer.opacity = 0.0
 			}
 			
-			profileView.profileImageView.image = user.profileImage
-            setupAboutLabel(with: user.about ?? "")
+			profileView.profileImageView.image = .photoProfile
+            setupAboutLabel(with: user.about ?? "Write something here...")
             
       
         } else {
