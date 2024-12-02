@@ -71,10 +71,10 @@ class ProfileView: UIView {
     //MARK: - ui settings
         
         // profile header
-        nameTitleLabel.text = "Profile"
-        nameTitleLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-        nameTitleLabel.textAlignment = .center
-        nameTitleLabel.textColor = .black
+//        nameTitleLabel.text = "Profile"
+//        nameTitleLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
+//        nameTitleLabel.textAlignment = .center
+//        nameTitleLabel.textColor = .black
         
         // back arrow
         backSaveButton.setImage(UIImage(systemName: "arrow.left"), for: .normal)
