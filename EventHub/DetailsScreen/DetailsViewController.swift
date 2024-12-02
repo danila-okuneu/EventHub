@@ -111,7 +111,7 @@ final class DetailsViewController: UIViewController {
 		if favouriteEvents.contains(where: { $0.id == event.id } ) {
 			bookmarkButton.isBookmarked = true
 		}
-		
+        
 		configure(with: event)
 	}
 	
@@ -243,28 +243,6 @@ final class DetailsViewController: UIViewController {
 	@objc private func backButtonAction() {
 		navigationController?.popViewController(animated: true)
 	}
-    
-    @objc private func shareButtonTapped() {
-
-        UIView.animate(withDuration: 0.2,
-                       animations: {
-                           self.shareButton.alpha = 0.5
-                       }) { _ in
-                           UIView.animate(withDuration: 0.2) {
-                               self.shareButton.alpha = 1.0
-                           }
-                       }
-        
-        let textToShare = "Share with your friends"
-        let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
-        
-        activityVC.excludedActivityTypes = [
-            .print,               // Исключить Print
-            .assignToContact,     // Исключить Assign to Contact
-        ]
-        
-        present(activityVC, animated: true, completion: nil)
-    }
 
 	// MARK: - Methods
 	func configure(with event: Event) {
@@ -332,7 +310,6 @@ final class DetailsViewController: UIViewController {
 	}
 	
 	@objc private func bookmarkTapped() {
-		
 		bookmarkButton.isBookmarked.toggle()
 		if bookmarkButton.isBookmarked {
 			FavouriteEventStore().saveEvent(event)
@@ -340,6 +317,28 @@ final class DetailsViewController: UIViewController {
 			FavouriteEventStore().deleteEvent(withId: event.id)
 		}
 	}
+    
+    @objc private func shareButtonTapped() {
+
+            UIView.animate(withDuration: 0.2,
+                           animations: {
+                               self.shareButton.alpha = 0.5
+                           }) { _ in
+                               UIView.animate(withDuration: 0.2) {
+                                   self.shareButton.alpha = 1.0
+                               }
+                           }
+            
+            let textToShare = "Share with your friends"
+            let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
+            
+            activityVC.excludedActivityTypes = [
+                .print,               // Исключить Print
+                .assignToContact,     // Исключить Assign to Contact
+            ]
+            
+            present(activityVC, animated: true, completion: nil)
+        }
 }
 
 // MARK: - Constants
@@ -370,6 +369,7 @@ extension DetailsViewController: UIScrollViewDelegate {
 		let headerImageViewBottomY = headerImageView.frame.maxY
 		let contentOffsetY = scrollView.contentOffset.y + navBar.frame.midY
 
+		
 		let shouldHideBookmark = contentOffsetY > headerImageViewBottomY
 		
 		UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveEaseOut) {
@@ -398,6 +398,5 @@ extension DetailsViewController: UIScrollViewDelegate {
 				navBar.tintColor = .white
 			}
 		}
-	
 	}
 }
