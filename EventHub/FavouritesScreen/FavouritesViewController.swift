@@ -68,6 +68,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self
         collectionView.delegate = self
+		collectionView.showsVerticalScrollIndicator = false
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: -10, right: 0)
         
         

@@ -80,7 +80,7 @@ final class SearchCell: UICollectionViewCell, UITextFieldDelegate {
             }
             )}
         var demoMenu: UIMenu {
-            return UIMenu(title: "Выбирите город", image: nil, identifier: nil, options: [], children: menuItems)
+            return UIMenu(title: "Select city", image: nil, identifier: nil, options: [], children: menuItems)
         }
         return demoMenu
         
