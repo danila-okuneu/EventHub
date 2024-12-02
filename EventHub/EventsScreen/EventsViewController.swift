@@ -13,10 +13,12 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     // MARK: - Property
     
     private let emptyView = EmptyEventView()
-    
+	private var isDataLoaded = false
+	
     var upcomingEvents: [Event] = []
     var pastEvents: [Event] = []
-
+	let network = NetworkService()
+	
     private var isShowingUpcomingEvents: Bool {
         return segmentedControl.selectedSegmentIndex == 0
     }
@@ -58,7 +60,10 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
         setupCollectionView()
 		setupEmptyView()
 		setupExploreButton()
-		loadMockData() // Загрузка моковых данных
+		Task {
+			try? await loadCollectionData() // Загрузка моковых данных
+		}
+		
 		segmentedControl.change(cornerRadiusPercent: 0.5, segmentInset: 5)
         
         navigationItem.title = "Events"
@@ -77,13 +82,8 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
     }
     
     @objc private func segmentChanged() {
-            if segmentedControl.selectedSegmentIndex == 0 {
-                print("Selected Upcoming Events")
-                loadMockData()
-            } else {
-                print("Selected Past Events")
-                loadMockData()
-            }
+		print(segmentedControl.selectedSegmentIndex)
+			collectionView.reloadData()
         }
     private func setupExploreButton() {
         view.addSubview(exploreButtons)
@@ -107,14 +107,20 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
            let hasData = isShowingUpcomingEvents ? !upcomingEvents.isEmpty : !pastEvents.isEmpty
            emptyView.isHidden = hasData
        }
-    private func loadMockData() {
-           upcomingEvents = [Event(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
-//        upcomingEvents = []
-           pastEvents = [Event(id: 1, dates: [DateElement(start: 1, end: 1)], title: "Событие", place: Place(id: 1, address: "адрес", title: "название"), bodyText: "Какое-то текст", images: [Image(image: "https://media.kudago.com/thumbs/640x384/images/event/ae/00/ae00ceb74547eee173d2cfc5f74d93b2.jpg", source: Source(name: "Имя", link: "Ссылка"))], favoritesCount: 30, shortTitle: "Короткое название")]
-//
-           collectionView.reloadData()
-           updateEmptyViewVisibility()
-       }
+	private func loadCollectionData() async throws {
+		
+		async let upcomingEvents = network.getEventsList(type: .nextWeek)
+		async let pastEvents = network.getEventsList(type: .pastWeek)
+		
+		
+		self.upcomingEvents = try await upcomingEvents
+
+		self.pastEvents = try await pastEvents
+		
+		isDataLoaded = true
+		collectionView.reloadData()
+		updateEmptyViewVisibility()
+	}
 
 
 private func setupCollectionView() {
@@ -154,14 +160,20 @@ private func setupCollectionView() {
 
     // MARK: - UICollectionViewDataSource
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        isShowingUpcomingEvents ? upcomingEvents.count : pastEvents.count
-            }
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		print(isShowingUpcomingEvents)
+		
+		guard isDataLoaded else { return 8 }
+		
+		return isShowingUpcomingEvents ? upcomingEvents.count : pastEvents.count
+		}
 
 
 func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
-        
+	
+		guard isDataLoaded else { return cell }
+	
         let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
 	
     cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)

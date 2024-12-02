@@ -96,8 +96,8 @@ final class NetworkService {
 			urlPostfix = "&number=\(eventsNumber)&categories=\(categories)&location=\(citySlug)&actual_since=\(currentDate - weekInSeconds)&actual_until=\(currentDate)"
 		}
     
-		
 		guard let url = URL(string: urlPrefix + urlSuffix + urlPostfix) else { throw NetworkError.invalidURL }
+		print(url)
 		return url
     }
 
