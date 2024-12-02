@@ -98,7 +98,7 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
             }
 
     @objc private func exploreButtonTapped() {
-        let sortedVC = SortedEventsViewController(with: upcomingEvents)
+        let sortedVC = SeeAllEvenetsViewController(with: upcomingEvents)
         navigationController?.pushViewController(sortedVC, animated: true)
 
             }

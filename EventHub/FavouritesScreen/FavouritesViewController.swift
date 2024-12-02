@@ -167,10 +167,12 @@ extension FavouritesViewController: UICollectionViewDelegate {
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		
+	
+		let event = FavouriteEventStore().fetchAllEvents()
 		
-		let event = FavouriteEventStore().fetchAllEvents()[indexPath.row]
+		guard event.count > indexPath.row else { return }
 		
-		let vc = DetailsViewController(event: event)
+		let vc = DetailsViewController(event: event[indexPath.row])
 		vc.modalPresentationStyle = .overCurrentContext
 		self.navigationController?.pushViewController(vc, animated: true)
 		self.navigationController?.navigationBar.isHidden = false
