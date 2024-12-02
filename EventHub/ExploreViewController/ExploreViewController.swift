@@ -172,6 +172,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .search:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchCell.identifier, for: indexPath) as! SearchCell
             cell.textField.delegate = self
+			cell.delegate = self
             return cell
         case .categories:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategorieCell.identifier, for: indexPath) as! CategorieCell
