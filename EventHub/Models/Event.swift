@@ -26,7 +26,7 @@ struct Event: Codable {
 		let todaysDate = Int(Date().timeIntervalSince1970)
 		
 		guard let actual = dates.first(where: { $0.end > todaysDate }) else {
-			return todaysDate
+			return dates[0].end
 		}
 		let actualDateObject = Date(timeIntervalSince1970: TimeInterval(actual.end))
 		

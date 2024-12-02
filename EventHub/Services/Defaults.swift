@@ -10,6 +10,7 @@ import Foundation
 struct DefaultsManager {
 	
 	static var currentUser: User?
+	static var categories: [Category] = [ ]
 	
 	static var isOnboarded: Bool {
 		get {

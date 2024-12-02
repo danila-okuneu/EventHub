@@ -11,6 +11,8 @@ import FirebaseAuth
 
 final class SplashViewController: UIViewController {
 	
+	private var categories: [Category] = [ ]
+	
 	private let backgroundImageView: UIImageView = {
 		let imageView = UIImageView()
 		imageView.contentMode = .scaleAspectFill
@@ -32,6 +34,7 @@ final class SplashViewController: UIViewController {
 		animateLogo()
 		Task {
 			await loadUserData()
+			DefaultsManager.categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
 			transitionVCs()
 		}
 	}
@@ -60,6 +63,8 @@ final class SplashViewController: UIViewController {
 			make.height.equalToSuperview().multipliedBy(0.1)
 		}
 	}
+	
+	
 	
 	// MARK: - Methods
 	private func animateLogo() {
@@ -98,6 +103,7 @@ final class SplashViewController: UIViewController {
 		} else {
 			return SignupViewController()
 		}
+		
 		
 		
 	}

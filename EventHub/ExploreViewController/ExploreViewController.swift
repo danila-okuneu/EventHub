@@ -17,7 +17,7 @@ final class ExploreViewController: UIViewController {
     private let networkService = NetworkService()
     private var upcommingEvents: [Event] = []
 	private var nearbyEvents: [Event] = [ ]
-    private var categoriesAll: [Category] = []
+	private var categories: [Category] = DefaultsManager.categories
     private var selectedCategory: Int?
     
     private let collectionView: UICollectionView = .createCollectionView(with: .eventsLayout())
@@ -54,10 +54,6 @@ final class ExploreViewController: UIViewController {
         view.backgroundColor = .white
 		configureCollectionView()
         getUpcommingEvents()
-        
-        Task {
-            await getCategories()
-        }
 	}
     
     override func viewDidLayoutSubviews() {
@@ -70,12 +66,6 @@ final class ExploreViewController: UIViewController {
 		self.navigationController?.navigationBar.isHidden = true
 		self.collectionView.reloadData()
     }
-    
-    private func getCategories() async  {
-            let categories = await CategoryProvider.shared.fetchCategoriesFromAPI()
-            self.categoriesAll = categories
-            self.collectionView.reloadSections(IndexSet(integer: 1))
-        }
     
     private func getEventsWithCategory(category: String) {
         Task {
@@ -135,7 +125,7 @@ final class ExploreViewController: UIViewController {
 		}
 		
 		collectionView.showsVerticalScrollIndicator = false
-        collectionView.backgroundColor = UIColor(red: 0.312, green: 0.334, blue: 0.534, alpha: 0.06)
+        collectionView.backgroundColor = UIColor(red: 0.312, green: 0.334, blue: 0.534, alpha: 0.0001)
         collectionView.register(CategorieCell.self, forCellWithReuseIdentifier: CategorieCell.identifier)
         collectionView.register(EventCell.self , forCellWithReuseIdentifier: EventCell.identifier)
         collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderView.identifier)
@@ -154,7 +144,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .search:
             return 1
         case .categories:
-            return categoriesAll.count
+            return categories.count
         case .upcoming:
 			return upcommingEvents.isEmpty ? 8 : upcommingEvents.count
         case .nearby:
@@ -172,7 +162,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return cell
         case .categories:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategorieCell.identifier, for: indexPath) as! CategorieCell
-            cell.configureCell(with: categoriesAll[indexPath.row])
+            cell.configureCell(with: categories[indexPath.row])
             return cell
         case .upcoming, .nearby:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell
@@ -202,7 +192,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         let section = sections[indexPath.section]
         switch section {
         case .categories:
-            getEventsWithCategory(category: categoriesAll[indexPath.row].slug)
+            getEventsWithCategory(category: categories[indexPath.row].slug)
 		case .upcoming, .nearby:
 			guard !upcommingEvents.isEmpty else { return }
 			let event = upcommingEvents[indexPath.row]
