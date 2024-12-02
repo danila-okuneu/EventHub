@@ -253,7 +253,8 @@ final class DetailsViewController: UIViewController {
 	// MARK: - Methods
 	func configure(with event: Event) {
 		
-		titleLabel.text = event.title.capitalized
+		
+		titleLabel.text = "\(String(event.title.prefix(1)).capitalized)\(event.title.dropFirst())"
 		
 		if let urlString = event.images.first?.image, let url = URL(string: urlString) {
 			headerImageView.kf.setImage(with: url)
