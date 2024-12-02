@@ -249,7 +249,7 @@ final class DetailsViewController: UIViewController {
 		
 	
 		if !event.dates.isEmpty {
-			let date = event.dates[0].end
+			let date = event.actualDate
 			dateComponentView.updateTitle(with: date.formatTo(.detailsHeaderDate))
 			dateComponentView.updateSubtitle(with: date.formatTo(.detailsDayTime))
 		} else {

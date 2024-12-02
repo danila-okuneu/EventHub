@@ -9,7 +9,13 @@ import UIKit
 
 final class BookmarkButton: RoundedButton {
 	
-    var isBookmarked: Bool
+	var isBookmarked: Bool {
+		didSet {
+			UIView.transition(with: self, duration: 0.15, options: [.transitionCrossDissolve, .curveEaseOut]) {
+				self.setImage(self.isBookmarked ? .bookmarkFill : .bookmarkEmpty, for: .normal)
+			}
+		}
+	}
 	
 	init(colors: (tint: UIColor, background: UIColor), isBookmarked: Bool = false) {
 		self.isBookmarked = isBookmarked
@@ -21,13 +27,6 @@ final class BookmarkButton: RoundedButton {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	func toggleState() {
-		isBookmarked.toggle()
-		UIView.transition(with: self, duration: 0.15, options: [.transitionCrossDissolve, .curveEaseOut]) {
-			self.setImage(self.isBookmarked ? .bookmarkFill : .bookmarkEmpty, for: .normal)
-		}
-		
-	}
 }
 
 

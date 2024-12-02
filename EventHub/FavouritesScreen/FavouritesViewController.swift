@@ -29,7 +29,7 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
     
     private let emptyView = EmptyView()
     
-    private var events: [FavouriteEvent] = []
+	private var events: [EventType] = []
     
     private var collectionView: UICollectionView!
     private let headerHeightWithNoData: CGFloat = 350
@@ -54,12 +54,12 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         events = favouriteEventStore.fetchAllEvents()
     }
     
-    private func saveEvent(_ event: FavouriteEvent) {
+	private func saveEvent(_ event: EventType) {
         favouriteEventStore.saveEvent(event)
         fetchEvents()
     }
     
-    private func deleteEvent(withId id: String) {
+	private func deleteEvent(withId id: Int) {
         favouriteEventStore.deleteEvent(withId: id)
         fetchEvents()
         collectionView.reloadData()
@@ -139,7 +139,8 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 140)
     }
-    
+	
+	    
     // MARK: - setupNavBar
         private func setupNavBar() {
             
@@ -161,3 +162,22 @@ class FavouritesViewController: UIViewController, UICollectionViewDataSource, UI
         }
 }
 
+
+extension FavouritesViewController: UICollectionViewDelegate {
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		
+		
+		let event = FavouriteEventStore().fetchAllEvents()[indexPath.row]
+		
+		let vc = DetailsViewController(event: event)
+		vc.modalPresentationStyle = .overCurrentContext
+		self.navigationController?.pushViewController(vc, animated: true)
+		self.navigationController?.navigationBar.isHidden = false
+		
+		
+	}
+
+	
+	
+}

@@ -41,7 +41,8 @@ class FavouriteEventCollectionViewCell: UICollectionViewCell {
         
         eventImageView.contentMode = .scaleAspectFill
         eventImageView.clipsToBounds = true
-        eventImageView.layer.cornerRadius = 10
+		eventImageView.layer.masksToBounds = true
+        eventImageView.layer.cornerRadius = 15
         
         
         dateLabel.font = UIFont.cerealFont(ofSize: 13, weight: .light)
@@ -118,19 +119,16 @@ class FavouriteEventCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(with event: FavouriteEvent, isbookmarkHidden: Bool) {
-        dateLabel.text = event.date
-        titleLabel.text = event.title
-        locationLabel.text = event.place
+	func configure(with event: EventType, isbookmarkHidden: Bool) {
+		dateLabel.text = event.actualDate.formatTo(.eventPreview)
+		titleLabel.text = event.shortTitle
+		locationLabel.text = event.place?.address
         
-        let imageUrl = URL(string: event.imageURL)
-        let processor = RoundCornerImageProcessor(cornerRadius: 10)
-        
+		let imageUrl = URL(string: event.images[0].image)
         eventImageView.kf.setImage(
             with: imageUrl,
             placeholder: nil,
             options: [
-                .processor(processor),
                 .transition(.fade(0.3))
             ]
         )

@@ -16,14 +16,26 @@ final class FavouriteEventStore {
     }
     
     // MARK: - Save Event
-    func saveEvent(_ event: FavouriteEvent) {
+	func saveEvent(_ event: EventType) {
         let favouriteEvent = FavouriteEventCoreData(context: context)
-        favouriteEvent.id = event.id
-        favouriteEvent.title = event.title
-        favouriteEvent.date = event.date
-        favouriteEvent.imageURL = event.imageURL
-        favouriteEvent.place = event.place
-        
+		
+		favouriteEvent.id = Int64(event.id)
+		favouriteEvent.actualDate = Int64(event.actualDate)
+		favouriteEvent.title = event.title
+		favouriteEvent.shortTitle = event.shortTitle
+		
+		var corePlace = ""
+		if let place = event.place, place.address != "" {
+			corePlace = place.address
+		} else if let place = event.place {
+			corePlace = place.title
+		}
+		
+		favouriteEvent.imageURL = event.images[0].image
+		favouriteEvent.place = corePlace
+		favouriteEvent.bodyText = event.bodyText
+		favouriteEvent.favouritesCount = Int64(event.favoritesCount)
+		
         do {
             try context.save()
             print("Event saved successfully!")
@@ -33,19 +45,22 @@ final class FavouriteEventStore {
     }
     
     // MARK: - Fetch Events
-    func fetchAllEvents() -> [FavouriteEvent] {
+	func fetchAllEvents() -> [EventType] {
         let fetchRequest: NSFetchRequest<FavouriteEventCoreData> = FavouriteEventCoreData.fetchRequest()
         
         do {
             let results = try context.fetch(fetchRequest)
             return results.map { coreDataEvent in
-                FavouriteEvent(
-                    id: coreDataEvent.id ?? "",
-                    title: coreDataEvent.title ?? "",
-                    imageURL: coreDataEvent.imageURL ?? "",
-                    place: coreDataEvent.place ?? "",
-                    date: coreDataEvent.date ?? ""
-                )
+				EventType(
+					id: Int(coreDataEvent.id),
+					dates: [DateElement(start: -1, end: Int(coreDataEvent.actualDate))],
+					title: coreDataEvent.title ?? "",
+					place: Place(id: -1, address: coreDataEvent.place ?? "", title: ""),
+					bodyText: coreDataEvent.bodyText ?? "",
+					images: [Image(image: coreDataEvent.imageURL ?? "", source: Source(name: "", link: ""))],
+					favoritesCount: Int(coreDataEvent.favouritesCount),
+					shortTitle: coreDataEvent.shortTitle ?? ""
+				)
             }
         } catch {
             print("Failed to fetch events: \(error.localizedDescription)")
@@ -54,9 +69,9 @@ final class FavouriteEventStore {
     }
     
     // MARK: - Delete Event
-    func deleteEvent(withId id: String) {
+	func deleteEvent(withId id: Int) {
         let fetchRequest: NSFetchRequest<FavouriteEventCoreData> = FavouriteEventCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id)
+		fetchRequest.predicate = NSPredicate(format: "id == %ld", Int64(id))
         
         do {
             let results = try context.fetch(fetchRequest)

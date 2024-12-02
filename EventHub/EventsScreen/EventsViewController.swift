@@ -163,6 +163,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
         let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
+	
     cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
         return cell
     }

@@ -11,12 +11,13 @@ import Kingfisher
 import SkeletonView
 
 protocol EventCellDelegate: AnyObject {
-    func didTapBookmark(for event: EventType)
+	func didTapBookmark(for event: EventType) -> Bool
 }
 
-class EventCell: UICollectionViewCell {
+final class EventCell: UICollectionViewCell {
+	
+	var event: EventType?
     weak var delegate: EventCellDelegate?
-    var event: EventType?
     
     private let favouriteEventStore = FavouriteEventStore()
     
@@ -31,7 +32,7 @@ class EventCell: UICollectionViewCell {
         var label = UILabel()
         label.textColor = UIColor(red: 0.167, green: 0.157, blue: 0.287, alpha: 1)
         label.font = .cerealFont(ofSize: 13)
-        label.text = "Адрес"
+        label.text = "Adress"
         return label
     }()
     
@@ -39,22 +40,37 @@ class EventCell: UICollectionViewCell {
         var view = UILabel()
         view.textColor = .black
         view.font = .systemFont(ofSize: 18, weight: .medium)
-        view.text = "International Band Music Concert"
+//        view.text = "International Band Music Concert"
         return view
     }()
     
 	let bookmarkButton = BookmarkButton(colors: (tint: .appRed, background: .white.withAlphaComponent(0.7)))
     
+	// MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setupCell()
+		setupSkeletons()
+			
+		
     }
+	
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+ 
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		
+		imageView.kf.cancelDownloadTask()
+		imageView.image = nil
+		bookmarkButton.isBookmarked = false
+		
+	}
+
+	// MARK: - Layout
     private func setupCell() {
         contentView.layer.cornerRadius = 15
         contentView.layer.masksToBounds = true
@@ -66,7 +82,6 @@ class EventCell: UICollectionViewCell {
         setupFriendsStack()
         
         setupLayout()
-        contentView.disableChildrenTAMIC()
         
         eventName.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(14)
@@ -74,24 +89,14 @@ class EventCell: UICollectionViewCell {
         }
     }
     
-	override func prepareForReuse() {
-		super.prepareForReuse()
 		
-		imageView.image = nil
-		imageView.kf.cancelDownloadTask()
-		imageView.hideSkeleton()
-		imageView.showGradientSkeleton()
-	}
-	
         private func setupImageView() {
 			imageView.backgroundColor = .appGray
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
             imageView.layer.cornerRadius = 15
-            imageView.disableChildrenTAMIC()
-			imageView.isSkeletonable = true
+            
 			
-			imageView.startSkeletonAnimation()
             
             let bluredViewForDate = UIView()
             bluredViewForDate.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.7).cgColor
@@ -135,7 +140,7 @@ class EventCell: UICollectionViewCell {
             aboutGoingLabel.font = .systemFont(ofSize: 12, weight: .medium)
             aboutGoingLabel.textColor =  UIColor(red: 0.247, green: 0.22, blue: 0.867, alpha: 1)
             friendsView.addSomeSubviews(friendOneImageView,friendTwoImageView,friendThreeImageView, aboutGoingLabel)
-            
+			
             contentView.addSubview(friendsView)
             
             friendsView.snp.makeConstraints { make in
@@ -156,8 +161,8 @@ class EventCell: UICollectionViewCell {
     
     @objc func didTap() {
         guard let event = event else { return }
-        delegate?.didTapBookmark(for: event)
-        bookmarkButton.toggleState()
+        let shouldBookmark = delegate?.didTapBookmark(for: event) ?? false
+		bookmarkButton.isBookmarked = shouldBookmark
         print("bookmark tapped")
     }
     
@@ -166,7 +171,6 @@ class EventCell: UICollectionViewCell {
         imageView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(9)
             make.height.equalTo(contentView.snp.height).dividedBy(2)
-            //            make.width.equalTo(contentView.snp.width).inset(9)
         }
         
         bookmarkButton.snp.makeConstraints { make in
@@ -182,36 +186,36 @@ class EventCell: UICollectionViewCell {
         
         eventAdrress.snp.makeConstraints { make in
             make.top.equalTo(friendsView.snp.bottom).offset(34)
-            make.leading.equalTo(pinImageView).inset(20)
+			make.leading.equalTo(pinImageView).inset(20)
             make.trailing.equalToSuperview().inset(16)
             
         }
         
     }
     
-    func configureCell(with data: EventType) {
+    func configureCell(with event: EventType) {
+		
+		print("Configuring cell for event ID: \(event.id)")
+		
+        self.event = event
         
-        self.event = data
-        
-        if  data.shortTitle != "" {
-            eventName.text = data.shortTitle
+        if  event.shortTitle != "" {
+            eventName.text = event.shortTitle
         } else {
-            eventName.text = data.title
+            eventName.text = event.title
         }
         
-        
-        let attributedString = NSMutableAttributedString(string: data.dates[0].end.formatTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
+		let attributedString = NSMutableAttributedString(string: event.actualDate.formatTo(.explorePreview).uppercased(), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .thin)])
         let string = attributedString.string
         if let range = string.range(of: "\n") {
             let startIndex = string.distance(from: string.startIndex, to: range.upperBound)
             attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 12, weight: .semibold), range: NSRange(location: startIndex, length: string.count - startIndex))
         }
-        
-        aboutGoingLabel.text = "+\(data.favoritesCount) Going"
+        aboutGoingLabel.text = "+\(event.favoritesCount) Going"
         
         eventDate.attributedText = attributedString
         
-        if let eventPlace = data.place {
+        if let eventPlace = event.place {
             if eventPlace.address != "" {
                 eventAdrress.text = eventPlace.address
             } else if eventPlace.title != "" {
@@ -220,29 +224,60 @@ class EventCell: UICollectionViewCell {
         } else {
             eventAdrress.text = "Adress not provided"
         }
-        
-        
-        if let imageUrlString = data.images.first?.image, let imageUrl = URL(string: imageUrlString) {
+		
+		
+		
+		
+        if let imageUrlString = event.images.first?.image, let imageUrl = URL(string: imageUrlString) {
             
             
-            
-            imageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { [weak self] result in
-                
-                self?.imageView.hideSkeleton(transition: .crossDissolve(0.2))
-            }
+			
+			imageView.kf.setImage(with: imageUrl, placeholder: nil, options: nil) { result in
+				
+				self.imageView.hideSkeleton(transition: .crossDissolve(0.2))
+				
+			}
         } else {
             
-            imageView.hideSkeleton()
+            
             imageView.image = UIImage(named: "hands")
         }
-        
+		
         let savedEvents = favouriteEventStore.fetchAllEvents()
-        let isBookmarked = savedEvents.contains { $0.id == "\(data.id)" }
-        bookmarkButton.isBookmarked = isBookmarked
-        bookmarkButton.setImage(isBookmarked ? .bookmarkFill : .bookmarkEmpty, for: .normal)
+		if savedEvents.contains { $0.id == event.id } {
+			bookmarkButton.isBookmarked = true
+		}
+		
+		
+		
 	}
+	
 }
 //@available(iOS 17.0, *)
 //#Preview {ExploreViewController()
 //}
+// MARK: - Skeletons
+extension EventCell {
+	
+	private func setupSkeletons() {
+		contentView.isSkeletonable = true
+		eventName.isSkeletonable = true
+		eventAdrress.isSkeletonable = true
+		aboutGoingLabel.isSkeletonable = true
+		imageView.isSkeletonable = true
+		friendsView.isSkeletonable = true
+	}
+	
+	func hideSkeletons() async {
+		
+		eventName.hideSkeleton(transition: .crossDissolve(0.2))
+		eventAdrress.hideSkeleton(transition: .crossDissolve(0.2))
+		aboutGoingLabel.hideSkeleton(transition: .crossDissolve(0.2))
+		friendsView.hideSkeleton()
+		
+		
+		
+				
+	}
 
+}
