@@ -243,6 +243,8 @@ final class OnboardingViewController: UIViewController {
 		}
 		
 		pageControl.currentPage = currentPage
+		
+		guard currentPage + 1 <= phoneCollectionView.numberOfItems(inSection: 0) else { return }
 		phoneCollectionView.scrollToItem(at: IndexPath(row: currentPage, section: 0), at: .centeredHorizontally, animated: true)
 		
 		
