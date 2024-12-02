@@ -12,7 +12,10 @@ final class BookmarkButton: RoundedButton {
 	var isBookmarked: Bool {
 		didSet {
 			UIView.transition(with: self, duration: 0.15, options: [.transitionCrossDissolve, .curveEaseOut]) {
-				self.setImage(self.isBookmarked ? .bookmarkFill : .bookmarkEmpty, for: .normal)
+				self.setImage(
+					self.isBookmarked ? .bookmarkFill.withRenderingMode(.alwaysTemplate) : .bookmarkEmpty.withRenderingMode(.alwaysTemplate),
+					for: .normal
+				)
 			}
 		}
 	}

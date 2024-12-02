@@ -105,6 +105,14 @@ final class DetailsViewController: UIViewController {
 	// MARK: - Initializers
 	init(event: EventType) {
 		super.init(nibName: nil, bundle: nil)
+		
+		let favouriteEvents = FavouriteEventStore().fetchAllEvents()
+		
+		if favouriteEvents.contains(where: { $0.id == event.id } ) {
+			bookmarkButton.isBookmarked = true
+			
+		}
+		
 		configure(with: event)
 	}
 	
