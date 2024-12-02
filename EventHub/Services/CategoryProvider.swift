@@ -40,7 +40,7 @@ final class CategoryProvider {
         var categories: [Category] = []
   
         do {
-            let categoriesFromAPI = try await networkService.getCategories(type: .allCategories)
+            let categoriesFromAPI = try await networkService.getCategories()
             //            print(categoriesFromAPI)
             categories = categoriesFromAPI.enumerated().map { index, apiCategory in
                 let color = self.categoryColors[index % self.categoryColors.count]
