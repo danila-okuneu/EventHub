@@ -98,7 +98,7 @@ final class EventsViewController: UIViewController, UICollectionViewDataSource, 
             }
 
     @objc private func exploreButtonTapped() {
-        let sortedVC = SortedEventsViewController(with: upcomingEvents)
+        let sortedVC = SeeAllEvenetsViewController(with: upcomingEvents)
         navigationController?.pushViewController(sortedVC, animated: true)
 
             }
@@ -163,6 +163,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
         
         let event = isShowingUpcomingEvents ? upcomingEvents[indexPath.item] : pastEvents[indexPath.item]
+	
     cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
         return cell
     }

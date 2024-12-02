@@ -113,8 +113,10 @@ class EventCollectionViewCell: UICollectionViewCell {
         bookmarkButton.tintColor = isBookmarked ? .red : .blue
     }
     
-	func configure(with event: EventType, isbookmarkHidden: Bool, isLocationHidden: Bool) {		
-		dateLabel.text = event.dates.first?.end.formatTo(.eventPreview)
+	func configure(with event: EventType, isbookmarkHidden: Bool, isLocationHidden: Bool) {
+		
+		print(event.actualDate)
+		dateLabel.text = event.actualDate.formatTo(.eventPreview)
         titleLabel.text = event.title
         
         if let eventPlace = event.place {

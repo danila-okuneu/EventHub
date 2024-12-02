@@ -6,19 +6,20 @@
 //
 
 import UIKit
-final class SortedEventsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+final class SeeAllEvenetsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     // MARK: - Property
     
     var sortedEvents: [EventType] = []
-
-   lazy var collectionView: UICollectionView = {
-           let layout = UICollectionViewFlowLayout()
-           let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-           cv.translatesAutoresizingMaskIntoConstraints = false
-           cv.backgroundColor = .white
-           return cv
-       }()
+	
+	lazy var collectionView: UICollectionView = {
+		let layout = UICollectionViewFlowLayout()
+		let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+		cv.showsVerticalScrollIndicator = false
+		cv.translatesAutoresizingMaskIntoConstraints = false
+		cv.backgroundColor = .white
+		return cv
+	}()
     
     init(with events: [EventType]) {
         super.init(nibName: nil, bundle: nil)
@@ -77,22 +78,33 @@ private func setupCollectionView() {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         sortedEvents.count
-            }
-
-
-func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
-        
-        let event = sortedEvents[indexPath.item]
-    cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
-        return cell
-    }
-
-// MARK: - UICollectionViewDelegateFlowLayout
-
-func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    return CGSize(width: collectionView.bounds.width, height: 140)
-}
+	}
+	
+	
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCollectionViewCell.identifier, for: indexPath) as! EventCollectionViewCell
+		
+		let event = sortedEvents[indexPath.item]
+		cell.configure(with: event, isbookmarkHidden: true, isLocationHidden: false)
+		return cell
+	}
+	
+	// MARK: - UICollectionViewDelegateFlowLayout
+	
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+		return CGSize(width: collectionView.bounds.width, height: 140)
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		
+		
+		guard sortedEvents.count > indexPath.row else { return }
+		
+		let vc = DetailsViewController(event: sortedEvents[indexPath.row])
+		vc.modalPresentationStyle = .overCurrentContext
+		self.navigationController?.pushViewController(vc, animated: true)
+		self.navigationController?.navigationBar.isHidden = false
+	}
 
 // MARK: - setupNavBar
     private func setupNavBar() {

@@ -12,7 +12,23 @@ import SkeletonView
 
 final class DetailsViewController: UIViewController {
 	
+	private let event: EventType
+	
 	// MARK: - UI Components
+	private let dimmedView: UIView = {
+		
+		let view = UIView()
+		view.backgroundColor = .black
+		return view
+	}()
+	
+	private let navBarBackground: UIView = {
+		let view = UIView()
+		view.layer.opacity = 0.0
+		view.backgroundColor = .white
+		return view
+	}()
+	
 	private let scrollView: UIScrollView = {
 		let scrollView = UIScrollView()
 		scrollView.showsVerticalScrollIndicator = false
@@ -42,6 +58,9 @@ final class DetailsViewController: UIViewController {
 		return imageView
 	}()
 
+	@objc private let bookmarkButton = BookmarkButton(colors: (tint: .white, background: .white.withAlphaComponent(0.3)))
+	private let shareButton = RoundedButton(image: .detailsShare, colors: (tint: .white, background: .white.withAlphaComponent(0.3)))
+	
 	private let titleLabel: UILabel = {
 		let label = UILabel()
 		label.font = .cerealFont(ofSize: Constants.titleFontSize)
@@ -87,7 +106,16 @@ final class DetailsViewController: UIViewController {
 
 	// MARK: - Initializers
 	init(event: EventType) {
+		self.event = event
 		super.init(nibName: nil, bundle: nil)
+		
+		let favouriteEvents = FavouriteEventStore().fetchAllEvents()
+		
+		if favouriteEvents.contains(where: { $0.id == event.id } ) {
+			bookmarkButton.isBookmarked = true
+			
+		}
+		
 		configure(with: event)
 	}
 	
@@ -98,10 +126,19 @@ final class DetailsViewController: UIViewController {
 	
 	
 	// MARK: - Life cycle
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		
+		setupNavBar()
+	}
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
 		setupViews()
+		
+		bookmarkButton.bounds.size = CGSize(width: 36, height: 36)
+		self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: bookmarkButton)
+		bookmarkButton.addTarget(self, action: #selector(bookmarkTapped), for: .touchUpInside)
 	}
 	
 	// MARK: - Layout
@@ -110,8 +147,10 @@ final class DetailsViewController: UIViewController {
 		view.backgroundColor = .white
 		
 		setupScrollView()
+		view.addSubview(dimmedView)
 		
 		contentView.addSubview(headerImageView)
+		headerImageView.addSubview(shareButton)
 		contentView.addSubview(infoStackView)
 		infoStackView.addArrangedSubview(titleLabel)
 		infoStackView.addArrangedSubview(dateComponentView)
@@ -145,12 +184,16 @@ final class DetailsViewController: UIViewController {
 			make.height.equalTo(Constants.detailElementHeight)
 		}
 
+		shareButton.snp.makeConstraints { make in
+			make.height.width.equalTo(36)
+			make.bottom.right.equalToSuperview().inset(16)
+		}
 	}
 	
 	private func setupScrollView() {
 		
 		view.addSubview(scrollView)
-		
+		scrollView.delegate = self
 		scrollView.snp.makeConstraints { make in
 			make.edges.equalToSuperview()
 		}
@@ -164,6 +207,48 @@ final class DetailsViewController: UIViewController {
 			make.bottom.equalToSuperview()
 		}
 	}
+	
+	private func setupNavBar() {
+		
+		guard let navBar = self.navigationController?.navigationBar else { return }
+		
+		let gradient = CAGradientLayer()
+		gradient.colors = [UIColor.black.cgColor, UIColor.clear.cgColor]
+		gradient.startPoint = CGPoint(x: 0.5, y: 0)
+		gradient.endPoint = CGPoint(x: 0.5, y: 1)
+		
+		let viewSize = CGSize(width: navBar.frame.width, height: navBar.frame.height + navBar.frame.minY)
+		
+		dimmedView.frame.size = viewSize
+		gradient.frame = dimmedView.bounds
+		dimmedView.layer.mask = gradient
+		
+		view.addSubview(navBarBackground)
+		navBarBackground.frame = dimmedView.frame
+		
+		
+		title = "Event Details"
+		navBar.tintColor = .white
+		navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+		navBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal: -Constants.screenWidth * 0.4, vertical: 0)
+		navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+		navBar.scrollEdgeAppearance?.titlePositionAdjustment = UIOffset(horizontal: -Constants.screenWidth * 0.4, vertical: 0)
+		
+		
+
+
+		let backButton = UIButton()
+		let image = UIImage(named: "arrow-left")?.withRenderingMode(.alwaysTemplate)
+		backButton.setImage(image, for: .normal)
+		backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+		backButton.semanticContentAttribute = .forceRightToLeft
+		navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+	}
+	
+	
+	@objc private func backButtonAction() {
+		navigationController?.popViewController(animated: true)
+	}
 
 	// MARK: - Methods
 	func configure(with event: EventType) {
@@ -176,7 +261,7 @@ final class DetailsViewController: UIViewController {
 		
 	
 		if !event.dates.isEmpty {
-			let date = event.dates[0].end
+			let date = event.actualDate
 			dateComponentView.updateTitle(with: date.formatTo(.detailsHeaderDate))
 			dateComponentView.updateSubtitle(with: date.formatTo(.detailsDayTime))
 		} else {
@@ -229,6 +314,17 @@ final class DetailsViewController: UIViewController {
 				print("Ошибка преобразования HTML в атрибутированную строку: \(error)")
 			}
 		}
+	}
+	
+	@objc private func bookmarkTapped() {
+		
+		bookmarkButton.isBookmarked.toggle()
+		if bookmarkButton.isBookmarked {
+			FavouriteEventStore().saveEvent(event)
+		} else {
+			FavouriteEventStore().deleteEvent(withId: event.id)
+		}
+		
 		
 		
 	}
@@ -255,4 +351,51 @@ extension DetailsViewController {
 	}
 	
 	
+}
+
+extension DetailsViewController: UIScrollViewDelegate {
+	
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		
+		guard let navBar = self.navigationController?.navigationBar else { return }
+		let headerImageViewBottomY = headerImageView.frame.maxY
+		let contentOffsetY = scrollView.contentOffset.y + navBar.frame.midY
+
+		
+		let shouldHideBookmark = contentOffsetY > headerImageViewBottomY
+		
+		UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveEaseOut) {
+			if shouldHideBookmark {
+				self.navBarBackground.layer.opacity = 1.0
+			} else {
+				self.navBarBackground.layer.opacity = 0.0
+			}
+		}
+		
+		
+		UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseOut) {
+			if shouldHideBookmark {
+				
+				self.bookmarkButton.change(colors: (UIColor.appPurple, UIColor.appPurple.withAlphaComponent(0.1)))
+				
+				
+				navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+				navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+				navBar.tintColor = .black
+				
+			} else {
+				
+				self.bookmarkButton.change(colors: (UIColor.white, UIColor.white.withAlphaComponent(0.3)))
+				
+				
+				navBar.standardAppearance.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+				navBar.scrollEdgeAppearance?.titleTextAttributes = [.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 22, weight: .semibold)]
+				navBar.tintColor = .white
+				
+				
+			}
+		}
+		
+		
+	}
 }

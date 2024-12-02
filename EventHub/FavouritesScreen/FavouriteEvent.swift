@@ -8,15 +8,15 @@
 import Foundation
 
 struct FavouriteEvent {
-    let id: String
+	let id: Int
     let title: String
     let imageURL: String
     let place: String
-    let date: String
+    let date: Int
     
     static func from(_ event: EventType) -> FavouriteEvent {
         // Извлекаем ID
-        let id = String(event.id)
+        let id = event.id
         
         // Определяем название
         let title = event.shortTitle.isEmpty ? event.title : event.shortTitle
@@ -40,13 +40,8 @@ struct FavouriteEvent {
         }
         
         // Извлекаем дату
-        let date: String
-        if let firstDate = event.dates.first {
-            date = firstDate.start.formattedDate()
-        } else {
-            date = "Date not available"
-        }
-        
+		let date = event.actualDate
+		
         return FavouriteEvent(id: id, title: title, imageURL: imageURL, place: place, date: date)
     }
 }

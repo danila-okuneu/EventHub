@@ -52,11 +52,21 @@ final class SearchCell: UICollectionViewCell, UITextFieldDelegate {
         super.init(frame: frame)
         setupCell()
         setupSearchView()
+		
+		selectLocationButton.addTarget(self, action: #selector(locationButtonTapped), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+	
+	private func setupLocationMenu() {
+		
+		let menu = UIMenu()
+		
+		
+		
+	}
     
     private func setupSearchView() {
         let glassButton = UIButton()
@@ -120,6 +130,13 @@ final class SearchCell: UICollectionViewCell, UITextFieldDelegate {
             make.height.equalTo(40)
         }
     }
+	
+	@objc private func locationButtonTapped() {
+		
+		
+		
+		
+	}
 }
 
 @available(iOS 17.0, *)

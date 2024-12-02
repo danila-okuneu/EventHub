@@ -15,6 +15,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     
     private let networkService = NetworkService()
     private var upcommingEvents: [EventType] = []
+	private var nearbyEvents: [EventType] = [ ]
     private var categoriesAll: [Category] = []
     private var selectedCategory: Int?
     
@@ -41,27 +42,16 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     
     lazy var blueView: UIView = {
         let view = UIView()
-        view.backgroundColor = .appPurpleDark
+        view.backgroundColor = .appPurple
         view.layer.cornerRadius = 40
         view.clipsToBounds = true
         return view
     }()
     
-//    init(categoriesAll: [Category], selectedCategory: Int? = 1) {
-//        super.init(nibName: nil, bundle: nil)
-//        self.categoriesAll = categoriesAll
-//    }
-    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
+
     override func viewDidLoad() {
         view.backgroundColor = .white
-        
-        
-        
-        configureCollectionView()
+		configureCollectionView()
         getUpcommingEvents()
         Task {
             await getCategories()
@@ -75,7 +65,8 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        collectionView.reloadData()
+		self.navigationController?.navigationBar.isHidden = true
+		self.collectionView.reloadData()
     }
     
     private func getCategories() async  {
@@ -89,7 +80,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
             do {
                 let events = try await networkService.getEventsList(type: .eventsList, categories: category)
                 self.upcommingEvents = events
-                self.collectionView.reloadData()
+				self.collectionView.reloadData()
             }
             catch {
                 self.shwoErrorAllertWith(error: error as! NetworkError)
@@ -102,7 +93,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
             do {
                 let events = try await networkService.getEventsList(type: .eventsList, eventsCount: 40)
                 self.upcommingEvents = events
-                print(upcommingEvents)
+				self.nearbyEvents = events.shuffled()
                 self.collectionView.reloadData()
             }
             catch {
@@ -122,9 +113,26 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
     
     private func configureCollectionView() {
         view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        contentView.addSubview(blueView)
-        contentView.addSubview(collectionView)
+		
+		
+		scrollView.addSubview(contentView)
+		contentView.addSubview(blueView)
+		contentView.addSubview(collectionView)
+		
+		
+		collectionView.snp.makeConstraints{ make in
+			make.top.equalTo(contentView.snp.top)
+			make.leading.trailing.equalTo(contentView)
+			make.bottom.equalTo(contentView.snp.bottom)
+		}
+		
+		blueView.snp.makeConstraints{ make in
+			make.top.equalTo(contentView.snp.top).offset(-300)
+			make.width.equalToSuperview()
+			make.height.equalTo(470)
+		}
+		
+        
         collectionView.backgroundColor = UIColor(red: 0.312, green: 0.334, blue: 0.534, alpha: 0.06)
         collectionView.register(CategorieCell.self, forCellWithReuseIdentifier: CategorieCell.identifier)
         collectionView.register(EventCell.self , forCellWithReuseIdentifier: EventCell.identifier)
@@ -133,16 +141,8 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        blueView.snp.makeConstraints{ make in
-            make.top.equalTo(contentView.snp.top).offset(-300)
-            make.width.equalToSuperview()
-            make.height.equalTo(470)
-        }
-        collectionView.snp.makeConstraints{ make in
-            make.top.equalTo(contentView.snp.top)
-            make.leading.trailing.equalTo(contentView)
-            make.bottom.equalTo(contentView.snp.bottom)
-        }
+      
+     
         
     }
     
@@ -158,9 +158,9 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .categories:
             return categoriesAll.count
         case .upcoming:
-            return upcommingEvents.count
+			return upcommingEvents.isEmpty ? 8 : upcommingEvents.count
         case .nearby:
-            return upcommingEvents.count
+            return upcommingEvents.isEmpty ? 8 : upcommingEvents.count
         }
     }
 	
@@ -177,23 +177,41 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             return cell
         case .upcoming, .nearby:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell
-            if upcommingEvents.count > 0 {
-                cell.configureCell(with: upcommingEvents[indexPath.row])
-                cell.delegate = self
-            }
+			
+			if !upcommingEvents.isEmpty {
+				
+				Task {
+					await cell.hideSkeletons()
+					cell.configureCell(with: section == .upcoming ? self.upcommingEvents[indexPath.row] : self.nearbyEvents[indexPath.row])
+					cell.delegate = self
+				}
+				
+			} else {
+				DispatchQueue.main.async {
+					cell.contentView.showAnimatedGradientSkeleton()
+				}
+				
+			}
+			
             return cell
         }
     }
+	
+	
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = sections[indexPath.section]
         switch section {
         case .categories:
             getEventsWithCategory(category: categoriesAll[indexPath.row].slug)
-        case .upcoming:
-            break
-        case .nearby:
-            break
+		case .upcoming, .nearby:
+			guard !upcommingEvents.isEmpty else { return }
+			let event = upcommingEvents[indexPath.row]
+			
+			let vc = DetailsViewController(event: event)
+			vc.modalPresentationStyle = .currentContext
+			self.navigationController?.pushViewController(vc, animated: true)
+			self.navigationController?.navigationBar.isHidden = false
         default:
             break
         }
@@ -216,7 +234,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     @objc func didTapSeeAllUpcomming() {
-        let vc = SortedEventsViewController(with: upcommingEvents)
+        let vc = SeeAllEvenetsViewController(with: upcommingEvents)
         self.navigationController?.modalPresentationStyle = .fullScreen
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -228,18 +246,18 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     
 
 extension ExploreViewController: EventCellDelegate {
-    func didTapBookmark(for event: EventType) {
-        let favouriteEvent = FavouriteEvent.from(event)
-        
-        let events = favouriteEventStore.fetchAllEvents()
-        if events.contains(where: { $0.id == favouriteEvent.id }) {
-            favouriteEventStore.deleteEvent(withId: favouriteEvent.id)
-        } else {
-            favouriteEventStore.saveEvent(favouriteEvent)
-        }
-    }
-
-
+	func didTapBookmark(for event: EventType) -> Bool {
+		
+		let events = favouriteEventStore.fetchAllEvents()
+		if events.contains(where: { $0.id == event.id }) {
+			favouriteEventStore.deleteEvent(withId: event.id)
+			return false
+		} else {
+			favouriteEventStore.saveEvent(event)
+			return true
+		}
+	}
+}
 //@available(iOS 17.0, *)
 //#Preview {ExploreViewController()
 //}

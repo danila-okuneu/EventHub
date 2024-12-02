@@ -16,11 +16,13 @@ struct EventType: Codable {
     let id: Int
     let dates: [DateElement]
     let title: String
+	let shortTitle: String
 	let place: Place?
     let bodyText: String
     let images: [Image]
     let favoritesCount: Int
-    let shortTitle: String
+	
+	var actualDate: Int { return dates.first(where: { $0.end > Int(Date().timeIntervalSince1970) } )?.end ?? dates[0].end }
 	
 	init(id: Int, dates: [DateElement], title: String, place: Place?, bodyText: String, images: [Image], favoritesCount: Int, shortTitle: String) {
 		self.id = id
