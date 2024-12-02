@@ -162,7 +162,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .upcoming:
 			return upcommingEvents.isEmpty ? 8 : upcommingEvents.count
         case .nearby:
-            return upcommingEvents.isEmpty ? 8 : upcommingEvents.count
+			return upcommingEvents.isEmpty ? 8 : nearbyEvents.count
         }
     }
 	
@@ -172,7 +172,6 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .search:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchCell.identifier, for: indexPath) as! SearchCell
             cell.textField.delegate = self
-            cell.delegate = self
             return cell
         case .categories:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategorieCell.identifier, for: indexPath) as! CategorieCell

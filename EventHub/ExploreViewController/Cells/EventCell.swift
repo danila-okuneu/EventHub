@@ -67,7 +67,7 @@ final class EventCell: UICollectionViewCell {
 		imageView.kf.cancelDownloadTask()
 		imageView.image = nil
 		bookmarkButton.isBookmarked = false
-		
+		contentView.showAnimatedSkeleton()
 	}
 
 	// MARK: - Layout
