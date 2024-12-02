@@ -126,7 +126,7 @@ final class ExploreViewController: UIViewController {
 		
 		collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = UIColor(red: 0.312, green: 0.334, blue: 0.534, alpha: 0.0001)
-        collectionView.register(CategorieCell.self, forCellWithReuseIdentifier: CategorieCell.identifier)
+		collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.identifier)
         collectionView.register(EventCell.self , forCellWithReuseIdentifier: EventCell.identifier)
         collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderView.identifier)
         collectionView.register(SearchCell.self, forCellWithReuseIdentifier: SearchCell.identifier)
@@ -161,7 +161,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
 			cell.delegate = self
             return cell
         case .categories:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategorieCell.identifier, for: indexPath) as! CategorieCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCell.identifier, for: indexPath) as! CategoryCell
             cell.configureCell(with: categories[indexPath.row])
             return cell
         case .upcoming, .nearby:

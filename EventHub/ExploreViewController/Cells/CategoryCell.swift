@@ -7,8 +7,8 @@
 
 import UIKit
 
-class CategorieCell: UICollectionViewCell {
-    static let identifier = String(describing: CategorieCell.self)
+final class CategoryCell: UICollectionViewCell {
+    static let identifier = String(describing: Category.self)
     
     private let titleLabel = UILabel()
     private let imageView = UIImageView(image: UIImage(systemName: "basketball.fill")?.withTintColor(.white).withRenderingMode(.alwaysOriginal))
