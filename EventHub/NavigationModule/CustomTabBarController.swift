@@ -7,42 +7,41 @@
 
 import UIKit
 
-class CustomTabBarController: UITabBarController, CustomTabBarDelegate, UINavigationControllerDelegate {
+class CustomTabBarController: UITabBarController, CustomTabBarDelegate, UINavigationControllerDelegate, UITabBarControllerDelegate {
     
     private let customTabBar = CustomTabBar()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-		
-		view.backgroundColor = .white
-		
-		setValue(customTabBar, forKey: "tabBar")
-		customTabBar.customDelegate = self
-		
-		
-		
-		// Создание нового объекта UINavigationBarAppearance
-		let appearance = UINavigationBarAppearance()
-		appearance.configureWithTransparentBackground() // Устанавливает прозрачный фон
-		appearance.backgroundColor = .clear
-		appearance.shadowColor = .clear // Удаляет тень под навигационной панелью
-		
-		// Применение настроек к разным состояниям навигационной панели
-		UINavigationBar.appearance().standardAppearance = appearance
-		UINavigationBar.appearance().scrollEdgeAppearance = appearance
-		UINavigationBar.appearance().compactAppearance = appearance
-		
-		
-		UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
-		
-		
-		// Установка прозрачности
-		UINavigationBar.appearance().isTranslucent = true
-		
-		
-		
-		setupTabItems()
-	}
+        delegate = self
+        
+        view.backgroundColor = .white
+        
+        setValue(customTabBar, forKey: "tabBar")
+        customTabBar.customDelegate = self
+        
+        // Создание нового объекта UINavigationBarAppearance
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground() // Устанавливает прозрачный фон
+        appearance.backgroundColor = .clear
+        appearance.shadowColor = .clear // Удаляет тень под навигационной панелью
+        
+        // Применение настроек к разным состояниям навигационной панели
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        
+        
+        UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
+        
+        
+        // Установка прозрачности
+        UINavigationBar.appearance().isTranslucent = true
+        
+        
+        
+        setupTabItems()
+    }
     
     private func setupTabItems() {
         let exploreVC = UINavigationController(rootViewController: ExploreViewController())
@@ -74,10 +73,7 @@ class CustomTabBarController: UITabBarController, CustomTabBarDelegate, UINaviga
     }
     
     func didTapFavoriteButton() {
-        
-
-
-        let favouritesVC = UINavigationController(rootViewController:FavouritesViewController())
+        let favouritesVC = UINavigationController(rootViewController: FavouritesViewController())
         favouritesVC.tabBarItem.title = ""
         favouritesVC.tabBarItem.image = UIImage(named: "favorites")
         favouritesVC.delegate = self
@@ -89,6 +85,12 @@ class CustomTabBarController: UITabBarController, CustomTabBarDelegate, UINaviga
         selectedIndex = 2
         
         customTabBar.updateFavoriteButtonColor(to: .appRed)
+    }
+    
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if selectedIndex != 2 {
+            customTabBar.updateFavoriteButtonColor(to: .accent)
+        }
     }
 }
 
