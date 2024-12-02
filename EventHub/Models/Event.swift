@@ -33,7 +33,7 @@ struct Event: Codable {
 		let calendar = Calendar.current
 		let year = calendar.component(.year, from: actualDateObject)
 		
-		if year == 2024 || year == 2025 {
+		if year > 2026 {
 			return actual.end
 		} else {
 			var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second, .timeZone], from: actualDateObject)
