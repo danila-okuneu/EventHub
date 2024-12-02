@@ -11,6 +11,7 @@ import SnapKit
 
 final class ExploreViewController: UIViewController, UITextFieldDelegate {
 	
+    
     private let favouriteEventStore = FavouriteEventStore()
     
     private let networkService = NetworkService()
@@ -53,6 +54,7 @@ final class ExploreViewController: UIViewController, UITextFieldDelegate {
         view.backgroundColor = .white
 		configureCollectionView()
         getUpcommingEvents()
+        
         Task {
             await getCategories()
         }
@@ -170,6 +172,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         case .search:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchCell.identifier, for: indexPath) as! SearchCell
             cell.textField.delegate = self
+            cell.delegate = self
             return cell
         case .categories:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategorieCell.identifier, for: indexPath) as! CategorieCell
@@ -257,6 +260,15 @@ extension ExploreViewController: EventCellDelegate {
 			return true
 		}
 	}
+}
+
+
+extension ExploreViewController: CityCheckerDelegate {
+    func didChangeCity() {
+        getUpcommingEvents()
+    }
+    
+
 }
 //@available(iOS 17.0, *)
 //#Preview {ExploreViewController()
