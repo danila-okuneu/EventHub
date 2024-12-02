@@ -22,7 +22,32 @@ struct Event: Codable {
     let images: [Image]
     let favoritesCount: Int
 	
-	var actualDate: Int { return dates.first(where: { $0.end > Int(Date().timeIntervalSince1970) } )?.end ?? dates[0].end }
+	var actualDate: Int {
+		let todaysDate = Int(Date().timeIntervalSince1970)
+		
+		guard let actual = dates.first(where: { $0.end > todaysDate }) else {
+			return todaysDate
+		}
+		let actualDateObject = Date(timeIntervalSince1970: TimeInterval(actual.end))
+		
+		let calendar = Calendar.current
+		let year = calendar.component(.year, from: actualDateObject)
+		
+		if year > 2026 {
+			return actual.end
+		} else {
+			var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second, .timeZone], from: actualDateObject)
+	
+			components.year = 2025
+			
+
+			if let correctedDate = calendar.date(from: components) {
+				return Int(correctedDate.timeIntervalSince1970)
+			} else {
+				return todaysDate
+			}
+		}
+	}
 	
 	init(id: Int, dates: [DateElement], title: String, place: Place?, bodyText: String, images: [Image], favoritesCount: Int, shortTitle: String) {
 		self.id = id
@@ -40,10 +65,6 @@ struct Event: Codable {
 struct DateElement: Codable {
 	let start: Int
 	let end: Int
-	
-//	var startFormatted: String { print(start.toAppDateFormat())
-//		return start.toAppDateFormat() }
-//	var endFormatted: String { end.toAppDateFormat() }
 }
 
 // MARK: - Image

@@ -145,12 +145,16 @@ class EventCollectionViewCell: UICollectionViewCell {
 		dateLabel.text = event.actualDate.formatTo(.eventPreview)
         titleLabel.text = event.title
         
+		
+		
         if let eventPlace = event.place {
             if eventPlace.address != "" {
                 locationLabel.text = eventPlace.address
             } else if eventPlace.title != "" {
                 locationLabel.text = eventPlace.title
-            }
+			} else {
+				locationLabel.text = "Adress not provided"
+			}
         } else {
             locationLabel.text = "Adress not provided"
         }
