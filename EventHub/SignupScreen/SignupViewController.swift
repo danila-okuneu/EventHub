@@ -12,6 +12,8 @@ import GoogleSignIn
 
 final class SignupViewController: UIViewController {
 
+    // MARK: - Properties
+    
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "background")
@@ -117,6 +119,7 @@ final class SignupViewController: UIViewController {
         return button
     }()
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -128,6 +131,7 @@ final class SignupViewController: UIViewController {
 		loginWithGoogleButton.addTarget(self, action: #selector(googleSignInTapped), for: .touchUpInside)
     }
 
+    // MARK: - Setup UI
     private func setupUI() {
         [backgroundImageView, backButton, titleLabel, fullNameTextField, emailTextField, passwordTextField, confirmPasswordTextField, signUpButton, signUpButtonImageView, orLabel, loginWithGoogleButton, alreadyHaveAccountLabel, signInButton].forEach {
             view.addSubview($0)
@@ -194,33 +198,42 @@ final class SignupViewController: UIViewController {
         ])
     }
     
+    // MARK: - Functions
+    
     @objc private func backButtonTapped() {
-        dismiss(animated: true, completion: nil)
+        navigateToLoginViewController()
     }
 	
+    private func navigateToLoginViewController() {
+        let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+        guard let window = windowScene.keyWindow else { return }
+        
+
+        UIView.transition(with: window, duration: 0.4, options: .transitionCrossDissolve) {
+            window.rootViewController = LoginViewController()
+        }
+    }
+    
 	@objc private func signUpButtonTapped() {
 		
 		print("sign UP tapper")
-		guard let name = fullNameTextField.textField.text, name != "" else {
-			fullNameTextField.showErrorAnimation()
-			return
-		}
-		
-		guard let email = emailTextField.textField.text, email != "", email.contains("@") else {
-			emailTextField.showErrorAnimation()
-			return
-		}
-		guard let password = passwordTextField.textField.text,
-			!password.isEmpty, password.count >= 8,
-			!password.contains(" ") else {
-			passwordTextField.showErrorAnimation()
-			return
-		}
-		
-		guard let confirmPassword = confirmPasswordTextField.textField.text, confirmPassword == password else {
-			confirmPasswordTextField.showErrorAnimation()
-			return
-		}
+        guard let name = fullNameTextField.text, !name.isEmpty else {
+            fullNameTextField.showErrorAnimation()
+            return
+        }
+        guard let email = emailTextField.text, !email.isEmpty, email.contains("@") else {
+            emailTextField.showErrorAnimation()
+            return
+        }
+        guard let password = passwordTextField.text,
+              !password.isEmpty, password.count >= 8, !password.contains(" ") else {
+            passwordTextField.showErrorAnimation()
+            return
+        }
+        guard let confirmPassword = confirmPasswordTextField.text, confirmPassword == password else {
+            confirmPasswordTextField.showErrorAnimation()
+            return
+        }
 		
 		Task {
 			do {
@@ -304,7 +317,7 @@ final class SignupViewController: UIViewController {
 	}
 	
     @objc private func signInButtonTapped() {
-        dismiss(animated: true, completion: nil)
+        navigateToLoginViewController()
     }
 }
 
@@ -312,15 +325,15 @@ final class SignupViewController: UIViewController {
 extension SignupViewController: UITextFieldDelegate {
     
     private func setupTextFields() {
-        fullNameTextField.textField.delegate = self
-        emailTextField.textField.delegate = self
-        passwordTextField.textField.delegate = self
-        confirmPasswordTextField.textField.delegate = self
+        fullNameTextField.delegate = self
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
+        confirmPasswordTextField.delegate = self
         
-        fullNameTextField.textField.tag = 1
-        emailTextField.textField.tag = 2
-        passwordTextField.textField.tag = 3
-        confirmPasswordTextField.textField.tag = 4
+        fullNameTextField.tag = 1
+        emailTextField.tag = 2
+        passwordTextField.tag = 3
+        confirmPasswordTextField.tag = 4
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -330,13 +343,14 @@ extension SignupViewController: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         switch textField.tag {
-        case 1 where textField.text == "": fullNameTextField.showError()
-        case 2 where textField.text?.count(where: { $0 == "@" } ) != 1:
-            emailTextField.showError()
+        case 1 where textField.text == "":
+            (textField as? CustomTextField)?.showError()
+        case 2 where textField.text?.count(where: { $0 == "@" }) != 1:
+            (textField as? CustomTextField)?.showError()
         case 3 where textField.text!.count < 8 || textField.text!.contains(" "):
-            passwordTextField.showError()
-        case 4 where textField.text != passwordTextField.textField.text:
-            confirmPasswordTextField.showError()
+            (textField as? CustomTextField)?.showError()
+        case 4 where textField.text != passwordTextField.text:
+            (textField as? CustomTextField)?.showError()
         default:
             return
         }
@@ -357,17 +371,8 @@ extension SignupViewController: UITextFieldDelegate {
     }
     
 }
-extension SignupViewController {
-	
-	private func register() {
-		
-		
-		
-		
-	}
-	
-}
 
+// MARK: - Preview
 @available(iOS 17.0, *)
 #Preview{
     return SignupViewController()
