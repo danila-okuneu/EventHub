@@ -11,8 +11,11 @@ import FirebaseFirestore
 import GoogleSignIn
 import FirebaseCore
 
+
 final class LoginViewController: UIViewController {
 
+    // MARK: - Properties
+    
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "background")
@@ -139,6 +142,8 @@ final class LoginViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -148,6 +153,8 @@ final class LoginViewController: UIViewController {
         signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
 		loginWithGoogleButton.addTarget(self, action: #selector(googleSignInTapped), for: .touchUpInside)
     }
+    
+    // MARK: - Setup UI
     
     private func setupUI() {
         [backgroundImageView, logoImageView, titleLabel, signInLabel, emailTextField, passwordTextField, rememberMeSwitch, rememberMeLabel, forgotPasswordButton, signInButton, signInButtonImageView, orLabel, loginWithGoogleButton, signUpLabel, signUpButton].forEach {
@@ -218,12 +225,18 @@ final class LoginViewController: UIViewController {
         ])
     }
     
+    // MARK: - Functions
+    
 	@objc private func signInButtonTapped() {
 		
-		guard let email = emailTextField.textField.text, email != "" else { emailTextField.showErrorAnimation(); return }
-		guard let password = passwordTextField.textField.text, password != "" else { passwordTextField.showErrorAnimation(); return }
-		
-		
+        guard let email = emailTextField.text, !email.isEmpty else {
+            emailTextField.showErrorAnimation()
+            return
+        }
+        guard let password = passwordTextField.text, !password.isEmpty else {
+            passwordTextField.showErrorAnimation()
+            return
+        }
 		
 		DefaultsManager.isRemembered = rememberMeSwitch.isOn
 		Task {
@@ -247,8 +260,6 @@ final class LoginViewController: UIViewController {
 				}				
 			}
 		}
-		
-		
 	}
 	
     @objc private func signUpButtonTapped() {
@@ -338,20 +349,17 @@ extension LoginViewController: UITextFieldDelegate {
 		
 	}
 	
-	private func setupTags() {
-		
-		emailTextField.tag = 1
-		passwordTextField.tag = 2
-		
-		emailTextField.textField.tag = 1
-		passwordTextField.textField.tag = 2
-		
-		emailTextField.textField.delegate = self
-		passwordTextField.textField.delegate = self
-		
-	}
-	
+    private func setupTags() {
+        emailTextField.tag = 1
+        passwordTextField.tag = 2
+        
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
+    }
+
 }
+
+// MARK: - Preview
 
 @available(iOS 17.0, *)
 #Preview {
